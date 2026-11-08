@@ -8,6 +8,29 @@ Interactive prototypes of a point-of-sale (POS) and back-office admin system for
 
 > All customers, staff, phone numbers, emails and sales figures in this demo are **fictional**.
 
+## Screenshots
+
+**POS dashboard**
+<img width="100%" alt="POS dashboard with main actions, store cash box, repairs and recent transactions" src="docs/screenshots/pos-dashboard.png">
+
+**New sale (dark mode)**
+<img width="100%" alt="New sale page in dark mode with cart, trade-in and exchange credit, and split payment" src="docs/screenshots/sale-dark.png">
+
+**New sale (light mode)**
+<img width="100%" alt="New sale page in light mode with cart, trade-in and exchange credit, and split payment" src="docs/screenshots/sale-light.png">
+
+**Repair orders**
+<img width="100%" alt="Repair orders page with in-progress and done repairs" src="docs/screenshots/repair-orders.png">
+
+**Cash management**
+<img width="100%" alt="Cash management page with store cash box and transaction log" src="docs/screenshots/cash-management.png">
+
+**Admin dashboard**
+<img width="100%" alt="Admin dashboard with today's totals, money and stock, and sales chart" src="docs/screenshots/admin-dashboard.png">
+
+**Customer reports**
+<img width="100%" alt="Admin customer reports with customer tiers and high-value customers going quiet" src="docs/screenshots/customer-reports.png">
+
 ## The problem
 
 Off-the-shelf retail POS systems don't fit a gold jewelry store:
