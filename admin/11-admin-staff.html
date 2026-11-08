@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Staff</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);min-height:100vh;display:flex;-webkit-tap-highlight-color:transparent;transition:background .25s,color .25s}
+.sidebar{width:222px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;transition:background .25s}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(128,128,128,.2)}
+.side-brand{height:64px;padding:0 18px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--bd)}
+.side-brand-name{font-size:17px;font-weight:700}
+.side-brand-name span{color:var(--gold)}
+.side-brand-sub{font-size:11px;color:var(--t4);margin-top:2px}
+.side-section{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--t4);font-weight:600;padding:16px 18px 6px}
+.side-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:14px;font-weight:500;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent;user-select:none}
+.side-item:hover{color:var(--t2);background:rgba(128,128,128,.05)}
+.side-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+.side-item .si-ico{width:20px;text-align:center;font-size:15px;flex-shrink:0}
+.side-item .si-arrow{margin-left:auto;font-size:10px;color:var(--t4)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:var(--bg2);border-bottom:1px solid var(--bd);gap:12px;transition:background .25s;flex-shrink:0}
+.top-title{font-size:19px;font-weight:600}
+.top-right{display:flex;align-items:center;gap:10px}
+.top-user{font-size:13px;color:var(--t3);display:flex;align-items:center;gap:7px}
+.top-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#1a1a1a;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.mode-btn{font-family:var(--font);font-size:15px;padding:8px 12px;border-radius:var(--r);cursor:pointer;border:1px solid var(--bd2);background:transparent;color:var(--t3);min-height:38px}
+.mode-btn:active{transform:scale(.95)}
+.content{flex:1;padding:22px 26px;overflow-y:auto}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+
+.btn{font-family:var(--font);font-size:13px;font-weight:600;padding:10px 16px;border-radius:var(--r);cursor:pointer;border:1px solid var(--bd2);background:transparent;color:var(--t3);min-height:42px;display:inline-flex;align-items:center;gap:6px;transition:all .12s}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:var(--gold);border-color:var(--gold);color:#1a1a1a}
+.btn-gold:active{background:var(--gold-h)}
+.btn-dark{background:var(--bg5);border-color:var(--bg5);color:var(--t1)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.page-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+.page-title{font-size:16px;font-weight:600}
+.panel{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px;transition:background .25s,border-color .25s;margin-bottom:14px}
+html.light .panel{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+.stats4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.scard{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;position:relative;overflow:hidden;transition:background .25s,border-color .25s}
+html.light .scard{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.scard::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--bd2)}
+.sc-green::before{background:var(--green)}.sc-blue::before{background:var(--blue)}.sc-amber::before{background:var(--amber)}.sc-gold::before{background:var(--gold)}
+.scard-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--t4);font-weight:500;margin-bottom:6px}
+.scard-value{font-size:21px;font-weight:700}
+.scard-sub{font-size:12px;color:var(--t4);margin-top:3px}
+
+.tbl-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+.tbl-title{font-size:15px;font-weight:600}
+.tbl-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search-wrap{position:relative}
+.search-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--t4);font-size:14px;pointer-events:none}
+.search-input{font-family:var(--font);font-size:13px;padding:10px 12px 10px 34px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:230px;-webkit-appearance:none}
+.search-input:focus{outline:none;border-color:var(--gold)}
+.f-select{font-family:var(--font);font-size:13px;padding:10px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);min-height:42px;appearance:auto;-webkit-appearance:auto;cursor:pointer}
+.f-select:focus{outline:none;border-color:var(--gold)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--t4);font-weight:600;padding:10px;border-bottom:1px solid var(--bd);white-space:nowrap}
+.tbl th.sortable{cursor:pointer;user-select:none}
+.tbl th.sortable:hover{color:var(--t2)}
+.tbl th .arrow{font-size:9px;margin-left:3px;color:var(--gold)}
+.tbl td{padding:11px 10px;border-bottom:1px solid var(--bd);color:var(--t2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr.inactive-row td{opacity:.5}
+.staff-name{display:flex;align-items:center;gap:10px}
+.staff-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#1a1a1a}
+.staff-name-txt{font-weight:600;color:var(--t1)}
+.staff-name-sub{font-size:11px;color:var(--t4)}
+.role-pill{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;margin-right:4px;white-space:nowrap;display:inline-block;margin-bottom:2px}
+.r-admin{background:var(--purple-bg);color:var(--purple)}
+.r-pos{background:var(--blue-bg);color:var(--blue)}
+.r-terminal{background:var(--amber-bg);color:var(--amber)}
+.status-pill{font-size:11px;font-weight:600;padding:3px 11px;border-radius:9px;cursor:pointer;user-select:none;border:1px solid transparent}
+.st-active{background:var(--green-bg);color:var(--green)}
+.st-inactive{background:var(--bg4);color:var(--t3)}
+.act-ico{font-family:var(--font);width:34px;height:34px;border-radius:8px;border:1px solid var(--bd2);background:transparent;cursor:pointer;font-size:14px;display:inline-flex;align-items:center;justify-content:center;margin-left:4px;position:relative;transition:all .12s}
+.act-edit{color:var(--t3)}.act-edit:active{background:var(--bg4);color:var(--t1)}
+.act-del{color:var(--red)}.act-del:active{background:var(--red-bg)}
+.act-ico::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#000;color:#fff;font-size:11px;font-weight:500;padding:4px 9px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:10}
+.act-ico:hover::after{opacity:1}
+
+/* form view */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+.fg label{font-size:12px;font-weight:600;color:var(--t2);display:block;margin-bottom:6px}
+.fg label .req{color:var(--red)}
+.fg label .opt{color:var(--t4);font-weight:400}
+.fg input{font-family:var(--font);font-size:14px;padding:11px 13px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:100%;-webkit-appearance:none;min-height:44px}
+.fg input:focus{outline:none;border-color:var(--gold)}
+.fg input:disabled{opacity:.6}
+.span2{grid-column:span 2}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:44px}
+.pw-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gold);font-size:16px;cursor:pointer;padding:8px 10px;min-height:40px}
+.pw-reqs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pw-req{font-size:11px;font-weight:500;padding:5px 11px;border-radius:8px;background:var(--bg4);color:var(--t4);transition:all .15s}
+.pw-req.met{background:var(--green-bg);color:var(--green)}
+.role-checks{display:flex;gap:10px;flex-wrap:wrap}
+.fg label.role-check{display:inline-flex;flex-direction:row;align-items:center;gap:11px;font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;user-select:none;padding:11px 16px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);transition:all .12s;white-space:nowrap;line-height:1;margin-bottom:0}
+.role-check{display:inline-flex;flex-direction:row;align-items:center;gap:11px;font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;user-select:none;padding:11px 16px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);transition:all .12s;white-space:nowrap;line-height:1}
+.role-check input{display:none}
+.role-check .rc-label{flex:0 0 auto}
+.role-check .rc-box{width:20px;height:20px;border-radius:6px;border:2px solid var(--bd2);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.role-check .rc-box svg{opacity:0;transition:opacity .12s}
+.role-check.on{border-color:var(--gold);background:var(--gold-bg);color:var(--t1)}
+.role-check.on .rc-box{background:var(--gold);border-color:var(--gold)}
+.role-check.on .rc-box svg{opacity:1}
+.role-hint{font-size:11px;color:var(--t4);margin-top:7px}
+.toggle-row{display:flex;align-items:center;gap:12px}
+.toggle{position:relative;width:46px;height:26px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--bg5);border-radius:26px;transition:.2s;cursor:pointer}
+.toggle-slider::before{content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--green)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(20px)}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#fff;color:#1a1a1a;padding:14px 28px;border-radius:var(--r);font-size:14px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,.4);opacity:0;transition:all .35s;z-index:200;pointer-events:none;max-width:90vw;text-align:center}
+html.light .toast{background:#1f1f1f;color:#fff}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* confirm modal */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;justify-content:center;align-items:center;padding:24px}
+.mo.show{display:flex}
+.mo-box{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:400px;padding:22px}
+.mo-title{font-size:16px;font-weight:600;margin-bottom:8px}
+.mo-text{font-size:13px;color:var(--t3);margin-bottom:18px;line-height:1.5}
+.mo-btns{display:flex;justify-content:flex-end;gap:8px}
+@media(max-width:1000px){.stats4{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="side-brand">
+    <div class="side-brand-name">Gold <span>Jewelry</span> POS</div>
+    <div class="side-brand-sub">Management System</div>
+  </div>
+  <div class="side-section">Main</div>
+  <div class="side-item"><span class="si-ico">🏠</span> Dashboard</div>
+  <div class="side-item"><span class="si-ico">📊</span> Reports <span class="si-arrow">▼</span></div>
+  <div class="side-item"><span class="si-ico">📦</span> Inventory</div>
+  <div class="side-item"><span class="si-ico">🏷️</span> Pricing</div>
+  <div class="side-item"><span class="si-ico">👥</span> Customers</div>
+  <div class="side-item"><span class="si-ico"><svg width="17" height="13" viewBox="0 0 16 12" fill="none"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/></svg></span> Used gold</div>
+  <div class="side-item"><span class="si-ico">↩️</span> Returns management</div>
+  <div class="side-item active"><span class="si-ico">💼</span> Staff</div>
+  <div class="side-section">System</div>
+  <div class="side-item"><span class="si-ico">🖥️</span> POS</div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <span class="top-title" id="topTitle">Staff</span>
+    <div class="top-right">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()">☀️</button>
+      <span class="top-user"><span class="top-avatar">AD</span> user1@example.com</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══ LIST VIEW ═══ -->
+    <div id="listView">
+      <div class="page-head">
+        <span class="page-title">💼 Staff management</span>
+        <button class="btn btn-gold" onclick="openForm(null)">+ Add staff</button>
+      </div>
+
+      <div class="stats4">
+        <div class="scard sc-blue"><div class="scard-label">Total staff</div><div class="scard-value" id="stTotal">0</div><div class="scard-sub" id="stActiveSub"></div></div>
+        <div class="scard sc-purple"><div class="scard-label">Admins</div><div class="scard-value" id="stAdmins" style="color:var(--purple)">0</div><div class="scard-sub">full system access</div></div>
+        <div class="scard sc-amber"><div class="scard-label">POS terminals</div><div class="scard-value" id="stTerminals" style="color:var(--amber)">0</div><div class="scard-sub">terminal-role logins</div></div>
+        <div class="scard sc-green"><div class="scard-label">Active now</div><div class="scard-value" id="stActive" style="color:var(--green)">0</div><div class="scard-sub">can log in today</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="tbl-head">
+          <span class="tbl-title" id="staffCount">Staff members</span>
+          <div class="tbl-tools">
+            <select class="f-select" id="fRole" onchange="render()">
+              <option value="">All roles</option>
+              <option value="Admin">Admin</option>
+              <option value="PosRole">PosRole</option>
+              <option value="TerminalRole">TerminalRole</option>
+            </select>
+            <select class="f-select" id="fStatus" onchange="render()">
+              <option value="">All status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+            <div class="search-wrap">
+              <span class="search-ico">⌕</span>
+              <input type="text" class="search-input" id="searchInput" placeholder="Search name, email, phone..." oninput="render()">
+            </div>
+          </div>
+        </div>
+        <table class="tbl" id="staffTbl"></table>
+      </div>
+    </div>
+
+    <!-- ═══ ADD / EDIT VIEW ═══ -->
+    <div id="formView" style="display:none">
+      <div class="page-head">
+        <span class="page-title" id="formTitle"></span>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline" onclick="clearForm()">✕ Clear</button>
+          <button class="btn btn-outline" onclick="showListView()">← Back to staff</button>
+          <button class="btn btn-gold" onclick="saveStaff()" id="saveBtn">💾 Save staff</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="form-grid">
+          <div class="fg"><label>Full name <span class="req">*</span></label><input type="text" id="sName" placeholder="Enter full name"></div>
+          <div class="fg"><label>Username <span class="opt">(email — used to log in)</span></label><input type="text" id="sUser" placeholder="Auto-set to email" disabled></div>
+          <div class="fg"><label>Email <span class="req">*</span></label><input type="email" id="sEmail" placeholder="Enter email" oninput="syncUsername()"></div>
+          <div class="fg"><label>Phone number <span class="opt">(optional)</span></label><input type="tel" id="sPhone" placeholder="780-555-0123" inputmode="tel" oninput="formatPhone(this)"></div>
+          <div class="fg span2" id="pwField"><label>Password <span class="req">*</span></label>
+            <div class="pw-wrap"><input type="password" id="sPass" placeholder="Enter password" oninput="checkPw()"><button class="pw-eye" onclick="togglePw()" id="pwEye">👁</button></div>
+            <div class="pw-reqs">
+              <span class="pw-req" id="pw1">At least 6 characters</span>
+              <span class="pw-req" id="pw2">One uppercase letter</span>
+              <span class="pw-req" id="pw3">One special character</span>
+            </div>
+          </div>
+          <div class="fg span2"><label>Roles <span class="req">*</span></label>
+            <div class="role-checks">
+              <label class="role-check" id="rcAdmin"><input type="checkbox" value="Admin" onchange="roleToggled()"><span class="rc-box"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 5 8.5 9.5 3.5" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="rc-label">Admin</span></label>
+              <label class="role-check" id="rcPos"><input type="checkbox" value="PosRole" onchange="roleToggled()"><span class="rc-box"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 5 8.5 9.5 3.5" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="rc-label">PosRole</span></label>
+              <label class="role-check" id="rcTerminal"><input type="checkbox" value="TerminalRole" onchange="roleToggled()"><span class="rc-box"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 5 8.5 9.5 3.5" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="rc-label">TerminalRole</span></label>
+            </div>
+            <div class="role-hint">Admin = full system · PosRole = can ring sales · TerminalRole = locked-down iPad terminal login</div>
+          </div>
+          <div class="fg span2"><label>Status</label>
+            <div class="toggle-row">
+              <label class="toggle"><input type="checkbox" id="sActive" checked><span class="toggle-slider"></span></label>
+              <span id="activeLabel" style="font-size:13px;color:var(--t2)">Active — can log in</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Delete confirm -->
+<div class="mo" id="delModal" onclick="if(event.target===this)closeM()">
+  <div class="mo-box">
+    <div class="mo-title">Remove staff member?</div>
+    <div class="mo-text" id="delText"></div>
+    <div class="mo-btns">
+      <button class="btn btn-dark" onclick="closeM()">Cancel</button>
+      <button class="btn" style="background:var(--red);border-color:var(--red);color:#fff" onclick="confirmDelete()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+function showToast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},3000)}
+function closeM(){document.getElementById('delModal').classList.remove('show')}
+function fmtPh(p){p=(p||'').replace(/[^0-9]/g,'');if(p.length===10)return p.slice(0,3)+'-'+p.slice(3,6)+'-'+p.slice(6);return p||'—'}
+function fmtDate(s){var p=s.split('-');var M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return M[+p[1]-1]+' '+(+p[2])+', '+p[0]}
+
+var staff=[
+  {id:1,name:'System Administrator',email:'user2@example.com',phone:'',roles:['Admin','PosRole','TerminalRole'],active:true,created:'2025-10-15'},
+  {id:2,name:'POS User',email:'user3@example.com',phone:'',roles:['PosRole'],active:true,created:'2025-10-15'},
+  {id:3,name:'Ellis Shaw',email:'user4@example.com',phone:'7805550108',roles:['Admin','PosRole'],active:true,created:'2026-02-27'},
+  {id:4,name:'Support Team',email:'user5@example.com',phone:'7805550109',roles:['Admin','PosRole'],active:true,created:'2026-03-01'},
+  {id:5,name:'Admin 2',email:'user6@example.com',phone:'7805550110',roles:['Admin','PosRole'],active:false,created:'2026-03-03'},
+  {id:6,name:'Terminal 1',email:'user7@example.com',phone:'7805550110',roles:['PosRole','TerminalRole'],active:true,created:'2026-03-19'},
+  {id:7,name:'Ari Freeman',email:'user8@example.com',phone:'7805550111',roles:['Admin','PosRole'],active:true,created:'2026-03-23'},
+  {id:8,name:'Jesse Simmons',email:'user1@example.com',phone:'7805550101',roles:['Admin','PosRole'],active:true,created:'2026-04-02'},
+];
+var nextId=9;
+var AV_COLORS=['#d4a017','#5ba3e6','#9b8de6','#4caf7c','#e6a23c','#e65b5b'];
+function avColor(id){return AV_COLORS[id%AV_COLORS.length]}
+function initials(n){var p=n.trim().split(/\s+/);return((p[0]||'')[0]||'')+((p[1]||'')[0]||'')}
+
+var sortField='created',sortDesc=true;
+function sortBy(f){if(sortField===f)sortDesc=!sortDesc;else{sortField=f;sortDesc=true}render()}
+
+function roleClass(r){return r==='Admin'?'r-admin':r==='PosRole'?'r-pos':'r-terminal'}
+
+function render(){
+  // stats (always whole set)
+  document.getElementById('stTotal').textContent=staff.length;
+  var active=staff.filter(function(s){return s.active}).length;
+  document.getElementById('stActive').textContent=active;
+  document.getElementById('stActiveSub').textContent=active+' active · '+(staff.length-active)+' inactive';
+  document.getElementById('stAdmins').textContent=staff.filter(function(s){return s.roles.indexOf('Admin')!==-1}).length;
+  document.getElementById('stTerminals').textContent=staff.filter(function(s){return s.roles.indexOf('TerminalRole')!==-1}).length;
+
+  var role=document.getElementById('fRole').value;
+  var status=document.getElementById('fStatus').value;
+  var q=(document.getElementById('searchInput').value||'').toLowerCase();
+  var qph=q.replace(/[^0-9]/g,'');
+  var rows=staff.filter(function(s){
+    if(role&&s.roles.indexOf(role)===-1)return false;
+    if(status==='active'&&!s.active)return false;
+    if(status==='inactive'&&s.active)return false;
+    if(q){
+      var hit=s.name.toLowerCase().indexOf(q)!==-1||s.email.toLowerCase().indexOf(q)!==-1||(qph.length>0&&s.phone.indexOf(qph)!==-1);
+      if(!hit)return false;
+    }
+    return true;
+  });
+  rows.sort(function(a,b){
+    var av,bv;
+    if(sortField==='name'){av=a.name.toLowerCase();bv=b.name.toLowerCase()}
+    else{av=a.created;bv=b.created}
+    var c=av===bv?0:(av<bv?-1:1);return sortDesc?-c:c;
+  });
+
+  document.getElementById('staffCount').textContent='Staff members ('+rows.length+')';
+  function arrow(f){return sortField===f?'<span class="arrow">'+(sortDesc?'▼':'▲')+'</span>':''}
+  document.getElementById('staffTbl').innerHTML='<tr>'+
+    '<th class="sortable" onclick="sortBy(\'name\')">Name '+arrow('name')+'</th>'+
+    '<th>Roles</th><th>Phone</th>'+
+    '<th class="sortable" onclick="sortBy(\'created\')">Created '+arrow('created')+'</th>'+
+    '<th>Status</th><th style="text-align:right">Actions</th></tr>'+
+    rows.map(function(s){
+      var rolesHtml=s.roles.map(function(r){return '<span class="role-pill '+roleClass(r)+'">'+r+'</span>'}).join('');
+      return '<tr'+(s.active?'':' class="inactive-row"')+'>'+
+        '<td><div class="staff-name"><div class="staff-av" style="background:'+avColor(s.id)+'">'+initials(s.name).toUpperCase()+'</div><div><div class="staff-name-txt">'+s.name+'</div><div class="staff-name-sub">'+s.email+'</div></div></div></td>'+
+        '<td>'+rolesHtml+'</td>'+
+        '<td>'+fmtPh(s.phone)+'</td>'+
+        '<td style="color:var(--t3);font-size:12px">'+fmtDate(s.created)+'</td>'+
+        '<td><span class="status-pill '+(s.active?'st-active':'st-inactive')+'" onclick="toggleStatus('+s.id+')" title="Click to toggle">'+(s.active?'● Active':'○ Inactive')+'</span></td>'+
+        '<td style="text-align:right;white-space:nowrap">'+
+          '<button class="act-ico act-edit" data-tip="Edit" onclick="openForm('+s.id+')">✎</button>'+
+          '<button class="act-ico act-del" data-tip="Remove" onclick="askDelete('+s.id+')">🗑</button>'+
+        '</td>'+
+      '</tr>';
+    }).join('');
+}
+
+function find(id){return staff.find(function(s){return s.id===id})}
+
+// quick status toggle from the list
+function toggleStatus(id){var s=find(id);s.active=!s.active;showToast(s.name+(s.active?' reactivated':' deactivated'));render()}
+
+// ═══ DELETE ═══
+var delId=null;
+function askDelete(id){delId=id;var s=find(id);document.getElementById('delText').innerHTML='<b style="color:var(--t1)">'+s.name+'</b> ('+s.email+') will lose access immediately. This cannot be undone — consider deactivating instead if they might return.';document.getElementById('delModal').classList.add('show')}
+function confirmDelete(){var s=find(delId);staff=staff.filter(function(x){return x.id!==delId});closeM();showToast('🗑 '+s.name+' removed');render()}
+
+// ═══ ADD / EDIT VIEW ═══
+var editingId=null;
+function openForm(id){
+  var s=id?find(id):null;
+  editingId=id;
+  document.getElementById('listView').style.display='none';
+  document.getElementById('formView').style.display='';
+  document.getElementById('topTitle').textContent=s?'Staff — Edit member':'Staff — Add member';
+  document.getElementById('formTitle').textContent=s?'✎ Edit staff member':'➕ Add new staff';
+  document.getElementById('saveBtn').textContent=s?'💾 Save changes':'💾 Save staff';
+  document.getElementById('sName').value=s?s.name:'';
+  document.getElementById('sEmail').value=s?s.email:'';
+  document.getElementById('sUser').value=s?s.email:'';
+  document.getElementById('sPhone').value=s?fmtPh(s.phone):'';
+  // password only required on add
+  document.getElementById('pwField').style.display=s?'none':'';
+  document.getElementById('sPass').value='';checkPw();
+  // roles
+  [['rcAdmin','Admin'],['rcPos','PosRole'],['rcTerminal','TerminalRole']].forEach(function(pair){
+    var on=s?s.roles.indexOf(pair[1])!==-1:false;
+    var lbl=document.getElementById(pair[0]);
+    lbl.querySelector('input').checked=on;
+    lbl.classList.toggle('on',on);
+  });
+  document.getElementById('sActive').checked=s?s.active:true;
+  syncActiveLabel();
+}
+function showListView(){
+  document.getElementById('formView').style.display='none';
+  document.getElementById('listView').style.display='';
+  document.getElementById('topTitle').textContent='Staff';
+}
+function syncUsername(){document.getElementById('sUser').value=document.getElementById('sEmail').value}
+function roleToggled(){
+  [['rcAdmin'],['rcPos'],['rcTerminal']].forEach(function(p){
+    var lbl=document.getElementById(p[0]);lbl.classList.toggle('on',lbl.querySelector('input').checked);
+  });
+}
+function formatPhone(el){var d=el.value.replace(/[^0-9]/g,'').slice(0,10);if(d.length>6)el.value=d.slice(0,3)+'-'+d.slice(3,6)+'-'+d.slice(6);else if(d.length>3)el.value=d.slice(0,3)+'-'+d.slice(3);else el.value=d}
+function togglePw(){var i=document.getElementById('sPass');i.type=i.type==='password'?'text':'password';document.getElementById('pwEye').textContent=i.type==='password'?'👁':'🙈'}
+function checkPw(){
+  var v=document.getElementById('sPass').value;
+  document.getElementById('pw1').classList.toggle('met',v.length>=6);
+  document.getElementById('pw2').classList.toggle('met',/[A-Z]/.test(v));
+  document.getElementById('pw3').classList.toggle('met',/[^A-Za-z0-9]/.test(v));
+}
+function syncActiveLabel(){document.getElementById('activeLabel').textContent=document.getElementById('sActive').checked?'Active — can log in':'Inactive — login blocked'}
+document.getElementById('sActive').addEventListener('change',syncActiveLabel);
+function clearForm(){
+  ['sName','sEmail','sUser','sPhone','sPass'].forEach(function(id){document.getElementById(id).value=''});
+  ['rcAdmin','rcPos','rcTerminal'].forEach(function(id){var l=document.getElementById(id);l.querySelector('input').checked=false;l.classList.remove('on')});
+  document.getElementById('sActive').checked=true;syncActiveLabel();checkPw();
+  showToast('Form cleared');
+}
+function saveStaff(){
+  var name=document.getElementById('sName').value.trim();
+  var email=document.getElementById('sEmail').value.trim();
+  var phone=document.getElementById('sPhone').value.replace(/[^0-9]/g,'');
+  var roles=[];['rcAdmin','rcPos','rcTerminal'].forEach(function(id){var i=document.getElementById(id).querySelector('input');if(i.checked)roles.push(i.value)});
+  var active=document.getElementById('sActive').checked;
+  if(!name){showToast('Full name is required');return}
+  if(!email||email.indexOf('@')===-1){showToast('A valid email is required');return}
+  var dupe=staff.find(function(s){return s.email.toLowerCase()===email.toLowerCase()&&s.id!==editingId});
+  if(dupe){showToast('⚠ '+email+' is already used by '+dupe.name);return}
+  if(!roles.length){showToast('Select at least one role');return}
+  if(editingId===null){
+    var v=document.getElementById('sPass').value;
+    if(v.length<6||!/[A-Z]/.test(v)||!/[^A-Za-z0-9]/.test(v)){showToast('Password does not meet all requirements');return}
+    staff.unshift({id:nextId++,name:name,email:email,phone:phone,roles:roles,active:active,created:'2026-06-11'});
+    showToast('✓ '+name+' added');
+  }else{
+    var s=find(editingId);s.name=name;s.email=email;s.phone=phone;s.roles=roles;s.active=active;
+    showToast('✓ '+name+' updated');
+  }
+  showListView();render();
+}
+
+render();
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

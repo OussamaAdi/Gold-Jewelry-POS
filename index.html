@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gold Jewelry POS</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#111113;--bg2:#1a1a1e;--bd:#2c2c32;--tx:#ececef;--mt:#9a9aa3;--gold:#D4A017}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);padding:40px 16px;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto}
+h1{font-size:30px;font-weight:700}h1 span{color:var(--gold)}
+.sub{color:var(--mt);margin:8px 0 6px;max-width:720px}
+.note{display:inline-block;margin:10px 0 28px;font-size:13px;color:var(--gold);border:1px solid rgba(212,160,23,.4);border-radius:8px;padding:6px 10px}
+h2{font-size:18px;margin:26px 0 12px;display:flex;align-items:center;gap:8px}
+h2:before{content:'';width:4px;height:18px;background:var(--gold);border-radius:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+a.card{display:block;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;color:var(--tx);text-decoration:none;transition:.15s}
+a.card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.card b{display:block;font-size:15px}.card small{color:var(--mt);font-size:13px}
+footer{margin-top:36px;color:var(--mt);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Gold <span>Jewelry</span> POS</h1>
+  <p class="sub">Clickable prototypes I designed for a gold jewelry store's point-of-sale and back-office system. I defined every workflow, screen and business rule, and the development team built the production system from these pages.</p>
+  <span class="note">Demo only · all customers, staff, phone numbers and sales are fictional · best viewed on a tablet or desktop</span>
+
+  <h2>POS (in-store, tablet)</h2>
+  <div class="grid">
+    <a class="card" href="pos/1-pos-dashboard.html"><b>POS dashboard</b><small>Six actions, PIN-protected sales total, open repairs</small></a>
+    <a class="card" href="pos/2-pos-sale.html"><b>New sale</b><small>Price per gram, trade-in &amp; exchange credit, split payment</small></a>
+    <a class="card" href="pos/3-return-system.html"><b>Returns</b><small>Find the receipt, select items, refund method</small></a>
+    <a class="card" href="pos/4-repair-intake.html"><b>Repair intake</b><small>Ticket, storage slot, due date</small></a>
+    <a class="card" href="pos/5-repair-orders.html"><b>Repair orders &amp; pickup</b><small>Status tracking, overdue alerts</small></a>
+    <a class="card" href="pos/6-used-gold.html"><b>Used gold purchase</b><small>Weight, karat, purity and payout</small></a>
+    <a class="card" href="pos/7-cash-management.html"><b>Cash management</b><small>Cash in/out, corrections, audit notes</small></a>
+  </div>
+
+  <h2>Admin panel (back office)</h2>
+  <div class="grid">
+    <a class="card" href="admin/1-admin-dashboard.html"><b>Admin dashboard</b><small>Daily overview</small></a>
+    <a class="card" href="admin/2-sales-reports.html"><b>Sales reports</b><small>Revenue, payment mix, trends</small></a>
+    <a class="card" href="admin/3-inventory-reports.html"><b>Inventory reports</b><small>Stock by karat, category and weight</small></a>
+    <a class="card" href="admin/4-repairs-reports.html"><b>Repairs reports</b><small>Volume, turnaround, revenue</small></a>
+    <a class="card" href="admin/5-customers-reports.html"><b>Customer reports</b><small>Tiers, lifetime spend</small></a>
+    <a class="card" href="admin/6-admin-inventory.html"><b>Inventory</b><small>Add and manage items</small></a>
+    <a class="card" href="admin/7-admin-pricing.html"><b>Pricing</b><small>Price per gram by karat</small></a>
+    <a class="card" href="admin/8-admin-customers.html"><b>Customers</b><small>Profiles and purchase history</small></a>
+    <a class="card" href="admin/9-admin-used-gold.html"><b>Used gold</b><small>Stock on hand, melting</small></a>
+    <a class="card" href="admin/10-admin-returns.html"><b>Returns management</b><small>Review and approve returns</small></a>
+    <a class="card" href="admin/11-admin-staff.html"><b>Staff</b><small>Accounts and roles</small></a>
+  </div>
+
+  <footer>Designed by Oussama Adi · <a href="https://www.linkedin.com/in/oussama-adi-6340aa23b" style="color:var(--gold)">LinkedIn</a> · <a href="https://github.com/OussamaAdi/Gold-Jewelry-POS/blob/main/docs/specification.md" style="color:var(--gold)">Specification</a></footer>
+</div>
+</body>
+</html>

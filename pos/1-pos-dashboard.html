@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);--green-b:rgba(76,175,124,.3);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);--blue-b:rgba(91,163,230,.3);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);--amber-b:rgba(230,162,60,.35);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);min-height:100vh;padding:0;-webkit-tap-highlight-color:transparent}
+
+
+/* ═══ LIGHT MODE ═══ */
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.08);--bd2:rgba(0,0,0,.16);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);--green-b:rgba(46,139,95,.3);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);--blue-b:rgba(61,127,196,.3);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);--amber-b:rgba(196,130,26,.3);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);
+}
+html.light .toast{background:#1f1f1f;color:#fff}
+html.light .action-btn,html.light .stat-card,html.light .recent-panel{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+html.light .nav{border-bottom-color:#c9c9cf}
+html.light .modal,html.light .pin-modal{border-color:#c9c9cf}
+html.light .pin-overlay{background:rgba(255,255,255,.85)}
+html.light .mo{background:rgba(0,0,0,.4)}
+body{transition:background .25s,color .25s}
+.nav,.action-btn,.stat-card,.recent-panel,.modal,.pin-modal{transition:background .25s,border-color .25s}
+.mode-btn{font-family:var(--font);font-size:16px;padding:7px 12px;border-radius:var(--r);cursor:pointer;display:inline-flex;align-items:center;min-height:36px;border:1px solid var(--bd2);background:transparent;color:var(--t3);transition:all .12s}
+.mode-btn:active{transform:scale(.95)}
+
+/* Top nav */
+.nav{background:var(--bg2);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-left{display:flex;align-items:center;gap:10px}
+.nav-brand{font-size:17px;font-weight:600;color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--t3)}
+.nav-user{display:flex;align-items:center;gap:6px}
+.nav-time{color:var(--t4)}
+.nav-btn{font-family:var(--font);font-size:12px;font-weight:500;padding:7px 14px;border-radius:var(--r);cursor:pointer;display:inline-flex;align-items:center;gap:5px;min-height:36px;transition:all .12s}
+.nav-btn:active{transform:scale(.97)}
+.nav-btn-outline{border:1px solid var(--bd2);background:transparent;color:var(--t3)}
+.nav-btn-outline:hover{border-color:rgba(255,255,255,.3);color:var(--t2)}
+.nav-btn-red{border:1px solid rgba(230,91,91,.25);background:rgba(230,91,91,.08);color:var(--red)}
+.nav-btn-red:hover{background:rgba(230,91,91,.15)}
+
+.page{max-width:1100px;margin:0 auto;padding:24px 28px 40px}
+
+/* Action buttons */
+.actions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+.action-btn{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 12px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;position:relative;overflow:hidden;font-family:var(--font)}
+.action-btn::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:rgba(212,160,23,.35)}
+.action-btn:active{transform:scale(.97);border-color:var(--bd2)}
+.action-btn:hover{border-color:var(--bd2);background:var(--bg3)}
+.act-icon{font-size:24px;line-height:1}
+.act-label{font-size:13px;font-weight:600;color:var(--t1)}
+.act-sub{font-size:10px;color:var(--t4)}
+/* action buttons share one accent — per-button colors removed */
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px}
+.stat-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px;position:relative}
+.stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--t4);margin-bottom:6px;font-weight:500;display:flex;align-items:center;gap:6px}
+.stat-value{font-size:24px;font-weight:600}
+.stat-sub{font-size:12px;color:var(--t4);margin-top:4px}
+.stat-clickable{cursor:pointer;transition:border-color .15s}
+.stat-clickable:hover{border-color:var(--bd2)}
+.stat-clickable:active{transform:scale(.98)}
+
+/* Blurred stat */
+.stat-blurred .stat-value{filter:blur(12px);user-select:none;transition:filter .3s}
+.stat-blurred .stat-sub{filter:blur(6px);user-select:none;transition:filter .3s}
+.stat-revealed .stat-value,.stat-revealed .stat-sub{filter:none}
+.stat-lock{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--t4);transition:opacity .3s}
+.stat-revealed .stat-lock{opacity:.3}
+
+/* Recent transactions */
+.recent-panel{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden}
+.recent-head{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.recent-title{font-size:14px;font-weight:500;color:var(--t3)}
+.recent-count{font-size:12px;color:var(--t4)}
+.recent-list{max-height:260px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.recent-list::-webkit-scrollbar{width:3px}
+.recent-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+.recent-row{display:grid;grid-template-columns:1fr 100px 80px 65px 90px;gap:8px;padding:10px 16px;border-bottom:1px solid var(--bd);align-items:center;font-size:13px}
+.recent-row:last-child{border-bottom:none}
+.recent-row:hover{background:rgba(255,255,255,.02)}
+.rr-id{font-family:'SF Mono','Fira Code',monospace;font-size:12px;color:var(--t3)}
+.rr-customer{color:var(--t2)}
+.rr-amount{text-align:right;font-weight:600;color:var(--green)}
+.rr-method{text-align:center}
+.rr-method-tag{font-size:10px;font-weight:500;padding:3px 8px;border-radius:10px}
+.tag-cash{background:var(--green-bg);color:var(--green)}
+.tag-card{background:var(--purple-bg);color:var(--purple)}
+.tag-split{background:var(--amber-bg);color:var(--amber)}
+.rr-time{font-size:11px;color:var(--t4);text-align:right}
+.rr-receipt{text-align:right}
+.rr-receipt-btn{font-family:var(--font);font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer}
+.rr-receipt-btn:active{background:var(--bg5)}
+.recent-cols{display:grid;grid-template-columns:1fr 100px 80px 65px 90px;gap:8px;padding:7px 16px;border-bottom:1px solid var(--bd);font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--t4);font-weight:500}
+
+/* Modals */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;justify-content:center;align-items:center;padding:20px}
+.mo.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:500px;max-height:85vh;overflow-y:auto}
+.mh{padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1}
+.mh-title{font-size:16px;font-weight:600}
+.mh-x{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:4px 8px;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.mh-x:active{background:var(--bg5);color:var(--t1)}
+.mb{padding:16px}
+
+.repair-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--bd)}
+.repair-item:last-child{border-bottom:none}
+.ri-slot{width:32px;height:32px;border-radius:6px;background:var(--amber-bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--amber);flex-shrink:0}
+.ri-info{flex:1}
+.ri-name{font-size:14px;font-weight:500}
+.ri-phone{font-size:12px;color:var(--t3)}
+.ri-notes{font-size:12px;color:var(--t4);margin-top:2px}
+.ri-right{text-align:right;flex-shrink:0}
+.ri-cost{font-size:13px;font-weight:500;color:var(--t1)}
+.ri-due{font-size:11px;margin-top:2px}
+.ri-due.overdue{color:var(--red)}
+.ri-due.today{color:var(--amber)}
+.ri-due.upcoming{color:var(--t4)}
+
+/* PIN overlay */
+.pin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:60;justify-content:center;align-items:center;padding:20px}
+.pin-overlay.show{display:flex}
+.pin-modal{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:300px;padding:24px;text-align:center}
+.pin-title{font-size:16px;font-weight:600;margin-bottom:4px}
+.pin-sub{font-size:12px;color:var(--t3);margin-bottom:20px}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:20px}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--bd2);background:transparent;transition:all .15s}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold)}
+.pin-dot.wrong{background:var(--red);border-color:var(--red);animation:shake .3s}
+.pin-pad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;max-width:230px;margin:0 auto}
+.pin-key{font-family:var(--font);font-size:20px;font-weight:500;padding:14px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);cursor:pointer;min-height:52px;display:flex;align-items:center;justify-content:center}
+.pin-key:active{background:var(--bg5);transform:scale(.95)}
+.pin-key.empty{visibility:hidden}
+.pin-key.del{font-size:14px;color:var(--t3)}
+.pin-error{font-size:12px;color:var(--red);margin-top:12px;min-height:18px}
+.pin-cancel{font-family:var(--font);font-size:13px;color:var(--t3);background:none;border:none;cursor:pointer;margin-top:12px;padding:8px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#fff;color:#1a1a1a;padding:14px 28px;border-radius:var(--r);font-size:14px;font-weight:500;font-family:var(--font);box-shadow:0 8px 30px rgba(0,0,0,.4);opacity:0;transition:all .35s;z-index:200;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:700px){
+  .actions-grid{grid-template-columns:repeat(2,1fr)}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .recent-row,.recent-cols{grid-template-columns:1fr 80px 65px 80px}
+  .rr-method{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-left">
+    <span class="nav-brand">Gold Jewelry POS</span>
+  </div>
+  <div class="nav-right">
+    <span class="nav-time" id="navTime"></span>
+    <span class="nav-user">👤 user1@example.com</span>
+    <button class="mode-btn" id="modeBtn" onclick="toggleMode()" title="Light / dark mode">☀️</button>
+    <button class="nav-btn nav-btn-outline" onclick="showToast('Opening Admin Panel...')">⚙️ Admin panel</button>
+    <button class="nav-btn nav-btn-red" onclick="showToast('Logging out...')">🚪 Logout</button>
+  </div>
+</nav>
+
+<div class="page">
+  <!-- Action buttons -->
+  <div class="actions-grid">
+    <div class="action-btn act-sale" onclick="navigate('sale')">
+      <span class="act-icon">🛒</span>
+      <span class="act-label">Start new sale</span>
+      <span class="act-sub">Ring up items and process payment</span>
+    </div>
+    <div class="action-btn act-return" onclick="navigate('return')">
+      <span class="act-icon">↩️</span>
+      <span class="act-label">Process return</span>
+      <span class="act-sub">Search transaction and refund</span>
+    </div>
+    <div class="action-btn act-repair" onclick="navigate('repair')">
+      <span class="act-icon">🔧</span>
+      <span class="act-label">New repair</span>
+      <span class="act-sub">Log a repair order</span>
+    </div>
+    <div class="action-btn act-pickup" onclick="navigate('pickup')">
+      <span class="act-icon">📦</span>
+      <span class="act-label">Repair pickup</span>
+      <span class="act-sub">Manage and complete repairs</span>
+    </div>
+    <div class="action-btn act-gold" onclick="navigate('usedgold')">
+      <span class="act-icon"><svg width="30" height="22" viewBox="0 0 16 12" fill="none"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/><path d="M4.5 3h5" stroke="#C49520" stroke-width=".5"/></svg></span>
+      <span class="act-label">Used gold</span>
+      <span class="act-sub">Buy gold from customers</span>
+    </div>
+    <div class="action-btn act-cash" onclick="navigate('cash')">
+      <span class="act-icon">💰</span>
+      <span class="act-label">Cash management</span>
+      <span class="act-sub">Expenses, cash in, store box</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card stat-blurred stat-clickable" id="salesStat" onclick="revealSales()">
+      <div class="stat-label">📊 Today's sales</div>
+      <div class="stat-value" style="color:var(--green)" id="salesVal">$12,437.27</div>
+      <div class="stat-sub" id="salesSub">6 transactions</div>
+      <div class="stat-lock" id="salesLock">🔒</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🏪 Store cash box</div>
+      <div class="stat-value" style="color:var(--green)">$13,340.50</div>
+      <div class="stat-sub">+$3,014 today</div>
+    </div>
+    <div class="stat-card stat-clickable" onclick="openM('repairsM')">
+      <div class="stat-label">🔧 In progress repairs</div>
+      <div class="stat-value">4</div>
+      <div class="stat-sub"><span style="color:var(--red)">2 overdue</span> · tap to view</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label"><svg width="16" height="12" viewBox="0 0 16 12" fill="none" style="flex-shrink:0"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".3"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/><path d="M4.5 3h5" stroke="#C49520" stroke-width=".5"/></svg> Used gold on hand</div>
+      <div class="stat-value" style="color:var(--gold)">212.5g</div>
+      <div class="stat-sub">Avg 19.8K · $34,608 value</div>
+    </div>
+  </div>
+
+  <!-- Recent transactions -->
+  <div style="font-size:14px;font-weight:500;color:var(--t3);margin-bottom:10px">Recent transactions</div>
+  <div class="recent-panel">
+    <div class="recent-head">
+      <span class="recent-title">Last 7 days</span>
+      <span class="recent-count" id="recentCount">8 transactions</span>
+    </div>
+    <div class="recent-cols">
+      <span>Customer</span>
+      <span style="text-align:right">Amount</span>
+      <span style="text-align:center">Payment</span>
+      <span style="text-align:center">Time</span>
+      <span style="text-align:right">Receipt</span>
+    </div>
+    <div class="recent-list" id="recentList"></div>
+  </div>
+</div>
+
+<!-- In Progress Repairs Modal -->
+<div class="mo" id="repairsM">
+  <div class="modal">
+    <div class="mh">
+      <span class="mh-title">🔧 In progress repairs</span>
+      <button class="mh-x" onclick="closeM('repairsM')">✕</button>
+    </div>
+    <div class="mb" style="padding:0">
+      <div id="repairsList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PIN Overlay -->
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-modal">
+    <div class="pin-title">View today's sales</div>
+    <div class="pin-sub">Enter 4-digit PIN</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-pad">
+      <div class="pin-key" onclick="pinKey('1')">1</div>
+      <div class="pin-key" onclick="pinKey('2')">2</div>
+      <div class="pin-key" onclick="pinKey('3')">3</div>
+      <div class="pin-key" onclick="pinKey('4')">4</div>
+      <div class="pin-key" onclick="pinKey('5')">5</div>
+      <div class="pin-key" onclick="pinKey('6')">6</div>
+      <div class="pin-key" onclick="pinKey('7')">7</div>
+      <div class="pin-key" onclick="pinKey('8')">8</div>
+      <div class="pin-key" onclick="pinKey('9')">9</div>
+      <div class="pin-key empty"></div>
+      <div class="pin-key" onclick="pinKey('0')">0</div>
+      <div class="pin-key del" onclick="pinDel()">⌫</div>
+    </div>
+    <div class="pin-error" id="pinError"></div>
+    <button class="pin-cancel" onclick="pinCancel()">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var OWNER_PIN='1234';
+
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+
+var recentTxns=[
+  {id:'SALE-20260523-0026',customer:'Jesse Simmons',amount:3293.02,method:'cash',time:'10:24 AM',date:'Today'},
+  {id:'SALE-20260523-0003',customer:'Robin Freeman',amount:3944.25,method:'card',time:'9:52 AM',date:'Today'},
+  {id:'SALE-20260523-0019',customer:'Noel Morales',amount:1879.50,method:'cash',time:'9:15 AM',date:'Today'},
+  {id:'SALE-20260522-0024',customer:'Taylor Ramos',amount:4893.41,method:'split',time:'4:38 PM',date:'Yesterday'},
+  {id:'SALE-20260522-0018',customer:'Morgan Hayes',amount:2150.00,method:'cash',time:'2:10 PM',date:'Yesterday'},
+  {id:'SALE-20260521-0023',customer:'Casey Jenkins',amount:1570.00,method:'card',time:'5:45 PM',date:'May 21'},
+  {id:'SALE-20260521-0015',customer:'Peyton Young',amount:6746.55,method:'cash',time:'11:20 AM',date:'May 21'},
+  {id:'SALE-20260520-0012',customer:'Sydney Long',amount:888.30,method:'cash',time:'3:05 PM',date:'May 20'},
+];
+
+var activeRepairs=[
+  {slot:8,customer:'Morgan Hayes',phone:'780-555-0100',notes:'Ring to size 7 (weight 6.34), Polish + rhodium plate',cost:45,dueDate:'2026-05-23',status:'overdue'},
+  {slot:4,customer:'Jesse Simmons',phone:'780-555-0101',notes:'Weld bracelet (weight 14.8), Replace spring ring clasp',cost:40,dueDate:'2026-05-21',status:'overdue'},
+  {slot:7,customer:'Sydney Long',phone:'780-555-0102',notes:'Necklace clasp replacement',cost:25,dueDate:'2026-05-24',status:'upcoming'},
+  {slot:2,customer:'Peyton Young',phone:'780-555-0103',notes:'Chain solder + replace spring ring',cost:20,dueDate:'2026-05-25',status:'upcoming'},
+];
+
+function fmt(n){return'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function showToast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},3000)}
+function openM(id){document.getElementById(id).classList.add('show')}
+function closeM(id){document.getElementById(id).classList.remove('show')}
+
+function navigate(page){
+  showToast('Opening '+page+'...');
+}
+
+// Clock
+function updateClock(){
+  var d=new Date();
+  var h=d.getHours(),m=d.getMinutes(),s=d.getSeconds();
+  var ampm=h>=12?'PM':'AM';
+  h=h%12||12;
+  document.getElementById('navTime').textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+' '+ampm;
+}
+updateClock();setInterval(updateClock,1000);
+
+// Recent transactions
+function renderRecent(){
+  document.getElementById('recentCount').textContent=recentTxns.length+' transactions';
+  document.getElementById('recentList').innerHTML=recentTxns.map(function(t){
+    var methodTag='';
+    if(t.method==='cash')methodTag='<span class="rr-method-tag tag-cash">Cash</span>';
+    else if(t.method==='card')methodTag='<span class="rr-method-tag tag-card">Card</span>';
+    else methodTag='<span class="rr-method-tag tag-split">Split</span>';
+    return'<div class="recent-row">'+
+      '<div><div class="rr-customer">'+t.customer+'</div><div class="rr-id">'+t.id+'</div></div>'+
+      '<div class="rr-amount">'+fmt(t.amount)+'</div>'+
+      '<div class="rr-method">'+methodTag+'</div>'+
+      '<div class="rr-time">'+t.date+'<br>'+t.time+'</div>'+
+      '<div class="rr-receipt"><button class="rr-receipt-btn" onclick="showToast(\'Opening receipt '+t.id+'\')">View</button></div>'+
+    '</div>';
+  }).join('');
+}
+
+// Repairs modal
+function renderRepairs(){
+  document.getElementById('repairsList').innerHTML=activeRepairs.map(function(r){
+    var dueClass='upcoming',dueText='Due '+r.dueDate.slice(5);
+    if(r.status==='overdue'){dueClass='overdue';dueText='Overdue'}
+    else if(r.status==='today'){dueClass='today';dueText='Due today'}
+    return'<div class="repair-item">'+
+      '<div class="ri-slot">'+r.slot+'</div>'+
+      '<div class="ri-info"><div class="ri-name">'+r.customer+'</div><div class="ri-phone">'+r.phone+'</div><div class="ri-notes">'+r.notes+'</div></div>'+
+      '<div class="ri-right"><div class="ri-cost">$'+r.cost+'.00</div><div class="ri-due '+dueClass+'">'+dueText+'</div></div>'+
+    '</div>';
+  }).join('');
+}
+
+// ═══ SALES PIN REVEAL ═══
+var pinEntry='';
+var revealTimer=null;
+
+function revealSales(){
+  var stat=document.getElementById('salesStat');
+  if(stat.classList.contains('stat-revealed'))return;
+  pinEntry='';
+  updatePinDots();
+  document.getElementById('pinError').textContent='';
+  document.getElementById('pinOverlay').classList.add('show');
+}
+
+function pinKey(n){
+  if(pinEntry.length>=4)return;
+  pinEntry+=n;
+  updatePinDots();
+  if(pinEntry.length===4)setTimeout(checkPin,200);
+}
+function pinDel(){
+  if(pinEntry.length>0)pinEntry=pinEntry.slice(0,-1);
+  updatePinDots();
+  document.getElementById('pinError').textContent='';
+}
+function pinCancel(){
+  document.getElementById('pinOverlay').classList.remove('show');
+  pinEntry='';
+}
+function updatePinDots(){
+  for(var i=0;i<4;i++){
+    document.getElementById('pd'+i).className='pin-dot'+(i<pinEntry.length?' filled':'');
+  }
+}
+function checkPin(){
+  if(pinEntry===OWNER_PIN){
+    document.getElementById('pinOverlay').classList.remove('show');
+    var stat=document.getElementById('salesStat');
+    stat.classList.remove('stat-blurred');
+    stat.classList.add('stat-revealed');
+    document.getElementById('salesLock').textContent='🔓';
+    if(revealTimer)clearTimeout(revealTimer);
+    revealTimer=setTimeout(function(){
+      stat.classList.add('stat-blurred');
+      stat.classList.remove('stat-revealed');
+      document.getElementById('salesLock').textContent='🔒';
+    },5000);
+  }else{
+    document.querySelectorAll('.pin-dot').forEach(function(d){d.classList.add('wrong')});
+    document.getElementById('pinError').textContent='Wrong PIN';
+    setTimeout(function(){pinEntry='';updatePinDots()},500);
+  }
+}
+
+document.querySelectorAll('.mo').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)closeM(m.id)})});
+
+renderRecent();
+renderRepairs();
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Repairs Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);min-height:100vh;display:flex;-webkit-tap-highlight-color:transparent;transition:background .25s,color .25s}
+.sidebar{width:222px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;transition:background .25s}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(128,128,128,.2)}
+.side-brand{height:64px;padding:0 18px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--bd)}
+.side-brand-name{font-size:17px;font-weight:700}
+.side-brand-name span{color:var(--gold)}
+.side-brand-sub{font-size:11px;color:var(--t4);margin-top:2px}
+.side-section{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--t4);font-weight:600;padding:16px 18px 6px}
+.side-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:14px;font-weight:500;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent;user-select:none}
+.side-item:hover{color:var(--t2);background:rgba(128,128,128,.05)}
+.side-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+.side-item .si-ico{width:20px;text-align:center;font-size:15px;flex-shrink:0}
+.side-item .si-arrow{margin-left:auto;font-size:10px;transition:transform .2s;color:var(--t4)}
+.side-item.open .si-arrow{transform:rotate(180deg)}
+.side-sub{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.side-sub.open{max-height:200px}
+.side-sub-item{display:block;padding:9px 18px 9px 48px;font-size:13px;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent}
+.side-sub-item:hover{color:var(--t2)}
+.side-sub-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:var(--bg2);border-bottom:1px solid var(--bd);gap:12px;transition:background .25s;flex-shrink:0}
+.top-title{font-size:19px;font-weight:600}
+.top-right{display:flex;align-items:center;gap:10px}
+.top-user{font-size:13px;color:var(--t3);display:flex;align-items:center;gap:7px}
+.top-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#1a1a1a;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.mode-btn{font-family:var(--font);font-size:15px;padding:8px 12px;border-radius:var(--r);cursor:pointer;border:1px solid var(--bd2);background:transparent;color:var(--t3);min-height:38px}
+.mode-btn:active{transform:scale(.95)}
+.content{flex:1;padding:22px 26px;overflow-y:auto}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+html.light .stat,html.light .chart-container,html.light .panel,html.light .health-card{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06);background:var(--bg2)}
+.controls{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.ctrl-group{display:flex;gap:6px;align-items:center}
+.ctrl-label{font-size:12px;color:var(--t3);white-space:nowrap}
+.ctrl-select{font-family:var(--font);font-size:14px;padding:10px 36px 10px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.ctrl-select:focus{outline:none;border-color:var(--gold)}
+.period-btn{font-family:var(--font);font-size:13px;font-weight:500;padding:10px 16px;border-radius:var(--r);border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer;transition:all .15s;min-height:44px}
+.period-btn:active{border-color:rgba(255,255,255,.3)}
+.period-btn.active{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+.date-input{font-family:var(--font);font-size:13px;padding:9px 10px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);min-height:42px;-webkit-appearance:none;color-scheme:dark}
+html.light .date-input{color-scheme:light}
+.date-input:focus{outline:none;border-color:var(--gold)}
+.apply-btn{font-family:var(--font);font-size:13px;font-weight:600;padding:10px 18px;border-radius:var(--r);border:none;background:var(--gold);color:#1a1a1a;cursor:pointer;min-height:42px}
+.apply-btn:active{background:var(--gold-h)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.stat{background:var(--bg4);border-radius:var(--r);padding:14px;text-align:center;border:1px solid var(--bd)}
+.stat-label{font-size:11px;color:var(--t3);margin-bottom:4px}
+.stat-num{font-size:22px;font-weight:600}
+.stat-sub{font-size:11px;color:var(--t4);margin-top:2px}
+
+.alert-box{background:var(--red-bg);border:1px solid rgba(230,91,91,.2);border-radius:var(--rl);padding:14px 16px;margin-bottom:16px}
+.alert-title{font-size:13px;font-weight:600;color:var(--red);margin-bottom:8px}
+.alert-item{display:flex;justify-content:space-between;font-size:12px;color:var(--red);padding:3px 0}
+
+.section{margin-bottom:20px}
+.section-title{font-size:14px;font-weight:500;color:var(--t3);margin-bottom:10px}
+
+.chart-container{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rl);padding:16px}
+.chart-bars{display:flex;align-items:flex-end;gap:4px;height:160px;padding-top:8px}
+.chart-bar-group{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.chart-bar{width:100%;border-radius:4px 4px 0 0;min-height:1px;cursor:pointer;transition:opacity .15s}
+.chart-bar:active{opacity:.7}
+.chart-bar-val{font-size:10px;font-weight:600;color:var(--t2);white-space:nowrap;height:14px;line-height:14px}
+.chart-bar-label{font-size:10px;color:var(--t4);height:14px;line-height:14px;margin-top:3px}
+.chart-bar.highlight{box-shadow:0 0 0 1px var(--gold)}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.panel{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rl);padding:16px;max-height:360px;display:flex;flex-direction:column}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px}
+.panel-title{font-size:13px;font-weight:600;color:var(--t3)}
+.panel-search{font-family:var(--font);font-size:13px;padding:7px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:180px}
+.panel-search::placeholder{color:var(--t4)}
+.panel-search:focus{outline:none;border-color:var(--gold)}
+.panel-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.panel-body::-webkit-scrollbar{width:3px}
+.panel-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px}
+.panel-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)}
+.panel-row:last-child{border-bottom:none}
+.panel-name{font-size:13px;color:var(--t1)}
+.panel-name-sub{font-size:11px;color:var(--t4)}
+.panel-val{font-size:13px;font-weight:600;white-space:nowrap}
+.v-green{color:var(--green)}
+.v-red{color:var(--red)}
+.v-amber{color:var(--amber)}
+.v-blue{color:var(--blue)}
+.v-muted{color:var(--t3)}
+
+.health-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.health-card{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rl);padding:14px;text-align:center}
+.health-label{font-size:11px;color:var(--t4);margin-bottom:4px}
+.health-val{font-size:20px;font-weight:600}
+.health-sub{font-size:11px;color:var(--t4);margin-top:2px}
+
+
+@media(max-width:700px){.two-col{grid-template-columns:1fr}.health-row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="side-brand">
+    <div class="side-brand-name">Gold <span>Jewelry</span> POS</div>
+    <div class="side-brand-sub">Management System</div>
+  </div>
+  <div class="side-section">Main</div>
+  <div class="side-item"><span class="si-ico">🏠</span> Dashboard</div>
+  <div class="side-item open"><span class="si-ico">📊</span> Reports <span class="si-arrow">▼</span></div>
+  <div class="side-sub open">
+    <span class="side-sub-item">Sales reports</span>
+    <span class="side-sub-item">Inventory reports</span>
+    <span class="side-sub-item active">Repairs reports</span>
+    <span class="side-sub-item">Customers reports</span>
+  </div>
+  <div class="side-item"><span class="si-ico">📦</span> Inventory</div>
+  <div class="side-item"><span class="si-ico">🏷️</span> Pricing</div>
+  <div class="side-item"><span class="si-ico">👥</span> Customers</div>
+  <div class="side-item"><span class="si-ico"><svg width="17" height="13" viewBox="0 0 16 12" fill="none"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/></svg></span> Used gold</div>
+  <div class="side-item"><span class="si-ico">↩️</span> Returns management</div>
+  <div class="side-item"><span class="si-ico">💼</span> Staff</div>
+  <div class="side-section">System</div>
+  <div class="side-item"><span class="si-ico">🖥️</span> POS</div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <span class="top-title">Repairs reports</span>
+    <div class="top-right">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()">☀️</button>
+      <span class="top-user"><span class="top-avatar">AD</span> user1@example.com</span>
+    </div>
+  </div>
+  <div class="content">
+  <div class="controls">
+    <div class="ctrl-group">
+      <span class="ctrl-label">View:</span>
+      <button class="period-btn active" id="btnMonth" onclick="setPeriod('month')">Month</button>
+      <button class="period-btn" id="btnYear" onclick="setPeriod('year')">Year</button>
+      <button class="period-btn" id="btnAll" onclick="setPeriod('all')">All time</button>
+    </div>
+    <div class="ctrl-group" id="monthPicker">
+      <select class="ctrl-select" id="selMonth"></select>
+      <select class="ctrl-select" id="selYear"></select>
+    </div>
+    <div class="ctrl-group" style="margin-left:auto">
+      <input type="date" class="date-input" id="dateFrom" value="2026-06-01">
+      <span class="ctrl-label">to</span>
+      <input type="date" class="date-input" id="dateTo" value="2026-06-11">
+      <button class="apply-btn" onclick="applyRange()">Apply</button>
+    </div>
+  </div>
+
+  <div class="stats" id="statsRow"></div>
+  <div id="alertBox"></div>
+
+  <div class="section">
+    <div class="section-title" id="chartTitle">Monthly revenue</div>
+    <div class="chart-container"><div class="chart-bars" id="revenueChart"></div></div>
+  </div>
+
+  <div class="health-row" id="healthRow"></div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Revenue by customer</span>
+        <input type="text" class="panel-search" id="custSearch" placeholder="Search customer..." autocomplete="off">
+      </div>
+      <div class="panel-body" id="custList"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span class="panel-title">Avg repair value history</span></div>
+      <div class="panel-body" id="avgHistory"></div>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;margin-bottom:8px">
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Repeat customers</span></div>
+        <div class="panel-body" id="repeatList"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Longest in shop (active)</span></div>
+        <div class="panel-body" id="longestList"></div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<script>
+
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+
+var TODAY=new Date('2026-06-11');
+var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// ═══ SEEDED DATA GENERATOR — ~50 repairs/month, avg ~$30, daily activity ═══
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+var rnd=mulberry32(20260611);
+var POOL_NAMES=[['Morgan Hayes','7805550100'],['Noel Morales','5875550174'],['Taylor Ramos','7805550141'],['Jesse Simmons','7805550101'],['Peyton Young','7805550103'],['Skyler King','7805550105'],['Sydney Long','7805550102'],['Casey Jenkins','7805550106'],['Robin Freeman','7805550192'],['Elliot Sanders','7805550113'],['Charlie Wells','7805550114'],['Cameron Campbell','7805550115'],['Logan Mason','7805550116'],['Ari Cook','7805550117'],['Avery Cole','7805550118'],['Ellis Shaw','7805550119']];
+var POOL_NOTES=['Ring resize (weight {w})','Chain solder repair','Bracelet weld (weight {w})','Necklace clasp replacement','Earring post re-solder','Polish + rhodium plate','Replace spring ring clasp','Pendant bail repair (weight {w})','Watch battery replacement','Chain solder + clean','Bracelet link removal (weight {w})','Stone tightening + polish','Engraving inside band','Earring hook replacement x2'];
+var POOL_COSTS=[10,15,15,20,20,25,25,25,30,30,30,30,35,35,40,40,45,50,60,80];
+
+function pad2(n){return String(n).padStart(2,'0')}
+function dstr(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())}
+
+var repairs=[];
+(function(){
+  var idx=1;
+  var d=new Date(2025,0,1);
+  while(d<=TODAY){
+    var r=rnd();
+    var count=r<0.15?0:r<0.50?1:r<0.82?2:r<0.96?3:4;
+    for(var i=0;i<count;i++){
+      var who=POOL_NAMES[Math.floor(rnd()*POOL_NAMES.length)];
+      var note=POOL_NOTES[Math.floor(rnd()*POOL_NOTES.length)].replace('{w}',(2+rnd()*20).toFixed(2));
+      var cost=POOL_COSTS[Math.floor(rnd()*POOL_COSTS.length)];
+      var orderDate=dstr(d);
+      var due=new Date(d.getTime()+3*864e5);
+      var ageDays=Math.round((TODAY-d)/864e5);
+      var rec={id:'R-'+String(100000+idx++).slice(1),customer:who[0],phone:who[1],notes:note,cost:cost,paid:true,status:'completed',orderDate:orderDate,dueDate:dstr(due),pickedUpDate:null};
+      var roll=rnd();
+      if(roll<0.03){
+        rec.status='cancelled';rec.paid=rnd()<0.5;
+      }else{
+        var activeChance=ageDays<=2?0.9:ageDays<=5?0.55:ageDays<=9?0.25:0;
+        if(rnd()<activeChance){
+          var s=rnd();
+          rec.status=s<0.5?'progress':(s<0.78?'ready':'notified');
+          rec.paid=rnd()<0.55;
+        }else{
+          var turn=1+Math.floor(rnd()*4)+(rnd()<0.15?3:0);
+          var pu=new Date(d.getTime()+turn*864e5);
+          if(pu>TODAY)pu=new Date(TODAY.getTime());
+          rec.pickedUpDate=dstr(pu);
+          rec.paid=rnd()<0.95;
+        }
+      }
+      repairs.push(rec);
+    }
+    d=new Date(d.getTime()+864e5);
+  }
+  // Guaranteed live examples for each attention type
+  repairs.push({id:'R-00901',customer:'Sydney Long',phone:'7805550102',notes:'Necklace clasp replacement',cost:25,paid:true,status:'ready',orderDate:'2026-06-08',dueDate:'2026-06-10',pickedUpDate:null});
+  repairs.push({id:'R-00902',customer:'Noel Morales',phone:'5875550174',notes:'Earring post re-solder',cost:15,paid:false,status:'notified',orderDate:'2026-06-04',dueDate:'2026-06-07',pickedUpDate:null});
+})();
+// State
+var period='month';
+var selMonth=5; // June
+var selYear=2026;
+var custSearchQuery='';
+
+// Helpers
+function fmt(n){return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fmtShort(n){return '$'+Math.round(n)}
+function parseD(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])}
+function getM(s){return +s.split('-')[1]-1}
+function getY(s){return +s.split('-')[0]}
+function daysBetween(a,b){return Math.round((b-a)/(864e5))}
+
+// Build month/year selectors
+(function(){
+  var ms=document.getElementById('selMonth');
+  MONTHS.forEach(function(m,i){var o=document.createElement('option');o.value=i;o.textContent=m;if(i===5)o.selected=true;ms.appendChild(o)});
+  var ys=document.getElementById('selYear');
+  [2026,2025].forEach(function(y){var o=document.createElement('option');o.value=y;o.textContent=y;ys.appendChild(o)});
+})();
+
+document.getElementById('selMonth').addEventListener('change',function(e){selMonth=+e.target.value;render()});
+document.getElementById('selYear').addEventListener('change',function(e){selYear=+e.target.value;render()});
+document.getElementById('custSearch').addEventListener('input',function(e){custSearchQuery=e.target.value;render()});
+
+function setPeriod(p){
+  period=p;
+  document.querySelectorAll('.period-btn').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('btn'+p.charAt(0).toUpperCase()+p.slice(1)).classList.add('active');
+  document.getElementById('monthPicker').style.display=(p==='month')?'flex':'none';
+  render();
+}
+
+var rangeFrom=null,rangeTo=null;
+function applyRange(){
+  var f=document.getElementById('dateFrom').value,t=document.getElementById('dateTo').value;
+  if(!f||!t)return;
+  if(t<f){var tmp=f;f=t;t=tmp}
+  rangeFrom=f;rangeTo=t;period='custom';
+  document.querySelectorAll('.period-btn').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('monthPicker').style.display='none';
+  render();
+}
+function getFiltered(){
+  if(period==='month')return repairs.filter(function(r){return getM(r.orderDate)===selMonth&&getY(r.orderDate)===selYear});
+  if(period==='year')return repairs.filter(function(r){return getY(r.orderDate)===selYear});
+  if(period==='custom')return repairs.filter(function(r){return r.orderDate>=rangeFrom&&r.orderDate<=rangeTo});
+  return repairs.slice();
+}
+
+function render(){
+  var data=getFiltered();
+  var completed=data.filter(function(r){return r.status==='completed'});
+  var cancelled=data.filter(function(r){return r.status==='cancelled'});
+  var active=data.filter(function(r){return r.status==='progress'||r.status==='ready'||r.status==='notified'});
+  var nonCancelled=data.filter(function(r){return r.status!=='cancelled'});
+  var paidRepairs=nonCancelled.filter(function(r){return r.paid});
+  var totalRevenue=paidRepairs.reduce(function(s,r){return s+r.cost},0);
+  var totalAll=nonCancelled.reduce(function(s,r){return s+r.cost},0);
+  var unpaid=data.filter(function(r){return !r.paid&&r.status!=='cancelled'});
+  var unpaidTotal=unpaid.reduce(function(s,r){return s+r.cost},0);
+  var completedRev=completed.reduce(function(s,r){return s+r.cost},0);
+  var avgVal=completed.length>0?(completedRev/completed.length):0;
+
+  // Turnaround: order to pickedUp for completed
+  var turnarounds=completed.filter(function(r){return r.pickedUpDate}).map(function(r){return daysBetween(parseD(r.orderDate),parseD(r.pickedUpDate))});
+  var avgTurn=turnarounds.length>0?(turnarounds.reduce(function(a,b){return a+b},0)/turnarounds.length):0;
+
+  // Period label
+  var periodLabel='';
+  if(period==='month')periodLabel=MONTHS[selMonth]+' '+selYear;
+  else if(period==='year')periodLabel=selYear;
+  else if(period==='custom'){var fp=rangeFrom.split('-'),tp=rangeTo.split('-');periodLabel=MONTHS[+fp[1]-1]+' '+(+fp[2])+' — '+MONTHS[+tp[1]-1]+' '+(+tp[2])+', '+tp[0]}
+  else periodLabel='All time';
+
+  // Previous-period comparison (month vs prev month, year vs prev year)
+  var prevData=null,prevLabel='';
+  if(period==='month'){var pm=selMonth-1,py=selYear;if(pm<0){pm=11;py--}prevData=repairs.filter(function(r){return getM(r.orderDate)===pm&&getY(r.orderDate)===py});prevLabel=MONTHS[pm]}
+  else if(period==='year'){prevData=repairs.filter(function(r){return getY(r.orderDate)===selYear-1});prevLabel=(selYear-1)}
+  function changeBadge(cur,prev){
+    if(prevData===null)return '';
+    if(prev===0)return cur>0?' <span style="color:var(--green)">▲ new</span>':'';
+    var pct=Math.round((cur-prev)/prev*100);
+    if(pct===0)return ' <span style="color:var(--t4)">= same</span>';
+    return ' <span style="color:'+(pct>0?'var(--green)':'var(--red)')+'">'+(pct>0?'▲':'▼')+' '+Math.abs(pct)+'%</span>';
+  }
+  var prevRepairCount=0,prevRevenue=0;
+  if(prevData){var pnc=prevData.filter(function(r){return r.status!=='cancelled'});prevRepairCount=pnc.length;prevRevenue=pnc.filter(function(r){return r.paid}).reduce(function(s,r){return s+r.cost},0)}
+  var repairCount=nonCancelled.length;
+
+  // Stats
+  document.getElementById('statsRow').innerHTML=
+    '<div class="stat"><div class="stat-label">Total repairs</div><div class="stat-num">'+repairCount+'</div><div class="stat-sub">'+periodLabel+changeBadge(repairCount,prevRepairCount)+'</div></div>'+
+    '<div class="stat"><div class="stat-label">Revenue collected</div><div class="stat-num v-green">'+fmtShort(totalRevenue)+'</div><div class="stat-sub">'+paidRepairs.length+' paid'+(prevData?changeBadge(totalRevenue,prevRevenue)+' vs '+prevLabel:'')+'</div></div>'+
+    '<div class="stat"><div class="stat-label">Expected revenue</div><div class="stat-num" style="color:var(--blue)">'+fmtShort(totalAll)+'</div><div class="stat-sub">collected + unpaid</div></div>'+
+    '<div class="stat"><div class="stat-label">Unpaid</div><div class="stat-num"'+(unpaidTotal>0?' style="color:var(--red)"':'')+'>'+fmtShort(unpaidTotal)+'</div><div class="stat-sub">'+unpaid.length+' repair'+(unpaid.length!==1?'s':'')+'</div></div>'+
+    '<div class="stat"><div class="stat-label">Avg repair value</div><div class="stat-num">'+fmtShort(avgVal)+'</div><div class="stat-sub">per completed</div></div>'+
+    '<div class="stat"><div class="stat-label">Avg turnaround</div><div class="stat-num">'+(avgTurn>0?avgTurn.toFixed(1)+'d':'—')+'</div><div class="stat-sub">order → pickup</div></div>';
+
+  // Alert box (always current, not filtered)
+  var allActive=repairs.filter(function(r){return r.status==='progress'||r.status==='ready'||r.status==='notified'});
+  var alerts=[];
+  allActive.forEach(function(r){
+    var due=parseD(r.dueDate);var diff=daysBetween(TODAY,due);
+    if(r.status==='progress'&&diff<0){
+      alerts.push({r:r,msg:'🔧 Not repaired yet — '+Math.abs(diff)+' day'+(Math.abs(diff)!==1?'s':'')+' past due date',priority:100-diff});
+    }else if(r.status==='ready'){
+      alerts.push({r:r,msg:'✅ Repaired — customer not called yet',priority:50});
+    }else if(r.status==='notified'){
+      alerts.push({r:r,msg:'📞 Customer notified — not picked up yet'+(!r.paid?' (unpaid)':''),priority:!r.paid?40:20});
+    }
+  });
+  alerts.sort(function(a,b){return b.priority-a.priority});
+  if(alerts.length){
+    document.getElementById('alertBox').innerHTML='<div class="alert-box"><div class="alert-title">⚠ Needs attention</div>'+alerts.map(function(a){return '<div class="alert-item"><span>'+a.r.id+' '+a.r.customer+' — '+a.msg+'</span><span>'+fmtShort(a.r.cost)+'</span></div>'}).join('')+'</div>';
+  }else{document.getElementById('alertBox').innerHTML=''}
+
+  // Revenue chart
+  var chartData=[];
+  function dayRevenue(dayStr){return completed.filter(function(r){return r.pickedUpDate===dayStr}).reduce(function(s,r){return s+r.cost},0)}
+  if(period==='month'){
+    var daysInMonth=new Date(selYear,selMonth+1,0).getDate();
+    for(var d=1;d<=daysInMonth;d++){
+      chartData.push({label:d,value:dayRevenue(selYear+'-'+String(selMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'))});
+    }
+    document.getElementById('chartTitle').textContent='Daily revenue — '+MONTHS[selMonth]+' '+selYear;
+  }else if(period==='year'){
+    for(var m=0;m<12;m++){
+      var mRev=completed.filter(function(r){return r.pickedUpDate&&getM(r.pickedUpDate)===m&&getY(r.pickedUpDate)===selYear}).reduce(function(s,r){return s+r.cost},0);
+      chartData.push({label:MONTHS[m].slice(0,3),value:mRev});
+    }
+    document.getElementById('chartTitle').textContent='Monthly revenue — '+selYear;
+  }else if(period==='custom'){
+    var fd=parseD(rangeFrom),td=parseD(rangeTo);
+    var span=daysBetween(fd,td)+1;
+    if(span<=31){
+      for(var i=0;i<span;i++){
+        var dd=new Date(fd.getTime()+i*864e5);
+        var ds=dd.getFullYear()+'-'+String(dd.getMonth()+1).padStart(2,'0')+'-'+String(dd.getDate()).padStart(2,'0');
+        chartData.push({label:(span<=14||i%5===0||i===span-1)?(dd.getMonth()+1)+'/'+dd.getDate():'',value:dayRevenue(ds)});
+      }
+      document.getElementById('chartTitle').textContent='Daily revenue — '+periodLabel;
+    }else{
+      var cur=new Date(fd.getFullYear(),fd.getMonth(),1);
+      while(cur<=td){
+        var mm=cur.getMonth(),yy=cur.getFullYear();
+        var mRev=completed.filter(function(r){return r.pickedUpDate&&getM(r.pickedUpDate)===mm&&getY(r.pickedUpDate)===yy}).reduce(function(s,r){return s+r.cost},0);
+        chartData.push({label:MONTHS[mm].slice(0,3)+' '+String(yy).slice(2),value:mRev});
+        cur=new Date(yy,mm+1,1);
+      }
+      document.getElementById('chartTitle').textContent='Monthly revenue — '+periodLabel;
+    }
+  }else{
+    var years={};
+    completed.forEach(function(r){if(r.pickedUpDate){var y=getY(r.pickedUpDate);years[y]=(years[y]||0)+r.cost}});
+    Object.keys(years).sort().forEach(function(y){chartData.push({label:y,value:years[y]})});
+    document.getElementById('chartTitle').textContent='Yearly revenue — all time';
+  }
+
+  var maxVal=Math.max.apply(null,chartData.map(function(d){return d.value}))||1;
+  // For daily view with many bars, only show some labels
+  var skipLabels=chartData.length>15;
+  document.getElementById('revenueChart').innerHTML=chartData.map(function(d,i){
+    var h=Math.max(1,d.value/maxVal*120);
+    var showLabel=!skipLabels||(i%5===4)||(i===chartData.length-1);
+    var showVal=d.value>0;
+    return '<div class="chart-bar-group">'+
+      '<div class="chart-bar-val" style="visibility:'+(showVal?'visible':'hidden')+'">'+fmtShort(d.value)+'</div>'+
+      '<div class="chart-bar" style="height:'+h+'px;background:'+(d.value>0?'var(--green)':'var(--bg5)')+'"></div>'+
+      '<div class="chart-bar-label">'+(showLabel?d.label:'')+'</div>'+
+    '</div>';
+  }).join('');
+
+  // Health metrics
+  var onTime=completed.filter(function(r){return r.pickedUpDate&&parseD(r.pickedUpDate)<=parseD(r.dueDate)}).length;
+  var onTimeRate=completed.length>0?Math.round(onTime/completed.length*100):0;
+  var prePaid=completed.filter(function(r){return r.paid}).length;
+  var collectRate=completed.length>0?Math.round(prePaid/completed.length*100):0;
+  var cancelRate=data.length>0?Math.round(cancelled.length/data.length*100):0;
+
+  document.getElementById('healthRow').innerHTML=
+    '<div class="health-card"><div class="health-label">On-time completion</div><div class="health-val '+(onTimeRate>=75?'v-green':onTimeRate>=50?'v-amber':'v-red')+'">'+onTimeRate+'%</div><div class="health-sub">'+onTime+' of '+completed.length+' on time</div></div>'+
+    '<div class="health-card"><div class="health-label">Collection rate</div><div class="health-val '+(collectRate>=80?'v-green':collectRate>=60?'v-amber':'v-red')+'">'+collectRate+'%</div><div class="health-sub">paid at completion</div></div>'+
+    '<div class="health-card"><div class="health-label">Cancellation rate</div><div class="health-val '+(cancelRate<=10?'v-green':'v-red')+'">'+cancelRate+'%</div><div class="health-sub">'+cancelled.length+' of '+data.length+' cancelled</div></div>';
+
+  // Revenue by customer (searchable)
+  var custMap={};
+  data.filter(function(r){return r.status!=='cancelled'}).forEach(function(r){
+    if(!custMap[r.customer])custMap[r.customer]={revenue:0,count:0};
+    if(r.status==='completed')custMap[r.customer].revenue+=r.cost;
+    custMap[r.customer].count++;
+  });
+  var custList=Object.keys(custMap).map(function(k){return{name:k,revenue:custMap[k].revenue,count:custMap[k].count}});
+  custList.sort(function(a,b){return b.revenue-a.revenue});
+  if(custSearchQuery){
+    var cq=custSearchQuery.toLowerCase();
+    custList=custList.filter(function(c){return c.name.toLowerCase().indexOf(cq)!==-1});
+  }
+  document.getElementById('custList').innerHTML=custList.length?custList.map(function(c){
+    return '<div class="panel-row"><div><div class="panel-name">'+c.name+'</div><div class="panel-name-sub">'+c.count+' repair'+(c.count!==1?'s':'')+'</div></div><span class="panel-val v-green">'+fmtShort(c.revenue)+'</span></div>';
+  }).join(''):'<div style="padding:20px;text-align:center;color:var(--t4);font-size:13px">No customers found</div>';
+
+  // Avg repair value history (monthly, all data)
+  var histMonths=[];
+  var allYears=[2025,2026];
+  allYears.forEach(function(yr){
+    for(var m=0;m<12;m++){
+      var mc=repairs.filter(function(r){return r.status==='completed'&&r.pickedUpDate&&getM(r.pickedUpDate)===m&&getY(r.pickedUpDate)===yr});
+      if(mc.length>0){
+        var rev=mc.reduce(function(s,r){return s+r.cost},0);
+        histMonths.push({label:MONTHS[m]+' '+yr,avg:rev/mc.length,count:mc.length,total:rev});
+      }
+    }
+  });
+  histMonths.reverse();
+  document.getElementById('avgHistory').innerHTML=histMonths.length?histMonths.map(function(h){
+    return '<div class="panel-row"><div><div class="panel-name">'+h.label+'</div><div class="panel-name-sub">'+h.count+' repairs · '+fmtShort(h.total)+' total</div></div><span class="panel-val v-blue">'+fmtShort(h.avg)+'</span></div>';
+  }).join(''):'<div style="padding:20px;text-align:center;color:var(--t4);font-size:13px">No data yet</div>';
+
+  // Repeat customers (all time, always)
+  var repeatMap={};
+  repairs.filter(function(r){return r.status!=='cancelled'}).forEach(function(r){
+    if(!repeatMap[r.customer])repeatMap[r.customer]=0;
+    repeatMap[r.customer]++;
+  });
+  var repeatList=Object.keys(repeatMap).map(function(k){return{name:k,count:repeatMap[k]}});
+  repeatList.sort(function(a,b){return b.count-a.count});
+  document.getElementById('repeatList').innerHTML=repeatList.map(function(c){
+    return '<div class="panel-row"><span class="panel-name">'+c.name+'</span><span class="panel-val v-blue">'+c.count+' repair'+(c.count!==1?'s':'')+'</span></div>';
+  }).join('');
+
+  // Longest in shop (active only, always current)
+  var activeAll=repairs.filter(function(r){return r.status==='progress'||r.status==='ready'||r.status==='notified'});
+  activeAll.sort(function(a,b){return parseD(a.orderDate)-parseD(b.orderDate)});
+  document.getElementById('longestList').innerHTML=activeAll.length?activeAll.map(function(r){
+    var days=daysBetween(parseD(r.orderDate),TODAY);
+    var cls=days>=7?'v-red':days>=4?'v-amber':'v-muted';
+    return '<div class="panel-row"><div><div class="panel-name">'+r.customer+'</div><div class="panel-name-sub">'+r.id+'</div></div><span class="panel-val '+cls+'">'+days+' day'+(days!==1?'s':'')+'</span></div>';
+  }).join(''):'<div style="padding:20px;text-align:center;color:var(--t4);font-size:13px">No active repairs</div>';
+}
+
+render();
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

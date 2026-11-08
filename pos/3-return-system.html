@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Process Return</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);--green-b:rgba(76,175,124,.3);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);--blue-b:rgba(91,163,230,.3);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);--amber-b:rgba(230,162,60,.35);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);--purple-b:rgba(155,141,230,.35);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+/* ═══ LIGHT MODE ═══ */
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);--bd3:rgba(0,0,0,.3);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);--blue-b:rgba(61,127,196,.35);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);--green-b:rgba(46,139,95,.35);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);--red-b:rgba(207,68,68,.35);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);--amber-b:rgba(196,130,26,.35);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);--purple-b:rgba(122,107,204,.35);
+}
+html.light .toast{background:#1f1f1f;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+html.light .modal{border-color:#c9c9cf;box-shadow:0 8px 30px rgba(0,0,0,.15)}
+html.light .top-bar,html.light .return-left-box,html.light .panel{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+html.light .mo{background:rgba(0,0,0,.4)}
+html.light .results-list::-webkit-scrollbar-thumb,html.light .return-items::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15)}
+body{transition:background .25s,color .25s}
+.mode-btn{font-family:var(--font);font-size:15px;padding:9px 12px;border-radius:var(--r);cursor:pointer;display:inline-flex;align-items:center;min-height:42px;border:1px solid var(--bd2);background:transparent;color:var(--t3);transition:all .12s}
+.mode-btn:active{transform:scale(.95)}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);height:100vh;height:100dvh;overflow:hidden;padding:14px;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent}
+.app{flex:1;display:flex;flex-direction:column;max-width:1200px;margin:0 auto;width:100%;min-height:0}
+
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);margin-bottom:10px;flex-shrink:0;gap:10px}
+.top-title{font-size:16px;font-weight:600;color:var(--gold);display:flex;align-items:center;gap:8px}
+.top-right{display:flex;gap:6px;align-items:center}
+.btn{font-family:var(--font);font-size:13px;font-weight:500;padding:9px 14px;border-radius:var(--r);cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px;min-height:42px;border:1px solid var(--bd2);background:transparent;color:var(--t3)}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+.btn-outline{border:1px solid var(--bd2);color:var(--t3)}
+.pill-btn{font-family:var(--font);font-size:12px;font-weight:500;padding:8px 16px;border-radius:20px;border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer;transition:all .15s;min-height:38px}
+.pill-btn.active{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+
+/* ═══ SEARCH SCREEN ═══ */
+.search-screen{flex:1;display:flex;flex-direction:column;min-height:0}
+.search-top{display:flex;gap:10px;margin-bottom:12px;align-items:center}
+.search-wrap{flex:1;position:relative}
+.search-input{width:100%;font-family:var(--font);font-size:15px;padding:12px 16px 12px 42px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);-webkit-appearance:none}
+.search-input::placeholder{color:var(--t4)}
+.search-input:focus{outline:none;border-color:var(--gold)}
+.search-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t4);font-size:16px;pointer-events:none}
+.result-count{font-size:12px;color:var(--t4);padding:0 2px 8px;min-height:24px}
+.results-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:6px}
+.results-list::-webkit-scrollbar{width:3px}
+.results-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+.result-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 18px;cursor:pointer;transition:all .15s;display:flex;justify-content:space-between;align-items:center}
+.result-card:hover{background:var(--bg3);border-color:var(--bd2)}
+.result-card:active{transform:scale(.99)}
+.result-date{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:3px}
+.result-desc{font-size:13px;color:var(--t3)}
+.result-right{text-align:right}
+.result-amount{font-size:15px;font-weight:600;color:var(--green);margin-bottom:3px}
+.result-id{font-size:11px;color:var(--t4);font-family:'SF Mono','Fira Code',monospace}
+.no-results{text-align:center;padding:60px 20px;color:var(--t4);font-size:14px}
+
+/* ═══ RETURN SCREEN ═══ */
+.return-screen{display:none;flex:1;flex-direction:column;min-height:0}
+.return-screen.visible{display:flex}
+.return-main{flex:1;display:grid;grid-template-columns:1fr 320px;gap:10px;min-height:0}
+
+.return-left{display:flex;flex-direction:column;min-height:0}
+.return-left-box{flex:1;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.return-left-head{padding:10px 14px;border-bottom:1px solid var(--bd);flex-shrink:0;display:flex;justify-content:space-between;align-items:center}
+.return-left-title{font-size:14px;font-weight:500;color:var(--t3)}
+.return-items{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 14px}
+.return-items::-webkit-scrollbar{width:3px}
+.return-items::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+
+.return-right{display:flex;flex-direction:column;gap:8px;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.return-right::-webkit-scrollbar{width:0}
+
+.panel{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:12px 14px;flex-shrink:0}
+.panel-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--t4);margin-bottom:6px;font-weight:500}
+
+/* Transaction summary */
+.txn-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.txn-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--t4);margin-bottom:3px;font-weight:500}
+.txn-val{font-size:14px;font-weight:600;color:var(--t1)}
+.view-receipt-btn{margin-top:8px;width:100%;font-family:var(--font);font-size:12px;padding:7px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.view-receipt-btn:active{background:var(--bg5)}
+
+/* Item cards */
+.item-card{background:var(--bg4);border:1px solid var(--bd);border-radius:var(--rl);margin-bottom:6px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.item-card.active{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+.item-top{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;user-select:none;transition:background .1s}
+.item-top:active{background:var(--bg5)}
+.item-cb{width:20px;height:20px;border-radius:5px;border:2px solid var(--bd2);background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.item-card.active .item-cb{background:var(--blue);border-color:var(--blue)}
+.item-cb svg{opacity:0;transition:opacity .15s}
+.item-card.active .item-cb svg{opacity:1}
+.item-icon{width:38px;height:38px;border-radius:8px;background:var(--bg5);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.item-info{flex:1;min-width:0}
+.item-name{font-size:14px;font-weight:500;color:var(--t1)}
+.item-meta{font-size:12px;color:var(--t3);margin-top:1px}
+.item-price{font-size:14px;font-weight:600;color:var(--t1);text-align:right;white-space:nowrap;flex-shrink:0}
+
+.item-expand{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.item-card.active .item-expand{max-height:500px}
+.item-expand-inner{padding:0 14px 14px 46px}
+
+.fields-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.field-label{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--t4);margin-bottom:5px;font-weight:500}
+.field-select{width:100%;font-size:13px;font-family:var(--font);padding:7px 28px 7px 10px;border-radius:6px;border:1px solid var(--bd2);background:var(--bg5);color:var(--t1);appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.field-select:focus{outline:none;border-color:var(--blue)}
+.pills{display:flex;gap:5px;flex-wrap:wrap}
+.pill{font-size:12px;font-family:var(--font);padding:6px 12px;border-radius:20px;border:1px solid var(--bd2);background:transparent;color:var(--t4);cursor:pointer;transition:all .15s;font-weight:500}
+.pill.sel{background:var(--blue-bg);color:var(--blue);border-color:var(--blue)}
+.dest-row{display:flex;gap:8px;margin-bottom:10px}
+.dest-btn{flex:1;padding:10px 6px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg5);cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font)}
+.dest-btn.sel{border-color:var(--blue);background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue)}
+.dest-ico{font-size:18px;display:block;margin-bottom:3px}
+.dest-lbl{font-size:12px;font-weight:600;color:var(--t1);display:block}
+.dest-btn.sel .dest-lbl{color:var(--blue)}
+.dest-sub{font-size:10px;color:var(--t4);display:block;margin-top:1px}
+.qty-row{display:flex;align-items:center;gap:8px}
+.qty-label{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--t4);font-weight:500}
+.qty-input{width:48px;text-align:center;font-size:13px;font-family:var(--font);font-weight:600;padding:5px 3px;border-radius:6px;border:1px solid var(--bd2);background:var(--bg5);color:var(--t1);-webkit-appearance:none}
+.qty-input:focus{outline:none;border-color:var(--blue)}
+.qty-ctx{font-size:12px;color:var(--t4)}
+.qty-amt{margin-left:auto;font-size:14px;font-weight:600;color:var(--t1)}
+
+/* Summary */
+.summary-empty{text-align:center;font-size:13px;color:var(--t4);padding:8px 0}
+.summary-line{display:flex;justify-content:space-between;font-size:13px;color:var(--t3);padding:3px 0}
+.summary-divider{border:none;border-top:1px solid var(--bd);margin:8px 0}
+.summary-total{display:flex;justify-content:space-between;font-size:17px;font-weight:600}
+.summary-total span:last-child{color:var(--red)}
+.validation-msg{font-size:11px;color:var(--red);margin-top:6px}
+
+.save-btn{width:100%;padding:13px;font-size:15px;font-family:var(--font);font-weight:600;border-radius:var(--r);border:none;background:var(--gold);color:#1a1a1a;cursor:pointer;min-height:48px;flex-shrink:0}
+.save-btn:active{background:var(--gold-h);transform:scale(.99)}
+.save-btn:disabled{background:var(--bg5);color:var(--t4);cursor:not-allowed;transform:none}
+
+/* Refund modal */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;justify-content:center;align-items:center;padding:20px}
+.mo.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:420px;max-height:90vh;overflow-y:auto}
+.mh{padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+.mh-title{font-size:16px;font-weight:600}
+.mh-x{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:4px 8px;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.mh-x:active{background:var(--bg5);color:var(--t1)}
+.mb{padding:18px}
+.refund-amt{font-size:26px;font-weight:600;text-align:center;margin-bottom:16px;color:var(--red)}
+.ref-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--t4);margin-bottom:7px;font-weight:500}
+.ref-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.ref-tab{padding:10px 4px;border-radius:var(--r);border:1px solid var(--bd2);background:transparent;cursor:pointer;text-align:center;font-family:var(--font);transition:all .12s}
+.ref-tab.sel-cash{border-color:var(--green);background:var(--green-bg);box-shadow:0 0 0 1px var(--green)}
+.ref-tab.sel-card{border-color:var(--purple);background:var(--purple-bg);box-shadow:0 0 0 1px var(--purple)}
+.ref-tab.sel-split{border-color:var(--amber);background:var(--amber-bg);box-shadow:0 0 0 1px var(--amber)}
+.ref-ico{font-size:20px;display:block;margin-bottom:2px}
+.ref-lbl{font-size:11px;font-weight:500;color:var(--t3)}
+.ref-tab.sel-cash .ref-lbl,.ref-tab.sel-cash .ref-ico{color:var(--green)}
+.ref-tab.sel-card .ref-lbl,.ref-tab.sel-card .ref-ico{color:var(--purple)}
+.ref-tab.sel-split .ref-lbl,.ref-tab.sel-split .ref-ico{color:var(--amber)}
+.ref-fields{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.rf{display:flex;flex-direction:column;gap:3px;min-width:0}
+.rf label{font-size:11px;color:var(--t4)}
+.rf input{font-family:var(--font);font-size:14px;padding:9px 10px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:100%;min-width:0;-webkit-appearance:none}
+.rf input:focus{outline:none;border-color:var(--green)}
+.rf input:disabled{opacity:.25;cursor:not-allowed}
+.ref-status{font-size:12px;margin-bottom:12px;padding:6px 10px;border-radius:var(--r);text-align:center}
+.ref-ok{background:var(--green-bg);color:var(--green)}
+.ref-warn{background:var(--red-bg);color:var(--red)}
+.ref-confirm{width:100%;padding:14px;font-size:15px;font-family:var(--font);font-weight:600;border-radius:var(--r);border:none;background:var(--gold);color:#1a1a1a;cursor:pointer;min-height:48px}
+.ref-confirm:active{background:var(--gold-h)}
+.ref-confirm:disabled{background:var(--bg5);color:var(--t4);cursor:not-allowed}
+.ref-cancel{display:block;width:100%;text-align:center;font-size:12px;color:var(--t4);cursor:pointer;margin-top:8px;padding:6px;background:none;border:none;font-family:var(--font)}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#fff;color:#1a1a1a;padding:14px 28px;border-radius:var(--r);font-size:14px;font-weight:500;font-family:var(--font);box-shadow:0 8px 30px rgba(0,0,0,.4);opacity:0;transition:all .35s;z-index:200;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top-bar">
+    <span class="top-title">↩️ Process return</span>
+    <div class="top-right">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()" title="Light / dark mode">☀️</button>
+    <div class="top-right" id="topRight">
+      <div class="pill-btn active" data-filter="name" onclick="setFilter('name')">Name</div>
+      <div class="pill-btn" data-filter="phone" onclick="setFilter('phone')">Phone</div>
+      <div class="pill-btn" data-filter="receipt" onclick="setFilter('receipt')">Receipt #</div>
+      <button class="btn btn-outline" onclick="showToast('Back to POS')">← Back to POS</button>
+    </div>
+    </div>
+  </div>
+
+  <!-- SEARCH SCREEN -->
+  <div class="search-screen" id="searchScreen">
+    <div class="search-top">
+      <div class="search-wrap">
+        <span class="search-ico">⌕</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search by customer name..." autofocus autocomplete="off">
+      </div>
+    </div>
+    <div class="result-count" id="resultCount"></div>
+    <div class="results-list" id="resultsList"></div>
+  </div>
+
+  <!-- RETURN SCREEN -->
+  <div class="return-screen" id="returnScreen">
+    <div class="return-main">
+      <div class="return-left">
+        <div class="return-left-box">
+          <div class="return-left-head">
+            <span class="return-left-title">Select items to return</span>
+            <span style="font-size:12px;color:var(--t4)" id="returnItemCount"></span>
+          </div>
+          <div class="return-items" id="itemsContainer"></div>
+        </div>
+      </div>
+      <div class="return-right">
+        <div class="panel" id="txnPanel"></div>
+        <div class="panel" id="summaryBox"></div>
+        <button class="save-btn" id="submitBtn" disabled>Select items to return</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Refund Modal -->
+<div class="mo" id="refundModal">
+  <div class="modal">
+    <div class="mh"><span class="mh-title">Refund payment</span><button class="mh-x" onclick="closeRefund()">✕</button></div>
+    <div class="mb">
+      <div class="refund-amt" id="refundAmt">$0.00</div>
+      <div class="ref-label">Refund method</div>
+      <div class="ref-tabs" id="refTabs">
+        <div class="ref-tab" data-m="cash" onclick="setRefMethod('cash')"><span class="ref-ico">💵</span><span class="ref-lbl">Cash</span></div>
+        <div class="ref-tab" data-m="card" onclick="setRefMethod('card')"><span class="ref-ico">💳</span><span class="ref-lbl">Card</span></div>
+        <div class="ref-tab" data-m="split" onclick="setRefMethod('split')"><span class="ref-ico">↔</span><span class="ref-lbl">Split</span></div>
+      </div>
+      <div class="ref-fields" id="refFields" style="display:none">
+        <div class="rf"><label>Cash</label><input type="number" id="refCash" value="0" min="0" step="any" inputmode="decimal" oninput="onRefInput('cash')"></div>
+        <div class="rf"><label>Card</label><input type="number" id="refCard" value="0" min="0" step="any" inputmode="decimal" disabled oninput="onRefInput('card')"></div>
+      </div>
+      <div id="refStatus"></div>
+      <button class="ref-confirm" id="refConfirmBtn" disabled onclick="confirmRefund()">Select refund method</button>
+      <button class="ref-cancel" onclick="closeRefund()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+
+var transactions=[
+  {id:"SALE-20260417-0002",date:"2026-04-17",dateDisplay:"Apr 17, 2026",customer:"Jesse Simmons",phone:"780-555-0101",paymentMethod:"Cash",desc:"Star Earrings, Heart Earrings, Quarter Lira Ring",items:[{name:"Star Earrings",icon:"✦",karat:21,weight:"1.71g",sku:"ER260346",unitPrice:401.85,qty:1},{name:"Heart Earrings",icon:"♡",karat:21,weight:"3.75g",sku:"ER260345",unitPrice:881.25,qty:2},{name:"Dangling Earrings",icon:"◇",karat:21,weight:"2.49g",sku:"ER260343",unitPrice:585.15,qty:1},{name:"Quarter Lira Ring",icon:"◎",karat:21,weight:"4.38g",sku:"RG260485",unitPrice:1029.30,qty:1},{name:"Half Lira Ring",icon:"◉",karat:21,weight:"5.02g",sku:"RG260483",unitPrice:1179.70,qty:1},{name:"Hexagon Bracelet",icon:"⬡",karat:18,weight:"17.24g",sku:"BC260218",unitPrice:3534.20,qty:1}]},
+  {id:"SALE-20260417-0001",date:"2026-04-17",dateDisplay:"Apr 17, 2026",customer:"Jesse Simmons",phone:"780-555-0101",paymentMethod:"Card",desc:"Flower Earrings, Star Earrings, Earrings",items:[{name:"Flower Earrings",icon:"✿",karat:21,weight:"4.08g",sku:"ER260339",unitPrice:958.80,qty:1},{name:"Star Earrings",icon:"✦",karat:21,weight:"1.77g",sku:"ER260342",unitPrice:415.95,qty:2},{name:"Earrings",icon:"◈",karat:21,weight:"1.56g",sku:"ER260341",unitPrice:366.60,qty:1},{name:"Heart Earrings",icon:"♡",karat:21,weight:"1.48g",sku:"ER260344",unitPrice:347.80,qty:1},{name:"Flower Earrings",icon:"✿",karat:21,weight:"2.11g",sku:"ER260340",unitPrice:495.85,qty:1}]},
+  {id:"SALE-20260414-0010",date:"2026-04-14",dateDisplay:"Apr 14, 2026",customer:"Jesse Simmons",phone:"780-555-0101",paymentMethod:"Cash",desc:"Quarter Lira Ring (×2), Sonbli Bracelet",items:[{name:"Quarter Lira Ring",icon:"◎",karat:21,weight:"3.78g",sku:"RG260482",unitPrice:888.30,qty:2},{name:"Sonbli Bracelet",icon:"⌒",karat:18,weight:"11.29g",sku:"BC260222",unitPrice:2314.45,qty:1}]},
+  {id:"SALE-20260407-0009",date:"2026-04-07",dateDisplay:"Apr 7, 2026",customer:"Jesse Simmons",phone:"780-555-0101",paymentMethod:"Cash",desc:"Bracelet, Men's Rolex Bracelet",items:[{name:"Bracelet",icon:"⌒",karat:18,weight:"19.14g",sku:"BC260221",unitPrice:3923.70,qty:1},{name:"Men's Rolex Bracelet",icon:"⌗",karat:18,weight:"26.63g",sku:"BC260217",unitPrice:5459.15,qty:1}]},
+  {id:"SALE-20260402-0005",date:"2026-04-02",dateDisplay:"Apr 2, 2026",customer:"Jesse Simmons",phone:"780-555-0101",paymentMethod:"Card",desc:"Thick Rolex Bracelet, Gold Bar Stamp Ring",items:[{name:"Thick Rolex Bracelet",icon:"⌗",karat:18,weight:"32.91g",sku:"BC260215",unitPrice:6746.55,qty:1},{name:"Gold Bar Stamp Ring",icon:"▣",karat:21,weight:"4.67g",sku:"RG260481",unitPrice:1097.45,qty:1}]},
+  {id:"SALE-20260415-0008",date:"2026-04-15",dateDisplay:"Apr 15, 2026",customer:"Robin Freeman",phone:"780-555-0192",paymentMethod:"Card",desc:"Heart Earrings, Flower Earrings",items:[{name:"Heart Earrings",icon:"♡",karat:21,weight:"3.75g",sku:"ER260345",unitPrice:881.25,qty:2},{name:"Flower Earrings",icon:"✿",karat:21,weight:"4.08g",sku:"ER260339",unitPrice:958.80,qty:1}]},
+  {id:"SALE-20260410-0007",date:"2026-04-10",dateDisplay:"Apr 10, 2026",customer:"Noel Morales",phone:"587-555-0174",paymentMethod:"Cash",desc:"Quarter Lira Ring, Hexagon Bracelet",items:[{name:"Quarter Lira Ring",icon:"◎",karat:21,weight:"4.38g",sku:"RG260485",unitPrice:1029.30,qty:1},{name:"Hexagon Bracelet",icon:"⬡",karat:18,weight:"17.24g",sku:"BC260218",unitPrice:3534.20,qty:1}]},
+];
+transactions.forEach(function(t){t.total=t.items.reduce(function(s,i){return s+i.unitPrice*i.qty},0)});
+var reasons=["Changed mind","Wrong item","Defective","Size issue","Gift return","Other"];
+var conditions=["Good","Needs polish","Damaged"];
+var currentFilter="name",selectedTxn=null,returnState={};
+
+function fmt(n){return"$"+Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function showToast(m){var t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(function(){t.classList.remove("show")},3000)}
+
+// ═══ SEARCH ═══
+function setFilter(f){
+  currentFilter=f;
+  document.querySelectorAll(".pill-btn[data-filter]").forEach(function(b){b.classList.toggle("active",b.dataset.filter===f)});
+  var input=document.getElementById("searchInput");
+  input.placeholder={name:"Search by customer name...",phone:"Search by phone number...",receipt:"Search by receipt number..."}[f];
+  input.value="";input.focus();renderResults("");
+}
+function searchTxn(q){
+  if(!q.trim())return[];var ql=q.toLowerCase(),ph=q.replace(/[^0-9]/g,"");
+  return transactions.filter(function(t){
+    if(currentFilter==="name")return t.customer.toLowerCase().indexOf(ql)!==-1;
+    if(currentFilter==="phone")return ph.length>0&&t.phone.indexOf(ph)!==-1;
+    if(currentFilter==="receipt")return t.id.toLowerCase().indexOf(ql)!==-1;
+    return false;
+  });
+}
+function renderResults(q){
+  var list=document.getElementById("resultsList"),count=document.getElementById("resultCount");
+  if(!q.trim()){list.innerHTML='<div class="no-results">Enter a search term to find transactions</div>';count.textContent="";return}
+  var results=searchTxn(q);
+  if(!results.length){list.innerHTML='<div class="no-results">No transactions found</div>';count.textContent="0 transactions found";return}
+  count.textContent=results.length+" transaction"+(results.length!==1?"s":"")+" found";
+  list.innerHTML=results.map(function(t){return'<div class="result-card" onclick="selectTxn(\''+t.id+'\')"><div><div class="result-date">'+t.dateDisplay+'</div><div class="result-desc">'+t.desc+'</div></div><div class="result-right"><div class="result-amount">'+fmt(t.total)+'</div><div class="result-id">'+t.id+'</div></div></div>'}).join("");
+}
+document.getElementById("searchInput").addEventListener("input",function(e){renderResults(e.target.value)});
+
+// ═══ SELECT TRANSACTION ═══
+function selectTxn(id){
+  selectedTxn=transactions.find(function(t){return t.id===id});if(!selectedTxn)return;
+  returnState={};selectedTxn.items.forEach(function(_,i){returnState[i]={checked:false,reason:"",condition:"",dest:"",qty:0}});
+  document.getElementById("searchScreen").style.display="none";
+  document.getElementById("returnScreen").classList.add("visible");
+  document.getElementById("topRight").innerHTML='<button class="btn btn-outline" onclick="goBack()">← Back to search</button>';
+  document.getElementById("returnItemCount").textContent=selectedTxn.items.length+" items";
+
+  document.getElementById("txnPanel").innerHTML=
+    '<div class="panel-label">Transaction · '+selectedTxn.id+'</div>'+
+    '<div class="txn-grid">'+
+      '<div><div class="txn-label">Customer</div><div class="txn-val">'+selectedTxn.customer+'</div></div>'+
+      '<div><div class="txn-label">Phone</div><div class="txn-val">'+selectedTxn.phone+'</div></div>'+
+      '<div><div class="txn-label">Date</div><div class="txn-val">'+selectedTxn.dateDisplay+'</div></div>'+
+      '<div><div class="txn-label">Paid by</div><div class="txn-val">'+selectedTxn.paymentMethod+'</div></div>'+
+    '</div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0 0;margin-top:8px;border-top:1px solid var(--bd)"><span class="txn-label" style="margin:0">Original total</span><span class="txn-val" style="color:var(--green);font-size:16px">'+fmt(selectedTxn.total)+'</span></div>'+
+    '<button class="view-receipt-btn" onclick="showToast(\'Opening receipt '+selectedTxn.id+'\')">📄 View receipt</button>';
+
+  var container=document.getElementById("itemsContainer");container.innerHTML="";
+  selectedTxn.items.forEach(function(item,idx){
+    var card=document.createElement("div");card.className="item-card";card.id="item-"+idx;
+    var ql=item.qty>1?" (×"+item.qty+")":"";var tp=item.unitPrice*item.qty;
+    card.innerHTML='<div class="item-top" onclick="toggleItem('+idx+')"><div class="item-cb"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5.5L4 8.5L11 1.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-icon">'+item.icon+'</div><div class="item-info"><div class="item-name">'+item.name+ql+'</div><div class="item-meta">'+item.karat+'K · '+item.weight+' · '+item.sku+'</div></div><div class="item-price">'+fmt(tp)+'</div></div><div class="item-expand"><div class="item-expand-inner"><div class="fields-row"><div><div class="field-label">Reason</div><select class="field-select" onchange="setField('+idx+',\'reason\',this.value)"><option value="">Select reason</option>'+reasons.map(function(r){return'<option value="'+r+'">'+r+'</option>'}).join("")+'</select></div><div><div class="field-label">Condition</div><div class="pills" id="pills-'+idx+'">'+conditions.map(function(c){return'<div class="pill" onclick="setCondition('+idx+',\''+c+'\',this)">'+c+'</div>'}).join("")+'</div></div></div><div class="dest-row" id="dest-'+idx+'"><div class="dest-btn" onclick="setDest('+idx+',\'stock\',this)"><span class="dest-ico">📦</span><span class="dest-lbl">Return to stock</span><span class="dest-sub">Available for sale</span></div><div class="dest-btn" onclick="setDest('+idx+',\'melt\',this)"><span class="dest-ico">🔥</span><span class="dest-lbl">Melt</span><span class="dest-sub">Recover materials</span></div></div><div class="qty-row"><span class="qty-label">Qty to return</span><input type="number" class="qty-input" id="qtyInput-'+idx+'" value="1" min="1" max="'+item.qty+'" onchange="setQty('+idx+',this.value,true)" oninput="setQty('+idx+',this.value,false)"><span class="qty-ctx">of '+item.qty+' purchased</span><span class="qty-amt" id="lineAmt-'+idx+'">'+fmt(item.unitPrice)+'</span></div></div></div>';
+    container.appendChild(card);
+  });
+  updateSummary();
+}
+function goBack(){
+  document.getElementById("returnScreen").classList.remove("visible");
+  document.getElementById("searchScreen").style.display="flex";
+  document.getElementById("topRight").innerHTML='<div class="pill-btn active" data-filter="name" onclick="setFilter(\'name\')">Name</div><div class="pill-btn" data-filter="phone" onclick="setFilter(\'phone\')">Phone</div><div class="pill-btn" data-filter="receipt" onclick="setFilter(\'receipt\')">Receipt #</div><button class="btn btn-outline" onclick="showToast(\'Back to POS\')">← Back to POS</button>';
+  selectedTxn=null;
+}
+
+// ═══ RETURN INTERACTIONS ═══
+function toggleItem(idx){var s=returnState[idx];s.checked=!s.checked;document.getElementById("item-"+idx).classList.toggle("active",s.checked);if(s.checked&&s.qty===0){s.qty=1;document.getElementById("qtyInput-"+idx).value=1;updateLineAmount(idx)}if(!s.checked)s.qty=0;updateSummary()}
+function setField(idx,f,v){returnState[idx][f]=v;updateSummary()}
+function setCondition(idx,v,el){returnState[idx].condition=v;document.querySelectorAll("#pills-"+idx+" .pill").forEach(function(p){p.classList.remove("sel")});el.classList.add("sel");updateSummary()}
+function setDest(idx,v,el){returnState[idx].dest=v;document.querySelectorAll("#dest-"+idx+" .dest-btn").forEach(function(b){b.classList.remove("sel")});el.classList.add("sel");updateSummary()}
+function setQty(idx,v,final){
+  var item=selectedTxn.items[idx];
+  if(!final&&v==="")return; // allow clearing mid-type
+  var val=Math.min(parseInt(v)||0,item.qty);
+  if(final)val=Math.max(1,val); // never finalize at 0 — uncheck instead
+  returnState[idx].qty=Math.max(0,val);
+  if(final)document.getElementById("qtyInput-"+idx).value=returnState[idx].qty;
+  updateLineAmount(idx);updateSummary();
+}
+function updateLineAmount(idx){var item=selectedTxn.items[idx];document.getElementById("lineAmt-"+idx).textContent=fmt(item.unitPrice*returnState[idx].qty)}
+
+function updateSummary(){
+  var box=document.getElementById("summaryBox"),btn=document.getElementById("submitBtn");
+  var checked=[];selectedTxn.items.forEach(function(item,i){var s=returnState[i];if(s.checked&&s.qty>0)checked.push({item:item,s:s})});
+  if(!checked.length){box.innerHTML='<div class="panel-label">Refund summary</div><div class="summary-empty">No items selected</div>';btn.disabled=true;btn.textContent="Select items to return";return}
+  var total=0,lines="",allValid=true;
+  checked.forEach(function(x){var lt=x.item.unitPrice*x.s.qty;total+=lt;var ql=(x.s.qty>1||x.item.qty>1)?" (×"+x.s.qty+")":"";lines+='<div class="summary-line"><span>'+x.item.name+ql+'</span><span>'+fmt(lt)+'</span></div>';if(!x.s.reason||!x.s.condition||!x.s.dest)allValid=false});
+  box.innerHTML='<div class="panel-label">Refund summary</div>'+lines+'<hr class="summary-divider"><div class="summary-total"><span>Refund total</span><span>'+fmt(total)+'</span></div>'+(!allValid?'<div class="validation-msg">Fill in reason, condition, and return option for all selected items</div>':"");
+  btn.disabled=!allValid;btn.textContent=allValid?"Process return — "+fmt(total):"Complete all fields to continue";
+}
+
+// ═══ REFUND MODAL ═══
+var refundTotal=0,refMethod="",refLastEdited="cash";
+document.getElementById("submitBtn").addEventListener("click",function(){
+  if(document.getElementById("submitBtn").disabled)return;
+  refundTotal=0;selectedTxn.items.forEach(function(item,i){var s=returnState[i];if(s.checked&&s.qty>0)refundTotal+=item.unitPrice*s.qty});
+  refMethod="";refLastEdited="cash";
+  document.getElementById("refundAmt").textContent=fmt(refundTotal);
+  document.querySelectorAll("#refTabs .ref-tab").forEach(function(t){t.className="ref-tab"});
+  document.getElementById("refFields").style.display="none";
+  document.getElementById("refCash").value="0";document.getElementById("refCard").value="0";
+  document.getElementById("refStatus").innerHTML="";
+  document.getElementById("refConfirmBtn").disabled=true;document.getElementById("refConfirmBtn").textContent="Select refund method";
+  document.getElementById("refundModal").classList.add("show");
+});
+function closeRefund(){document.getElementById("refundModal").classList.remove("show")}
+function setRefMethod(m){
+  refMethod=m;refLastEdited="cash";
+  document.querySelectorAll("#refTabs .ref-tab").forEach(function(t){t.className="ref-tab"+(t.dataset.m===m?" sel-"+m:"")});
+  var ci=document.getElementById("refCash"),ca=document.getElementById("refCard"),fields=document.getElementById("refFields");
+  if(m==="cash"){fields.style.display="grid";ci.disabled=false;ci.value=refundTotal.toFixed(2);ca.disabled=true;ca.value="0"}
+  else if(m==="card"){fields.style.display="grid";ci.disabled=true;ci.value="0";ca.disabled=false;ca.value=refundTotal.toFixed(2)}
+  else if(m==="split"){fields.style.display="grid";ci.disabled=false;ci.value=refundTotal.toFixed(2);ca.disabled=false;ca.value="0"}
+  updateRefStatus();
+}
+function onRefInput(which){
+  if(refMethod!=="split"){updateRefStatus();return}refLastEdited=which;
+  var ci=document.getElementById("refCash"),ca=document.getElementById("refCard");
+  if(which==="cash"){ca.value=Math.max(0,refundTotal-(parseFloat(ci.value)||0)).toFixed(2)}
+  else{ci.value=Math.max(0,refundTotal-(parseFloat(ca.value)||0)).toFixed(2)}
+  updateRefStatus();
+}
+function updateRefStatus(){
+  var ps=document.getElementById("refStatus"),btn=document.getElementById("refConfirmBtn");
+  var ci=parseFloat(document.getElementById("refCash").value)||0,ca=parseFloat(document.getElementById("refCard").value)||0;
+  if(!refMethod){ps.innerHTML="";btn.disabled=true;btn.textContent="Select refund method";return}
+  if(refMethod==="split"){var rem=refundTotal-ci-ca;if(Math.abs(rem)<.01){ps.innerHTML='<div class="ref-status ref-ok">Split: '+fmt(ci)+' cash + '+fmt(ca)+' card</div>';btn.disabled=false;btn.textContent="Confirm refund — "+fmt(refundTotal)}else{ps.innerHTML='<div class="ref-status ref-warn">'+fmt(Math.abs(rem))+(rem>0?" remaining":" over refund total")+'</div>';btn.disabled=true;btn.textContent=rem>0?fmt(rem)+" remaining":"Amounts exceed refund total"}}
+  else{ps.innerHTML='<div class="ref-status ref-ok">Refund via '+refMethod+'</div>';btn.disabled=false;btn.textContent="Confirm refund — "+fmt(refundTotal)}
+}
+function confirmRefund(){
+  if(document.getElementById("refConfirmBtn").disabled)return;
+  var ci=parseFloat(document.getElementById("refCash").value)||0,ca=parseFloat(document.getElementById("refCard").value)||0;
+  var ms="";if(refMethod==="cash")ms="Cash "+fmt(ci);else if(refMethod==="card")ms="Card "+fmt(ca);else ms="Cash "+fmt(ci)+" / Card "+fmt(ca);
+  closeRefund();showToast("✓ Return processed — "+fmt(refundTotal)+" refunded ("+ms+")");
+}
+document.getElementById("refundModal").addEventListener("click",function(e){if(e.target===document.getElementById("refundModal"))closeRefund()});
+renderResults("");
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Sales Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);min-height:100vh;display:flex;-webkit-tap-highlight-color:transparent;transition:background .25s,color .25s}
+
+/* SIDEBAR */
+.sidebar{width:222px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;transition:background .25s}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(128,128,128,.2)}
+.side-brand{height:64px;padding:0 18px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--bd)}
+.side-brand-name{font-size:17px;font-weight:700}
+.side-brand-name span{color:var(--gold)}
+.side-brand-sub{font-size:11px;color:var(--t4);margin-top:2px}
+.side-section{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--t4);font-weight:600;padding:16px 18px 6px}
+.side-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:14px;font-weight:500;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent;user-select:none}
+.side-item:hover{color:var(--t2);background:rgba(128,128,128,.05)}
+.side-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+.side-item .si-ico{width:20px;text-align:center;font-size:15px;flex-shrink:0}
+.side-item .si-arrow{margin-left:auto;font-size:10px;transition:transform .2s;color:var(--t4)}
+.side-item.open .si-arrow{transform:rotate(180deg)}
+.side-sub{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.side-sub.open{max-height:200px}
+.side-sub-item{display:block;padding:9px 18px 9px 48px;font-size:13px;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent}
+.side-sub-item:hover{color:var(--t2)}
+.side-sub-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+
+/* MAIN */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:var(--bg2);border-bottom:1px solid var(--bd);gap:12px;transition:background .25s;flex-shrink:0}
+.top-left{display:flex;align-items:center;gap:12px}
+.top-title{font-size:19px;font-weight:600}
+.top-right{display:flex;align-items:center;gap:10px}
+.top-user{font-size:13px;color:var(--t3);display:flex;align-items:center;gap:7px}
+.top-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#1a1a1a;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.mode-btn{font-family:var(--font);font-size:15px;padding:8px 12px;border-radius:var(--r);cursor:pointer;border:1px solid var(--bd2);background:transparent;color:var(--t3);min-height:38px}
+.mode-btn:active{transform:scale(.95)}
+.content{flex:1;padding:22px 26px;overflow-y:auto}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+
+/* Period pills */
+.period-bar{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.pbtn{font-family:var(--font);font-size:13px;font-weight:500;padding:10px 18px;border-radius:var(--r);border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer;min-height:42px}
+.pbtn.active{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+.date-input{font-family:var(--font);font-size:13px;padding:9px 10px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);min-height:42px;-webkit-appearance:none;color-scheme:dark}
+html.light .date-input{color-scheme:light}
+.date-input:focus{outline:none;border-color:var(--gold)}
+.apply-btn{font-family:var(--font);font-size:13px;font-weight:600;padding:10px 18px;border-radius:var(--r);border:none;background:var(--gold);color:#1a1a1a;cursor:pointer;min-height:42px}
+.apply-btn:active{background:var(--gold-h);transform:scale(.97)}
+
+/* Stat cards */
+.stats4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.scard{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;position:relative;overflow:hidden;transition:background .25s,border-color .25s}
+html.light .scard,html.light .panel{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.scard::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--bd2)}
+.sc-green::before{background:var(--green)}
+.sc-red::before{background:var(--red)}
+.sc-gold::before{background:var(--gold)}
+.sc-purple::before{background:var(--purple)}
+.scard-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--t4);font-weight:500;margin-bottom:6px}
+.scard-value{font-size:21px;font-weight:700}
+.scard-sub{font-size:12px;color:var(--t4);margin-top:3px}
+
+/* Panels & charts */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.panel{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px;transition:background .25s,border-color .25s;margin-bottom:12px}
+.grid2 .panel{margin-bottom:0}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.panel-title{font-size:14px;font-weight:600}
+.panel-right{display:flex;align-items:center;gap:8px}
+.panel-sub{font-size:11px;color:var(--t4)}
+.expand-btn{font-family:var(--font);font-size:13px;width:32px;height:32px;border-radius:8px;border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.expand-btn:active{background:var(--bg4)}
+
+.chart{display:flex;align-items:flex-end;gap:4px;height:170px}
+.chart.big{height:330px}
+.chart-group{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0}
+.chart-val{font-size:8.5px;font-weight:600;color:var(--t3);height:12px;line-height:12px;white-space:nowrap;overflow:visible}
+.chart-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px;background:var(--gold);opacity:.65}
+.chart-lbl{font-size:9px;color:var(--t4);height:13px;line-height:13px;margin-top:3px;white-space:nowrap;overflow:hidden}
+
+.hbar-row{display:flex;align-items:center;gap:10px;padding:6px 0}
+.hbar-name{font-size:12px;color:var(--t2);width:92px;flex-shrink:0}
+.hbar-track{flex:1;height:18px;background:var(--bg4);border-radius:5px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:5px;background:var(--gold);opacity:.85;min-width:2px}
+.hbar-amt{font-size:11px;font-weight:600;color:var(--t3);width:108px;text-align:right;flex-shrink:0}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--t4);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--bd)}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--bd);color:var(--t2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .num{text-align:right;font-weight:600}
+.search-input{font-family:var(--font);font-size:13px;padding:9px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:220px;-webkit-appearance:none}
+.search-input:focus{outline:none;border-color:var(--gold)}
+
+/* Expand modal */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;justify-content:center;align-items:center;padding:24px}
+.mo.show{display:flex}
+.mo-box{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:1000px;max-height:90vh;overflow-y:auto;padding:20px 24px}
+.mo-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.mo-title{font-size:17px;font-weight:600}
+.mo-x{background:none;border:none;color:var(--t3);font-size:24px;cursor:pointer;padding:6px 10px;border-radius:6px;min-height:44px;min-width:44px}
+.mo-x:active{background:var(--bg5);color:var(--t1)}
+
+@media(max-width:1000px){.stats4{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="side-brand">
+    <div class="side-brand-name">Gold <span>Jewelry</span> POS</div>
+    <div class="side-brand-sub">Management System</div>
+  </div>
+  <div class="side-section">Main</div>
+  <div class="side-item"><span class="si-ico">🏠</span> Dashboard</div>
+  <div class="side-item open"><span class="si-ico">📊</span> Reports <span class="si-arrow">▼</span></div>
+  <div class="side-sub open">
+    <span class="side-sub-item active">Sales reports</span>
+    <span class="side-sub-item">Inventory reports</span>
+    <span class="side-sub-item">Repairs reports</span>
+    <span class="side-sub-item">Customers reports</span>
+  </div>
+  <div class="side-item"><span class="si-ico">📦</span> Inventory</div>
+  <div class="side-item"><span class="si-ico">🏷️</span> Pricing</div>
+  <div class="side-item"><span class="si-ico">👥</span> Customers</div>
+  <div class="side-item"><span class="si-ico"><svg width="17" height="13" viewBox="0 0 16 12" fill="none"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/></svg></span> Used gold</div>
+  <div class="side-item"><span class="si-ico">↩️</span> Returns management</div>
+  <div class="side-item"><span class="si-ico">💼</span> Staff</div>
+  <div class="side-section">System</div>
+  <div class="side-item"><span class="si-ico">🖥️</span> POS</div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="top-left"><span class="top-title">Sales reports</span></div>
+    <div class="top-right">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()">☀️</button>
+      <span class="top-user"><span class="top-avatar">AD</span> user1@example.com</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="period-bar" id="periodBar">
+      <button class="pbtn" data-p="today" onclick="setPeriod('today')">Today</button>
+      <button class="pbtn" data-p="week" onclick="setPeriod('week')">This week</button>
+      <button class="pbtn active" data-p="month" onclick="setPeriod('month')">This month</button>
+      <button class="pbtn" data-p="year" onclick="setPeriod('year')">This year</button>
+      <button class="pbtn" data-p="all" onclick="setPeriod('all')">All time</button>
+      <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+        <input type="date" class="date-input" id="dateFrom" value="2026-06-01">
+        <span style="font-size:12px;color:var(--t4)">to</span>
+        <input type="date" class="date-input" id="dateTo" value="2026-06-11">
+        <button class="apply-btn" onclick="applyCustomRange()">Apply</button>
+      </div>
+    </div>
+
+    <div class="stats4" id="statsRow1"></div>
+    <div class="stats4" id="statsRow2"></div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Revenue over time</span>
+        <div class="panel-right"><span class="panel-sub" id="revChartSub"></span><button class="expand-btn" onclick="expandChart('revenue')">⛶</button></div>
+      </div>
+      <div class="chart" id="revChart"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Items sold over time</span>
+          <div class="panel-right"><button class="expand-btn" onclick="expandChart('units')">⛶</button></div>
+        </div>
+        <div class="chart" id="unitsChart" style="height:140px"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Sales by category</span>
+          <div class="panel-right"><button class="expand-btn" onclick="expandChart('category')">⛶</button></div>
+        </div>
+        <div id="catChart"></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Gold sold by karat</span><span class="panel-sub" id="karatSub"></span></div>
+        <div id="karatRows"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Top customers</span><span class="panel-sub">by spend in period</span></div>
+        <table class="tbl" id="topCustTbl"></table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Items sold</span>
+        <div class="panel-right">
+          <input type="text" class="search-input" id="itemSearch" placeholder="Search item, SKU, customer..." oninput="renderItems()">
+          <span class="panel-sub" id="itemCount"></span>
+        </div>
+      </div>
+      <table class="tbl" id="itemsTbl"></table>
+    </div>
+  </div>
+</div>
+
+<!-- Expand modal -->
+<div class="mo" id="chartModal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="mo-box">
+    <div class="mo-head"><span class="mo-title" id="moTitle"></span><button class="mo-x" onclick="document.getElementById('chartModal').classList.remove('show')">✕</button></div>
+    <div id="moBody"></div>
+  </div>
+</div>
+
+<script>
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+function fmt(n){return'$'+Math.round(n).toLocaleString()}
+function fmtF(n){return'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+
+// ═══ DATA PER PERIOD ═══
+var DATA={
+ today:{sum:{rev:68425,txn:31,items:38,avg:2207,disc:1240,cash:46791,card:22019,refunds:3205,weight:724.6},
+  chart:[{l:'9am',v:4120},{l:'10am',v:8930},{l:'11am',v:12480},{l:'12pm',v:6240},{l:'1pm',v:5180},{l:'2pm',v:9320},{l:'3pm',v:11250},{l:'4pm',v:7860},{l:'5pm',v:3045}],
+  units:[{l:'9am',v:2},{l:'10am',v:5},{l:'11am',v:7},{l:'12pm',v:4},{l:'1pm',v:3},{l:'2pm',v:5},{l:'3pm',v:6},{l:'4pm',v:4},{l:'5pm',v:2}],
+  karat:[{k:'21K',g:412.3,ppg:226.1,rev:93221},{k:'18K',g:253.8,ppg:200.5,rev:50887},{k:'22K',g:41.2,ppg:228.4,rev:9410},{k:'24K',g:17.3,ppg:231.0,rev:3996}],
+  cats:[{n:'Bracelets',v:24300},{n:'Bangles',v:9800},{n:'Rings',v:15200},{n:'Necklaces',v:12900},{n:'Earrings',v:8825},{n:'Pendants',v:4400},{n:'Bullion',v:2800}],
+  cust:[{n:'Morgan Hayes',t:3,v:9840},{n:'Noel Morales',t:1,v:5459},{n:'Taylor Ramos',t:2,v:4893},{n:'Walk-in',t:8,v:4210},{n:'Sydney Long',t:1,v:3293}]},
+ week:{sum:{rev:412350,txn:187,items:241,avg:2205,disc:8430,cash:283021,card:137759,refunds:12480,weight:4385.2},
+  chart:[{l:'Mon',v:51200},{l:'Tue',v:48300},{l:'Wed',v:62800},{l:'Thu',v:55400},{l:'Fri',v:78200},{l:'Sat',v:88025},{l:'Sun',v:28425}],
+  units:[{l:'Mon',v:31},{l:'Tue',v:28},{l:'Wed',v:38},{l:'Thu',v:33},{l:'Fri',v:45},{l:'Sat',v:50},{l:'Sun',v:16}],
+  karat:[{k:'21K',g:2480.5,ppg:225.8,rev:560097},{k:'18K',g:1530.2,ppg:200.2,rev:306346},{k:'22K',g:248.0,ppg:227.9,rev:56519},{k:'24K',g:126.5,ppg:230.6,rev:29171}],
+  cats:[{n:'Bracelets',v:146400},{n:'Bangles',v:58200},{n:'Rings',v:91500},{n:'Necklaces',v:77800},{n:'Earrings',v:53200},{n:'Pendants',v:26500},{n:'Bullion',v:16950}],
+  cust:[{n:'Peyton Young',t:4,v:28400},{n:'Morgan Hayes',t:5,v:22180},{n:'Skyler King',t:2,v:18920},{n:'Noel Morales',t:3,v:15630},{n:'Robin Freeman',t:4,v:14210}]},
+ month:{sum:{rev:1842300,txn:824,items:1067,avg:2236,disc:38240,cash:1247082,card:595218,refunds:51280,weight:19483.7},
+  chart:[{l:'1',v:55200},{l:'',v:48900},{l:'',v:61300},{l:'',v:58700},{l:'5',v:72400},{l:'',v:66100},{l:'',v:43800},{l:'',v:51900},{l:'',v:59600},{l:'10',v:75300},{l:'',v:68200},{l:'',v:55800},{l:'',v:49200},{l:'',v:63400},{l:'15',v:71800},{l:'',v:58300},{l:'',v:52700},{l:'',v:67900},{l:'',v:74200},{l:'20',v:81500},{l:'',v:62800},{l:'',v:57400},{l:'',v:66300},{l:'',v:59800},{l:'25',v:72100},{l:'',v:64500},{l:'',v:58900},{l:'',v:53200},{l:'',v:48100},{l:'30',v:68425}],
+  units:[{l:'Week 1',v:248},{l:'Week 2',v:271},{l:'Week 3',v:259},{l:'Week 4',v:289}],
+  karat:[{k:'21K',g:11240.8,ppg:225.5,rev:2534800},{k:'18K',g:6820.4,ppg:200.4,rev:1366808},{k:'22K',g:982.3,ppg:227.2,rev:223178},{k:'24K',g:440.2,ppg:230.7,rev:101554}],
+  cats:[{n:'Bracelets',v:648200},{n:'Bangles',v:262400},{n:'Rings',v:412800},{n:'Necklaces',v:342100},{n:'Earrings',v:241500},{n:'Pendants',v:118400},{n:'Bullion',v:79300}],
+  cust:[{n:'Skyler King',t:8,v:84200},{n:'Peyton Young',t:11,v:71800},{n:'Morgan Hayes',t:14,v:65300},{n:'Casey Jenkins',t:6,v:48900},{n:'Taylor Ramos',t:9,v:44100}]},
+ year:{sum:{rev:9418200,txn:4382,items:5641,avg:2149,disc:194300,cash:6204012,card:3214188,refunds:248600,weight:99284.5},
+  chart:[{l:'Jan',v:1483000},{l:'Feb',v:1391500},{l:'Mar',v:1622800},{l:'Apr',v:1568400},{l:'May',v:1510200},{l:'Jun',v:1842300}],
+  units:[{l:'Jan',v:892},{l:'Feb',v:836},{l:'Mar',v:981},{l:'Apr',v:938},{l:'May',v:927},{l:'Jun',v:1067}],
+  karat:[{k:'21K',g:57420.6,ppg:224.8,rev:12908151},{k:'18K',g:34280.2,ppg:199.8,rev:6849184},{k:'22K',g:4890.5,ppg:226.5,rev:1107698},{k:'24K',g:2693.2,ppg:230.1,rev:619705}],
+  cats:[{n:'Bracelets',v:3295400},{n:'Bangles',v:1334500},{n:'Rings',v:2118200},{n:'Necklaces',v:1742600},{n:'Earrings',v:1224400},{n:'Pendants',v:601800},{n:'Bullion',v:435800}],
+  cust:[{n:'Skyler King',t:34,v:312400},{n:'Peyton Young',t:48,v:288700},{n:'Morgan Hayes',t:52,v:241900},{n:'Noel Morales',t:29,v:198400},{n:'Casey Jenkins',t:22,v:176200}]},
+ all:{sum:{rev:24831500,txn:11847,items:15233,avg:2096,disc:512400,cash:16308185,card:8523315,refunds:684200,weight:266841.0},
+  chart:[{l:'2023',v:3120400},{l:'2024',v:5841200},{l:'2025',v:6451700},{l:'2026',v:9418200}],
+  units:[{l:'2023',v:2241},{l:'2024',v:3684},{l:'2025',v:3667},{l:'2026',v:5641}],
+  karat:[{k:'21K',g:152380.4,ppg:218.2,rev:33249403},{k:'18K',g:91240.8,ppg:194.6,rev:17755460},{k:'22K',g:13205.2,ppg:221.4,rev:2923631},{k:'24K',g:7420.6,ppg:226.8,rev:1683072}],
+  cats:[{n:'Bracelets',v:8691000},{n:'Bangles',v:3518400},{n:'Rings',v:5586400},{n:'Necklaces',v:4593800},{n:'Earrings',v:3228100},{n:'Pendants',v:1586900},{n:'Bullion',v:1145300}],
+  cust:[{n:'Skyler King',t:96,v:824100},{n:'Peyton Young',t:131,v:761300},{n:'Morgan Hayes',t:142,v:638200},{n:'Jesse Simmons',t:88,v:540800},{n:'Noel Morales',t:74,v:498200}]}
+};
+
+var ITEMS=[
+ {sku:'BL260001',name:'Lira',cust:'Ari Cook',sale:'SALE-20260611-0010',qty:2,w:'8g',tw:'16g',ppg:175,sub:2800},
+ {sku:'BL260001',name:'Lira',cust:'Hayden Wright',sale:'SALE-20260611-0009',qty:1,w:'8g',tw:'8g',ppg:175,sub:1400},
+ {sku:'RG261108',name:'Ring',cust:'Avery Cole',sale:'SALE-20260611-0008',qty:1,w:'2.1g',tw:'2.1g',ppg:187,sub:392.7},
+ {sku:'BL260001',name:'Lira',cust:'Ari Cook',sale:'SALE-20260611-0007',qty:1,w:'8g',tw:'8g',ppg:175,sub:1400},
+ {sku:'RG261766',name:'Monc',cust:'Hayden Wright',sale:'SALE-20260611-0006',qty:1,w:'2.32g',tw:'2.32g',ppg:187,sub:433.84},
+ {sku:'BC260218',name:'Hexagon Bracelet',cust:'Noel Morales',sale:'SALE-20260611-0005',qty:1,w:'17.24g',tw:'17.24g',ppg:205,sub:3534.20},
+ {sku:'NC260381',name:'Chain',cust:'Morgan Hayes',sale:'SALE-20260611-0004',qty:1,w:'10.36g',tw:'10.36g',ppg:225,sub:2331},
+ {sku:'ER260345',name:'Heart Earrings',cust:'Robin Freeman',sale:'SALE-20260611-0003',qty:2,w:'3.75g',tw:'7.5g',ppg:235,sub:1762.50},
+ {sku:'RG260482',name:'Quarter Lira Ring',cust:'Taylor Ramos',sale:'SALE-20260611-0002',qty:1,w:'3.78g',tw:'3.78g',ppg:235,sub:888.30},
+ {sku:'NC260380',name:'Clover Necklace',cust:'Skyler King',sale:'SALE-20260611-0001',qty:1,w:'11.42g',tw:'11.42g',ppg:225,sub:2569.50},
+];
+
+var period='month';
+var periodLabel='This month';
+
+// seeded pseudo-random so the same range always shows the same numbers
+function seededVal(dayIndex){var x=Math.sin(dayIndex*127.1+311.7)*43758.5453;return 40000+Math.abs(x-Math.floor(x))*45000}
+var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function applyCustomRange(){
+  var f=document.getElementById('dateFrom').value,t=document.getElementById('dateTo').value;
+  if(!f||!t)return;
+  var fd=new Date(f+'T12:00:00'),td=new Date(t+'T12:00:00');
+  if(td<fd){var tmp=fd;fd=td;td=tmp}
+  var days=Math.round((td-fd)/864e5)+1;
+  var chart=[],totalRev=0;
+  var step=days>62?Math.ceil(days/31):1; // aggregate if huge range
+  for(var i=0;i<days;i+=step){
+    var d=new Date(fd.getTime()+i*864e5);
+    var v=0;for(var j=0;j<step&&(i+j)<days;j++)v+=seededVal(Math.round(fd.getTime()/864e5)+i+j);
+    v=Math.round(v);totalRev+=v;
+    var lbl=(days<=14||i%Math.ceil(days/10/step)*step===i)?MN[d.getMonth()]+' '+d.getDate():'';
+    chart.push({l:lbl,v:v});
+  }
+  var m=DATA.month,ratio=totalRev/m.sum.rev;
+  function sc(n){return Math.round(n*ratio)}
+  DATA.custom={
+    sum:{rev:totalRev,txn:Math.max(1,sc(m.sum.txn)),items:Math.max(1,sc(m.sum.items)),avg:Math.round(totalRev/Math.max(1,sc(m.sum.txn))),disc:sc(m.sum.disc),cash:sc(m.sum.cash),card:totalRev-sc(m.sum.cash)-sc(m.sum.refunds)>0?totalRev-sc(m.sum.cash):sc(m.sum.card),refunds:sc(m.sum.refunds),weight:+(m.sum.weight*ratio).toFixed(1)},
+    chart:chart,
+    units:chart.map(function(c,i){return{l:c.l,v:Math.max(1,Math.round(c.v/2200))}}),
+    karat:m.karat.map(function(k){return{k:k.k,g:+(k.g*ratio).toFixed(1),ppg:k.ppg,rev:sc(k.rev)}}),
+    cats:m.cats.map(function(c){return{n:c.n,v:sc(c.v)}}),
+    cust:m.cust.map(function(c){return{n:c.n,t:Math.max(1,sc(c.t)),v:sc(c.v)}})
+  };
+  period='custom';
+  periodLabel=MN[fd.getMonth()]+' '+fd.getDate()+' — '+MN[td.getMonth()]+' '+td.getDate()+', '+td.getFullYear();
+  document.querySelectorAll('.pbtn').forEach(function(b){b.classList.remove('active')});
+  render();
+}
+
+function setPeriod(p){
+  period=p;
+  var lbls={today:'Today',week:'This week',month:'This month',year:'This year',all:'All time'};
+  periodLabel=lbls[p];
+  document.querySelectorAll('.pbtn').forEach(function(b){b.classList.toggle('active',b.dataset.p===p)});
+  render();
+}
+
+function barChart(el,data,color,big){
+  var max=Math.max.apply(null,data.map(function(d){return d.v}))||1;
+  var H=big?260:118;
+  el.innerHTML=data.map(function(d,i){
+    var h=Math.max(2,Math.round(d.v/max*H));
+    var valTxt=d.v>=1000?'$'+(d.v>=1e6?(d.v/1e6).toFixed(1)+'M':Math.round(d.v/1000)+'k'):d.v;
+    return '<div class="chart-group">'+
+      '<div class="chart-val">'+valTxt+'</div>'+
+      '<div class="chart-bar" style="height:'+h+'px;background:'+color+'"></div>'+
+      '<div class="chart-lbl">'+(d.l||'')+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function catBars(el,cats){
+  var max=Math.max.apply(null,cats.map(function(c){return c.v}))||1;
+  var total=cats.reduce(function(s,c){return s+c.v},0);
+  el.innerHTML=cats.map(function(c){
+    var pct=Math.round(c.v/total*100);
+    return '<div class="hbar-row"><span class="hbar-name">'+c.n+'</span><div class="hbar-track"><div class="hbar-fill" style="width:'+Math.round(c.v/max*100)+'%"></div></div><span class="hbar-amt">'+fmt(c.v)+' · '+pct+'%</span></div>';
+  }).join('');
+}
+
+function render(){
+  var D=DATA[period];var s=D.sum;
+  var net=s.rev-s.refunds;
+  document.getElementById('statsRow1').innerHTML=
+    '<div class="scard sc-green"><div class="scard-label">Total revenue</div><div class="scard-value" style="color:var(--green)">'+fmt(s.rev)+'</div><div class="scard-sub">'+s.txn.toLocaleString()+' transactions</div></div>'+
+    '<div class="scard sc-red"><div class="scard-label">Refunds</div><div class="scard-value" style="color:var(--red)">−'+fmt(s.refunds)+'</div><div class="scard-sub">Net: '+fmt(net)+'</div></div>'+
+    '<div class="scard sc-gold"><div class="scard-label">Items sold</div><div class="scard-value">'+s.items.toLocaleString()+'</div><div class="scard-sub">'+s.weight.toLocaleString()+'g of gold</div></div>'+
+    '<div class="scard sc-purple"><div class="scard-label">Avg sale</div><div class="scard-value">'+fmt(s.avg)+'</div><div class="scard-sub">per transaction</div></div>';
+  var cashPct=Math.round(s.cash/(s.cash+s.card)*100);
+  document.getElementById('statsRow2').innerHTML=
+    '<div class="scard sc-green"><div class="scard-label">Cash collected</div><div class="scard-value" style="color:var(--green)">'+fmt(s.cash)+'</div><div class="scard-sub">'+cashPct+'% of payments</div></div>'+
+    '<div class="scard sc-purple"><div class="scard-label">Card collected</div><div class="scard-value" style="color:var(--purple)">'+fmt(s.card)+'</div><div class="scard-sub">'+(100-cashPct)+'% of payments</div></div>'+
+    '<div class="scard sc-red"><div class="scard-label">Discounts given</div><div class="scard-value" style="color:var(--red)">'+fmt(s.disc)+'</div><div class="scard-sub">'+(s.disc/s.rev*100).toFixed(1)+'% of revenue</div></div>'+
+    (function(){
+      var k21=D.karat.find(function(k){return k.k==='21K'});
+      var k18=D.karat.find(function(k){return k.k==='18K'});
+      return '<div class="scard sc-gold"><div class="scard-label">Avg price per gram</div><div class="scard-value" style="font-size:17px;line-height:1.5">21K — $'+(k21?k21.ppg.toFixed(2):'—')+'<br>18K — $'+(k18?k18.ppg.toFixed(2):'—')+'</div></div>';
+    })();
+
+  barChart(document.getElementById('revChart'),D.chart,'var(--gold)');
+  document.getElementById('revChartSub').textContent=fmt(s.rev)+' total';
+  barChart(document.getElementById('unitsChart'),D.units,'var(--blue)');
+  catBars(document.getElementById('catChart'),D.cats);
+
+  var totalG=D.karat.reduce(function(a,k){return a+k.g},0);
+  document.getElementById('karatSub').textContent=totalG.toLocaleString()+'g total';
+  var maxG=Math.max.apply(null,D.karat.map(function(k){return k.g}));
+  document.getElementById('karatRows').innerHTML=D.karat.map(function(k){
+    return '<div class="hbar-row"><span class="hbar-name">'+k.k+' · $'+k.ppg.toFixed(0)+'/g</span><div class="hbar-track"><div class="hbar-fill" style="width:'+Math.round(k.g/maxG*100)+'%"></div></div><span class="hbar-amt">'+k.g.toLocaleString()+'g</span></div>';
+  }).join('');
+
+  document.getElementById('topCustTbl').innerHTML='<tr><th>Customer</th><th class="num">Sales</th><th class="num">Spent</th></tr>'+
+    D.cust.map(function(c){return '<tr><td>'+c.n+'</td><td class="num">'+c.t+'</td><td class="num" style="color:var(--green)">'+fmt(c.v)+'</td></tr>'}).join('');
+
+  renderItems();
+}
+
+function renderItems(){
+  var q=(document.getElementById('itemSearch').value||'').toLowerCase();
+  var rows=ITEMS.filter(function(r){return !q||r.sku.toLowerCase().indexOf(q)!==-1||r.name.toLowerCase().indexOf(q)!==-1||r.cust.toLowerCase().indexOf(q)!==-1||r.sale.toLowerCase().indexOf(q)!==-1});
+  document.getElementById('itemCount').textContent=rows.length+' of '+ITEMS.length+' rows';
+  document.getElementById('itemsTbl').innerHTML='<tr><th>SKU</th><th>Product</th><th>Customer</th><th>Sale ID</th><th class="num">Qty</th><th class="num">Weight</th><th class="num">$/g</th><th class="num">Subtotal</th></tr>'+
+    rows.map(function(r){return '<tr><td style="font-family:monospace;font-size:11px">'+r.sku+'</td><td>'+r.name+'</td><td>'+r.cust+'</td><td style="font-family:monospace;font-size:11px;color:var(--t4)">'+r.sale+'</td><td class="num">'+r.qty+'</td><td class="num">'+r.tw+'</td><td class="num">$'+r.ppg+'</td><td class="num" style="color:var(--green)">'+fmtF(r.sub)+'</td></tr>'}).join('');
+}
+
+// ═══ EXPAND ═══
+function expandChart(which){
+  var D=DATA[period];
+  var titles={revenue:'Revenue over time',units:'Items sold over time',category:'Sales by category'};
+  document.getElementById('moTitle').textContent=titles[which]+' — '+periodLabel;
+  var body=document.getElementById('moBody');
+  if(which==='revenue'){body.innerHTML='<div class="chart big" id="moChart"></div>';barChart(document.getElementById('moChart'),D.chart,'var(--gold)',true)}
+  else if(which==='units'){body.innerHTML='<div class="chart big" id="moChart"></div>';barChart(document.getElementById('moChart'),D.units,'var(--blue)',true)}
+  else{body.innerHTML='<div id="moChart"></div>';catBars(document.getElementById('moChart'),D.cats)}
+  document.getElementById('chartModal').classList.add('show');
+}
+
+render();
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

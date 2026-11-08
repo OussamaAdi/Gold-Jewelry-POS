@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);--gold-b:rgba(212,160,23,.35);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);--green-b:rgba(76,175,124,.3);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);--gold-b:rgba(184,134,11,.35);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);--green-b:rgba(46,139,95,.35);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);min-height:100vh;display:flex;-webkit-tap-highlight-color:transparent;transition:background .25s,color .25s}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{width:222px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;transition:background .25s}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(128,128,128,.2);border-radius:3px}
+.side-brand{height:64px;padding:0 18px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--bd)}
+.side-brand-name{font-size:17px;font-weight:700}
+.side-brand-name span{color:var(--gold)}
+.side-brand-sub{font-size:11px;color:var(--t4);margin-top:2px}
+.side-section{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--t4);font-weight:600;padding:16px 18px 6px}
+.side-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:14px;font-weight:500;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent;user-select:none}
+.side-item:hover{color:var(--t2);background:rgba(128,128,128,.05)}
+.side-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+.side-item .si-ico{width:20px;text-align:center;font-size:15px;flex-shrink:0}
+.side-item .si-arrow{margin-left:auto;font-size:10px;transition:transform .2s;color:var(--t4)}
+.side-item.open .si-arrow{transform:rotate(180deg)}
+.side-sub{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.side-sub.open{max-height:200px}
+.side-sub-item{display:block;padding:9px 18px 9px 48px;font-size:13px;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent}
+.side-sub-item:hover{color:var(--t2)}
+.side-sub-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+
+/* ═══ MAIN ═══ */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:var(--bg2);border-bottom:1px solid var(--bd);gap:12px;transition:background .25s;flex-shrink:0}
+.top-left{display:flex;align-items:center;gap:12px}
+.top-title{font-size:19px;font-weight:600}
+.top-date{font-size:13px;color:var(--t3)}
+.top-right{display:flex;align-items:center;gap:10px}
+.top-user{font-size:13px;color:var(--t3);display:flex;align-items:center;gap:7px}
+.top-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#1a1a1a;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.mode-btn{font-family:var(--font);font-size:15px;padding:8px 12px;border-radius:var(--r);cursor:pointer;border:1px solid var(--bd2);background:transparent;color:var(--t3);transition:all .12s;min-height:38px}
+.mode-btn:active{transform:scale(.95)}
+.refresh-btn{font-family:var(--font);font-size:13px;font-weight:600;padding:9px 16px;border-radius:var(--r);cursor:pointer;border:none;background:var(--gold);color:#1a1a1a;min-height:38px;display:inline-flex;align-items:center;gap:6px}
+.refresh-btn:active{background:var(--gold-h);transform:scale(.97)}
+
+.content{flex:1;padding:22px 26px;overflow-y:auto}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25);border-radius:4px}
+
+.sec-title{font-size:13px;font-weight:600;color:var(--t3);margin:0 0 10px 2px;text-transform:uppercase;letter-spacing:.5px}
+
+/* Stat cards */
+.stats4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.stats4.stats3{grid-template-columns:repeat(3,1fr)}
+.scard{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px;transition:background .25s,border-color .25s;position:relative;overflow:hidden}
+html.light .scard{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.scard::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px}
+.sc-gold::before{background:var(--gold)}
+.sc-green::before{background:var(--green)}
+.sc-blue::before{background:var(--blue)}
+.sc-amber::before{background:var(--amber)}
+.sc-red::before{background:var(--red)}
+.sc-purple::before{background:var(--purple)}
+.sc-plain::before{background:var(--bd2)}
+.scard-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--t4);font-weight:500;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.scard-value{font-size:23px;font-weight:700}
+.scard-sub{font-size:12px;color:var(--t4);margin-top:4px}
+.scard-sub .up{color:var(--green)}
+.scard-sub .down{color:var(--red)}
+
+/* Two-col layout */
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-bottom:22px}
+.panel{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px;transition:background .25s,border-color .25s}
+html.light .panel{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.panel-title{font-size:14px;font-weight:600}
+.panel-sub{font-size:11px;color:var(--t4)}
+
+/* Chart */
+.chart{display:flex;align-items:flex-end;gap:5px;height:150px}
+.chart-group{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.chart-val{font-size:9px;font-weight:600;color:var(--t3);height:13px;line-height:13px;white-space:nowrap}
+.chart-bar{width:100%;border-radius:4px 4px 0 0;min-height:2px;background:var(--gold);opacity:.55;transition:opacity .15s}
+.chart-bar.today{opacity:1;box-shadow:0 0 0 1px var(--gold)}
+.chart-lbl{font-size:9px;color:var(--t4);height:13px;line-height:13px;margin-top:3px}
+
+/* Payment split */
+.pay-split{display:flex;flex-direction:column;gap:10px}
+.ps-row{display:flex;align-items:center;gap:10px}
+.ps-label{font-size:12px;color:var(--t3);width:48px;flex-shrink:0}
+.ps-track{flex:1;height:22px;background:var(--bg4);border-radius:6px;overflow:hidden;position:relative}
+.ps-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:#fff;min-width:fit-content;white-space:nowrap}
+.ps-amt{font-size:12px;font-weight:600;width:78px;text-align:right;flex-shrink:0}
+
+/* Mini stats inside panels */
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini{background:var(--bg3);border-radius:var(--r);padding:10px 12px;transition:background .25s}
+.mini-label{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--t4);font-weight:500}
+.mini-val{font-size:17px;font-weight:700;margin-top:3px}
+.mini-sub{font-size:11px;color:var(--t4);margin-top:1px}
+
+/* Attention list */
+.att-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd);font-size:13px}
+.att-item:last-child{border-bottom:none}
+.att-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.att-text{flex:1;color:var(--t2)}
+.att-text b{color:var(--t1);font-weight:600}
+.att-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;white-space:nowrap}
+
+/* Category rows */
+.cat-row{display:flex;align-items:center;gap:10px;padding:7px 0}
+.cat-name{font-size:12px;color:var(--t2);width:90px;flex-shrink:0}
+.cat-track{flex:1;height:16px;background:var(--bg4);border-radius:5px;overflow:hidden}
+.cat-fill{height:100%;background:var(--gold);border-radius:5px;opacity:.8}
+.cat-amt{font-size:11px;font-weight:600;color:var(--t3);width:70px;text-align:right;flex-shrink:0}
+
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:22px}
+
+@media(max-width:1000px){.stats4{grid-template-columns:repeat(2,1fr)}.stats4.stats3{grid-template-columns:repeat(2,1fr)}.stats4.stats3 .scard:last-child{grid-column:1/-1}.grid2,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar">
+  <div class="side-brand">
+    <div class="side-brand-name">Gold <span>Jewelry</span> POS</div>
+    <div class="side-brand-sub">Management System</div>
+  </div>
+
+  <div class="side-section">Main</div>
+  <div class="side-item active"><span class="si-ico">🏠</span> Dashboard</div>
+  <div class="side-item" id="reportsToggle" onclick="toggleReports()"><span class="si-ico">📊</span> Reports <span class="si-arrow">▼</span></div>
+  <div class="side-sub" id="reportsSub">
+    <span class="side-sub-item">Sales reports</span>
+    <span class="side-sub-item">Inventory reports</span>
+    <span class="side-sub-item">Repairs reports</span>
+    <span class="side-sub-item">Customers reports</span>
+  </div>
+  <div class="side-item"><span class="si-ico">📦</span> Inventory</div>
+  <div class="side-item"><span class="si-ico">🏷️</span> Pricing</div>
+  <div class="side-item"><span class="si-ico">👥</span> Customers</div>
+  <div class="side-item"><span class="si-ico"><svg width="17" height="13" viewBox="0 0 16 12" fill="none"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/></svg></span> Used gold</div>
+  <div class="side-item"><span class="si-ico">↩️</span> Returns management</div>
+  <div class="side-item"><span class="si-ico">💼</span> Staff</div>
+
+  <div class="side-section">System</div>
+  <div class="side-item"><span class="si-ico">🖥️</span> POS</div>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="top-left">
+      <span class="top-title">Dashboard</span>
+      <span class="top-date" id="topDate"></span>
+    </div>
+    <div class="top-right">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()" title="Light / dark mode">☀️</button>
+      <button class="refresh-btn">⟳ Refresh</button>
+      <span class="top-user"><span class="top-avatar">AD</span> user1@example.com</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- TODAY'S MONEY -->
+    <div class="sec-title">Today</div>
+    <div class="stats4">
+      <div class="scard sc-green">
+        <div class="scard-label">💰 Sales revenue</div>
+        <div class="scard-value" style="color:var(--green)">$68,425.50</div>
+        <div class="scard-sub">31 transactions · <span class="up">▲ 12% vs yesterday</span></div>
+      </div>
+      <div class="scard sc-amber">
+        <div class="scard-label">🔧 Repairs collected</div>
+        <div class="scard-value">$385.00</div>
+        <div class="scard-sub">9 payments · 4 repairs taken in today</div>
+      </div>
+      <div class="scard sc-red">
+        <div class="scard-label">↩️ Refunds paid out</div>
+        <div class="scard-value" style="color:var(--red)">−$3,205.30</div>
+        <div class="scard-sub">2 returns · 1 to stock, 1 to melt</div>
+      </div>
+      <div class="scard sc-gold">
+        <div class="scard-label"><svg width="16" height="12" viewBox="0 0 16 12" fill="none" style="flex-shrink:0"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/><path d="M4.5 3h5" stroke="#C49520" stroke-width=".5"/></svg> Used gold bought</div>
+        <div class="scard-value">$4,860.00</div>
+        <div class="scard-sub">27.4g across 3 purchases</div>
+      </div>
+    </div>
+
+    <!-- CASH & STATE -->
+    <div class="sec-title">Money & stock right now</div>
+    <div class="stats4 stats3">
+      <div class="scard sc-blue">
+        <div class="scard-label">🏪 Store cash box</div>
+        <div class="scard-value" style="color:var(--blue)">$21,447.20</div>
+        <div class="scard-sub"><span class="up">+$5,830 in</span> · <span class="down">−$8,065 out</span> today</div>
+      </div>
+      <div class="scard sc-gold">
+        <div class="scard-label"><svg width="16" height="12" viewBox="0 0 16 12" fill="none" style="flex-shrink:0"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/><path d="M4.5 3h5" stroke="#C49520" stroke-width=".5"/></svg> Used gold on hand</div>
+        <div class="scard-value" style="color:var(--gold)">239.9g</div>
+        <div class="scard-sub">Avg 19.7K · $39,468 invested value</div>
+      </div>
+      <div class="scard sc-plain">
+        <div class="scard-label">💎 Stock value</div>
+        <div class="scard-value">$3,819,557</div>
+        <div class="scard-sub">4,837 items · 18,939g total</div>
+      </div>
+    </div>
+
+    <!-- TREND + PAYMENT SPLIT -->
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Sales — last 14 days</span>
+          <span class="panel-sub">today highlighted</span>
+        </div>
+        <div class="chart" id="trendChart"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Today's payments</span>
+          <span class="panel-sub">$68,810 collected</span>
+        </div>
+        <div class="pay-split">
+          <div class="ps-row">
+            <span class="ps-label">Cash</span>
+            <div class="ps-track"><div class="ps-fill" style="width:68%;background:var(--green)">68%</div></div>
+            <span class="ps-amt" style="color:var(--green)">$46,791</span>
+          </div>
+          <div class="ps-row">
+            <span class="ps-label">Card</span>
+            <div class="ps-track"><div class="ps-fill" style="width:32%;background:var(--purple)">32%</div></div>
+            <span class="ps-amt" style="color:var(--purple)">$22,019</span>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--bd);margin-top:14px;padding-top:12px">
+          <div class="mini-grid">
+            <div class="mini"><div class="mini-label">Items sold</div><div class="mini-val">38</div><div class="mini-sub">724.6g total</div></div>
+            <div class="mini"><div class="mini-label">Discounts given</div><div class="mini-val" style="color:var(--red)">$1,240</div><div class="mini-sub">on 6 sales</div></div>
+            <div class="mini"><div class="mini-label">Avg sale</div><div class="mini-val">$2,207</div><div class="mini-sub">per transaction</div></div>
+            <div class="mini"><div class="mini-label">Customers</div><div class="mini-val">1,394</div><div class="mini-sub"><span style="color:var(--green)">+7 added today</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPAIRS + GOLD SOLD + ATTENTION -->
+    <div class="grid3">
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">🔧 Repairs</span><span class="panel-sub">live</span></div>
+        <div class="mini-grid">
+          <div class="mini"><div class="mini-label">In progress</div><div class="mini-val" style="color:var(--amber)">6</div></div>
+          <div class="mini"><div class="mini-label">Awaiting call</div><div class="mini-val" style="color:var(--amber)">2</div></div>
+          <div class="mini"><div class="mini-label">Due today</div><div class="mini-val">3</div></div>
+          <div class="mini"><div class="mini-label">Overdue</div><div class="mini-val" style="color:var(--red)">2</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--t4);margin-top:10px">Unpaid balance: <b style="color:var(--red)">$215</b> across 8 repairs</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Gold sold today</span><span class="panel-sub">by karat</span></div>
+        <div class="cat-row"><span class="cat-name">21K</span><div class="cat-track"><div class="cat-fill" style="width:78%"></div></div><span class="cat-amt">412.3g</span></div>
+        <div class="cat-row"><span class="cat-name">18K</span><div class="cat-track"><div class="cat-fill" style="width:48%"></div></div><span class="cat-amt">253.8g</span></div>
+        <div class="cat-row"><span class="cat-name">22K</span><div class="cat-track"><div class="cat-fill" style="width:8%"></div></div><span class="cat-amt">41.2g</span></div>
+        <div class="cat-row"><span class="cat-name">24K</span><div class="cat-track"><div class="cat-fill" style="width:4%"></div></div><span class="cat-amt">17.3g</span></div>
+        <div style="font-size:12px;color:var(--t4);margin-top:10px">Top category today: <b style="color:var(--t2)">Bracelets</b> — 11 items</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">⚠ Needs attention</span></div>
+        <div class="att-item"><span class="att-dot" style="background:var(--red)"></span><span class="att-text"><b>2 repairs overdue</b> — oldest 5 days (Slot 4)</span><span class="att-tag" style="background:var(--red-bg);color:var(--red)">Repairs</span></div>
+        <div class="att-item"><span class="att-dot" style="background:var(--amber)"></span><span class="att-text"><b>2 repairs done</b>, customer not called yet</span><span class="att-tag" style="background:var(--amber-bg);color:var(--amber)">Call</span></div>
+        <div class="att-item"><span class="att-dot" style="background:var(--blue)"></span><span class="att-text"><b>4 returned items</b> need tags printed</span><span class="att-tag" style="background:var(--blue-bg);color:var(--blue)">Tags</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+// ═══ REPORTS DROPDOWN ═══
+function toggleReports(){
+  document.getElementById('reportsToggle').classList.toggle('open');
+  document.getElementById('reportsSub').classList.toggle('open');
+}
+// ═══ DATE ═══
+(function(){
+  var d=new Date('2026-06-11T12:00:00');
+  var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('topDate').textContent=days[d.getDay()]+', '+months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+})();
+// ═══ TREND CHART (last 14 days) ═══
+(function(){
+  var data=[42180,55320,38940,61200,47850,52640,71300,44980,58210,49370,63850,39420,57960,68425];
+  var labels=['May 29','30','31','Jun 1','2','3','4','5','6','7','8','9','10','Today'];
+  var max=Math.max.apply(null,data);
+  document.getElementById('trendChart').innerHTML=data.map(function(v,i){
+    var h=Math.max(3,Math.round(v/max*108));
+    var isToday=i===data.length-1;
+    var showVal=isToday||i%3===0;
+    return '<div class="chart-group">'+
+      '<div class="chart-val" style="visibility:'+(showVal?'visible':'hidden')+'">$'+Math.round(v/1000)+'k</div>'+
+      '<div class="chart-bar'+(isToday?' today':'')+'" style="height:'+h+'px"></div>'+
+      '<div class="chart-lbl">'+((i%3===0||isToday)?labels[i]:'')+'</div>'+
+    '</div>';
+  }).join('');
+})();
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

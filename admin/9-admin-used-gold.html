@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Used Gold</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);--green-b:rgba(76,175,124,.3);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);--amber-b:rgba(230,162,60,.35);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);--green-b:rgba(46,139,95,.3);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);--amber-b:rgba(196,130,26,.35);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);min-height:100vh;display:flex;-webkit-tap-highlight-color:transparent;transition:background .25s,color .25s}
+.sidebar{width:222px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;transition:background .25s}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(128,128,128,.2)}
+.side-brand{height:64px;padding:0 18px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--bd)}
+.side-brand-name{font-size:17px;font-weight:700}
+.side-brand-name span{color:var(--gold)}
+.side-brand-sub{font-size:11px;color:var(--t4);margin-top:2px}
+.side-section{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--t4);font-weight:600;padding:16px 18px 6px}
+.side-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:14px;font-weight:500;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent;user-select:none}
+.side-item:hover{color:var(--t2);background:rgba(128,128,128,.05)}
+.side-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+.side-item .si-ico{width:20px;text-align:center;font-size:15px;flex-shrink:0}
+.side-item .si-arrow{margin-left:auto;font-size:10px;color:var(--t4)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:var(--bg2);border-bottom:1px solid var(--bd);gap:12px;transition:background .25s;flex-shrink:0}
+.top-title{font-size:19px;font-weight:600}
+.top-right{display:flex;align-items:center;gap:10px}
+.top-user{font-size:13px;color:var(--t3);display:flex;align-items:center;gap:7px}
+.top-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#1a1a1a;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.mode-btn{font-family:var(--font);font-size:15px;padding:8px 12px;border-radius:var(--r);cursor:pointer;border:1px solid var(--bd2);background:transparent;color:var(--t3);min-height:38px}
+.mode-btn:active{transform:scale(.95)}
+.content{flex:1;padding:22px 26px;overflow-y:auto}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+.page-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+.page-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px}
+html.light .stat,html.light .pool,html.light .log-panel,html.light .modal{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+html.light .stat{background:var(--bg2)}
+.controls{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.ctrl-group{display:flex;gap:6px;align-items:center}
+.ctrl-label{font-size:12px;color:var(--t3);white-space:nowrap}
+.ctrl-select{font-family:var(--font);font-size:14px;padding:10px 36px 10px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.ctrl-select:focus{outline:none;border-color:var(--gold)}
+.pbtn{font-family:var(--font);font-size:13px;font-weight:500;padding:10px 16px;border-radius:var(--r);border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer;min-height:42px}
+.pbtn.active{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+.btn{font-family:var(--font);font-size:13px;font-weight:500;padding:9px 14px;border-radius:var(--r);cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px;min-height:42px;border:1px solid var(--bd2);background:transparent;color:var(--t3)}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+.btn-gold:active{background:var(--gold-h)}
+.btn-amber{background:var(--amber-bg);border:1px solid var(--amber-b);color:var(--amber)}
+.btn-green{background:var(--green-bg);border:1px solid var(--green-b);color:var(--green)}
+.btn-outline{border:1px solid var(--bd2);color:var(--t3)}
+
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
+.stat{background:var(--bg4);border-radius:var(--r);padding:12px 8px;text-align:center;border:1px solid var(--bd)}
+.stat-n{font-size:18px;font-weight:600}
+.stat-l{font-size:10px;color:var(--t3);margin-top:2px}
+
+.section-title{font-size:14px;font-weight:500;color:var(--t3);margin:14px 0 8px 2px}
+
+.pools{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:14px}
+.pool{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:12px 14px;position:relative;overflow:hidden}
+.pool::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.pool-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.pool-karat{font-size:15px;font-weight:600}
+.pool-weight{font-size:13px;font-weight:500;color:var(--t2)}
+.pool-row{display:flex;justify-content:space-between;font-size:11px;padding:2px 0}
+.pool-row-l{color:var(--t4)}
+.pool-row-v{color:var(--t3);font-weight:500}
+
+.log-panel{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden}
+.log-head{padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.log-title{font-size:14px;font-weight:500;color:var(--t3)}
+.log-controls{display:flex;gap:6px;align-items:center}
+.log-search{font-family:var(--font);font-size:13px;padding:8px 12px 8px 32px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:180px;-webkit-appearance:none}
+.log-search::placeholder{color:var(--t4)}
+.log-search:focus{outline:none;border-color:var(--gold)}
+.lsw{position:relative}
+.lsw-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t4);font-size:13px;pointer-events:none}
+.log-filter{font-family:var(--font);font-size:13px;padding:8px 30px 8px 10px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);-webkit-appearance:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.log-body{max-height:340px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.log-body::-webkit-scrollbar{width:3px}
+.log-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+.log-cols{display:grid;grid-template-columns:75px 1fr 55px 55px 75px 70px;gap:6px;padding:7px 14px;border-bottom:1px solid var(--bd);font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--t4);font-weight:500}
+.log-row{display:grid;grid-template-columns:75px 1fr 55px 55px 75px 70px;gap:6px;padding:8px 14px;border-bottom:1px solid var(--bd);align-items:center;font-size:12px}
+.log-row:last-child{border-bottom:none}
+.lr-date{color:var(--t3)}
+.lr-desc{color:var(--t1)}
+.lr-sub{font-size:11px;color:var(--t4)}
+.lr-karat{text-align:center;font-weight:500}
+.lr-weight{text-align:center;color:var(--t2)}
+.lr-cost{text-align:right;font-weight:500;color:var(--red)}
+.lr-type{text-align:center}
+.lr-badge{font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px}
+.badge-purchase{background:var(--red-bg);color:var(--red)}
+.badge-melt{background:var(--amber-bg);color:var(--amber)}
+.badge-stock{background:var(--green-bg);color:var(--green)}
+.log-empty{padding:30px;text-align:center;color:var(--t4);font-size:13px}
+
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;justify-content:center;align-items:center;padding:20px}
+.mo.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:460px;max-height:90vh;overflow-y:auto}
+.mh{padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1}
+.mh-title{font-size:16px;font-weight:600}
+.mh-x{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:4px 8px;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.mh-x:active{background:var(--bg5);color:var(--t1)}
+.mb{padding:18px}
+.fg{margin-bottom:12px}
+.fg label{font-size:12px;color:var(--t3);display:block;margin-bottom:4px;font-weight:500}
+.fg input,.fg select,.fg textarea{font-family:var(--font);font-size:14px;padding:10px 12px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:100%;-webkit-appearance:none}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--blue)}
+.fg select{appearance:auto;-webkit-appearance:auto}
+.fg textarea{resize:vertical;min-height:60px;line-height:1.5}
+.m-btns{display:flex;gap:8px;margin-top:16px}
+.m-btns .btn{flex:1;justify-content:center;padding:13px;font-size:14px}
+
+.melt-pool-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg4);border-radius:var(--r);margin-bottom:4px;font-size:13px}
+.melt-pool-k{font-weight:600;color:var(--t1)}
+.melt-pool-w{color:var(--t3)}
+.melt-pool-c{color:var(--red);font-weight:500}
+.melt-total-box{background:var(--amber-bg);border:1px solid var(--amber-b);border-radius:var(--r);padding:12px 14px;margin:12px 0;display:flex;justify-content:space-between;font-size:15px;font-weight:600}
+.melt-total-label{color:var(--amber)}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#fff;color:#1a1a1a;padding:14px 28px;border-radius:var(--r);font-size:14px;font-weight:500;font-family:var(--font);box-shadow:0 8px 30px rgba(0,0,0,.4);opacity:0;transition:all .35s;z-index:200;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:700px){.stats{grid-template-columns:repeat(3,1fr)}.pools{grid-template-columns:repeat(2,1fr)}.log-cols,.log-row{grid-template-columns:60px 1fr 45px 45px 65px 60px}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="side-brand">
+    <div class="side-brand-name">Gold <span>Jewelry</span> POS</div>
+    <div class="side-brand-sub">Management System</div>
+  </div>
+  <div class="side-section">Main</div>
+  <div class="side-item"><span class="si-ico">🏠</span> Dashboard</div>
+  <div class="side-item"><span class="si-ico">📊</span> Reports <span class="si-arrow">▼</span></div>
+  <div class="side-item"><span class="si-ico">📦</span> Inventory</div>
+  <div class="side-item"><span class="si-ico">🏷️</span> Pricing</div>
+  <div class="side-item"><span class="si-ico">👥</span> Customers</div>
+  <div class="side-item active"><span class="si-ico"><svg width="17" height="13" viewBox="0 0 16 12" fill="none"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/></svg></span> Used gold</div>
+  <div class="side-item"><span class="si-ico">↩️</span> Returns management</div>
+  <div class="side-item"><span class="si-ico">💼</span> Staff</div>
+  <div class="side-section">System</div>
+  <div class="side-item"><span class="si-ico">🖥️</span> POS</div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <span class="top-title">Used gold</span>
+    <div class="top-right">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()">☀️</button>
+      <span class="top-user"><span class="top-avatar">AD</span> user1@example.com</span>
+    </div>
+  </div>
+  <div class="content">
+  <div class="page-head">
+    <span class="page-title"><svg width="20" height="15" viewBox="0 0 16 12" fill="none"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/></svg> Used gold inventory</span>
+    <div class="hdr-actions">
+      <button class="btn btn-green" onclick="openM('stockM')">📦 Return to stock</button>
+      <button class="btn btn-amber" onclick="openMelt()">🔥 Send to melt</button>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="ctrl-group"><span class="ctrl-label">Period:</span>
+      <button class="pbtn active" id="btnMonth" onclick="setPeriod('month')">Month</button>
+      <button class="pbtn" id="btnYear" onclick="setPeriod('year')">Year</button>
+      <button class="pbtn" id="btnAll" onclick="setPeriod('all')">All time</button>
+    </div>
+    <div class="ctrl-group" id="monthPicker">
+      <select class="ctrl-select" id="selMonth"></select>
+      <select class="ctrl-select" id="selYear"></select>
+    </div>
+  </div>
+  <div class="stats" id="statsRow"></div>
+  <div class="section-title">Gold pools — what's in the drawer</div>
+  <div class="pools" id="poolsGrid"></div>
+  <div id="otherSection" style="display:none">
+    <div class="section-title">Other purities — odd buys (9K, 23K, ...)</div>
+    <div class="pools" id="otherPools"></div>
+  </div>
+  <div class="section-title">History</div>
+  <div class="log-panel">
+    <div class="log-head">
+      <span class="log-title" id="logCount">0 entries</span>
+      <div class="log-controls">
+        <div class="lsw"><span class="lsw-ico">⌕</span><input type="text" class="log-search" id="logSearch" placeholder="Search..." oninput="renderLog()" autocomplete="off"></div>
+        <select class="log-filter" id="logFilter" onchange="renderLog()"><option value="all">All</option><option value="purchase">Purchases</option><option value="melt">Melts</option><option value="stock">Returned to stock</option></select>
+      </div>
+    </div>
+    <div class="log-cols"><span>Date</span><span>Description</span><span style="text-align:center">Karat</span><span style="text-align:center">Weight</span><span style="text-align:right">Cost</span><span style="text-align:center">Type</span></div>
+    <div class="log-body" id="logBody"></div>
+  </div>
+  </div>
+</div>
+<!-- Melt Modal -->
+<div class="mo" id="meltM">
+  <div class="modal">
+    <div class="mh"><span class="mh-title">🔥 Send to melt</span><button class="mh-x" onclick="closeM('meltM')">✕</button></div>
+    <div class="mb">
+      <div style="font-size:13px;color:var(--t3);margin-bottom:12px">Everything in the drawer goes to the dealer as a mixed bag. Enter the bag weight to confirm.</div>
+      <div id="meltPoolList"></div>
+      <div id="meltTotalBox"></div>
+      <div class="fg"><label>Bag weight (grams) *</label><input type="number" id="meltWeight" value="" min="0" step="any" inputmode="decimal" placeholder="Weigh the bag and enter here" oninput="updateMeltBtn()"></div>
+      <div class="fg"><label>Dealer / Notes</label><textarea id="meltNotes" placeholder="e.g. Sent to ABC Gold"></textarea></div>
+      <div class="m-btns">
+        <button class="btn btn-amber" id="meltBtn" onclick="confirmMelt()" disabled>Enter bag weight</button>
+        <button class="btn btn-outline" onclick="closeM('meltM')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Return to Stock Modal -->
+<div class="mo" id="stockM">
+  <div class="modal">
+    <div class="mh"><span class="mh-title">📦 Return to stock</span><button class="mh-x" onclick="closeM('stockM')">✕</button></div>
+    <div class="mb">
+      <div style="font-size:13px;color:var(--t3);margin-bottom:12px">Move used gold back to display inventory for sale. Enter the karat and weight.</div>
+      <div class="fg"><label>Karat *</label><select id="stockKarat"><option value="">Select karat</option></select></div>
+      <div id="stockAvail" style="font-size:12px;color:var(--t4);margin:-8px 0 12px 2px"></div>
+      <div class="fg"><label>Weight (grams) *</label><input type="number" id="stockWeight" value="" min="0" step="any" inputmode="decimal" placeholder="0.00"></div>
+      <div class="fg"><label>Notes</label><input type="text" id="stockNotes" placeholder="e.g. 21K ring for display"></div>
+      <div class="m-btns">
+        <button class="btn btn-gold" onclick="confirmStock()">Return to stock</button>
+        <button class="btn btn-outline" onclick="closeM('stockM')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+
+var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var KC={24:'#D4A017',22:'#C9952A',21:'#BF8C30',18:'#B28535',14:'#A07A3B',10:'#8C6D3F'};
+function getKBg(k){return KC[k]||'#7D6340'}
+var STANDARD_KARATS=[24,22,21,18,14,10];
+function allKarats(){return Object.keys(pools).map(Number).sort(function(a,b){return b-a})}
+
+// Pools: weight and cost per karat
+// pools are derived from the history log: invested = sum of purchases,
+// weight/cost = purchases minus melt shares and stock returns
+var pools={24:{weight:23.60,cost:2124.00,totalInvested:2124.00},22:{weight:5.17,cost:423.94,totalInvested:861.00},21:{weight:105.29,cost:18731.65,totalInvested:22564.65},18:{weight:65.30,cost:9762.50,totalInvested:14367.00},14:{weight:18.60,cost:2232.00,totalInvested:2232.00},10:{weight:5.80,cost:551.00,totalInvested:551.00},9:{weight:3.20,cost:96.00,totalInvested:96.00}};
+
+// History log
+var hLog=[
+  {id:101,date:'2026-06-10',type:'purchase',desc:'Cameron Campbell',notes:'21K ring',karat:21,weight:4.20,cost:735.00},
+  {id:102,date:'2026-06-08',type:'purchase',desc:'Logan Mason',notes:'18K bracelet',karat:18,weight:9.60,cost:1392.00},
+  {id:103,date:'2026-06-05',type:'purchase',desc:'Ellis Shaw',notes:'9K ring — odd purity',karat:9,weight:3.20,cost:96.00},
+  {id:104,date:'2026-06-02',type:'purchase',desc:'Skyler King',notes:'21K chain',karat:21,weight:11.30,cost:1977.50},
+  {id:1,date:'2026-05-16',type:'purchase',desc:'Morgan Hayes',notes:'21K ring',karat:21,weight:5.69,cost:1337.15},
+  {id:2,date:'2026-05-14',type:'purchase',desc:'Noel Morales',notes:'18K chain',karat:18,weight:22.40,cost:3360.00},
+  {id:3,date:'2026-05-12',type:'purchase',desc:'Taylor Ramos',notes:'21K bracelet + ring',karat:21,weight:19.00,cost:3325.00},
+  {id:4,date:'2026-05-10',type:'purchase',desc:'Jesse Simmons',notes:'24K chain broken',karat:24,weight:15.20,cost:1368.00},
+  {id:5,date:'2026-05-08',type:'purchase',desc:'Robin Freeman',notes:'18K earrings pair',karat:18,weight:8.30,cost:1245.00},
+  {id:6,date:'2026-05-06',type:'purchase',desc:'Peyton Young',notes:'21K 3 rings',karat:21,weight:12.40,cost:2170.00},
+  {id:7,date:'2026-05-04',type:'purchase',desc:'Casey Jenkins',notes:'14K chain',karat:14,weight:18.60,cost:2232.00},
+  {id:8,date:'2026-05-02',type:'purchase',desc:'Sydney Long',notes:'21K pendant',karat:21,weight:4.80,cost:840.00},
+  {id:9,date:'2026-04-28',type:'purchase',desc:'Morgan Hayes',notes:'18K bracelet',karat:18,weight:14.20,cost:2130.00},
+  {id:10,date:'2026-04-25',type:'purchase',desc:'Jesse Simmons',notes:'22K chain',karat:22,weight:10.50,cost:861.00},
+  {id:11,date:'2026-04-22',type:'purchase',desc:'Taylor Ramos',notes:'21K ring',karat:21,weight:6.30,cost:1102.50},
+  {id:12,date:'2026-04-20',type:'purchase',desc:'Noel Morales',notes:'24K pendant',karat:24,weight:8.40,cost:756.00},
+  {id:13,date:'2026-04-18',type:'purchase',desc:'Robin Freeman',notes:'10K ring',karat:10,weight:5.80,cost:551.00},
+  {id:14,date:'2026-04-15',type:'purchase',desc:'Casey Jenkins',notes:'18K mixed 2 items',karat:18,weight:11.60,cost:1740.00},
+  {id:15,date:'2026-04-10',type:'purchase',desc:'Peyton Young',notes:'21K bracelet',karat:21,weight:16.80,cost:2940.00},
+  {id:16,date:'2026-04-05',type:'purchase',desc:'Jesse Simmons',notes:'21K chain heavy',karat:21,weight:32.50,cost:5687.50},
+  {id:17,date:'2026-04-08',type:'melt',desc:'Melt batch',notes:'Sent to ABC Gold — mixed bag',karat:'mixed',weight:44.00,cost:6950.00},
+  {id:18,date:'2026-03-28',type:'purchase',desc:'Morgan Hayes',notes:'18K ring + earring',karat:18,weight:9.70,cost:1455.00},
+  {id:19,date:'2026-03-22',type:'purchase',desc:'Taylor Ramos',notes:'21K bracelet',karat:21,weight:14.00,cost:2450.00},
+  {id:20,date:'2026-03-15',type:'purchase',desc:'Noel Morales',notes:'18K chain',karat:18,weight:20.30,cost:3045.00},
+  {id:21,date:'2026-03-12',type:'stock',desc:'Return to stock',notes:'21K ring set for display',karat:21,weight:8.50,cost:1487.50},
+  {id:22,date:'2026-03-06',type:'stock',desc:'Return to stock',notes:'22K pendant display piece',karat:22,weight:5.33,cost:437.06},
+];
+var nextHistId=23;
+
+var period='month',selMonth=5,selYear=2026;
+
+(function(){var ms=document.getElementById('selMonth');MONTHS.forEach(function(m,i){var o=document.createElement('option');o.value=i;o.textContent=m;if(i===5)o.selected=true;ms.appendChild(o)});var ys=document.getElementById('selYear');[2026,2025].forEach(function(y){var o=document.createElement('option');o.value=y;o.textContent=y;ys.appendChild(o)})})();
+document.getElementById('selMonth').addEventListener('change',function(e){selMonth=+e.target.value;render()});
+document.getElementById('selYear').addEventListener('change',function(e){selYear=+e.target.value;render()});
+
+function fmt(n){return'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fmtS(n){return'$'+Math.round(Math.abs(n)).toLocaleString()}
+function getM(d){return+d.split('-')[1]-1}
+function getY(d){return+d.split('-')[0]}
+function fmtD(d){var p=d.split('-');return MONTHS[+p[1]-1]+' '+parseInt(p[2])}
+function today(){return '2026-06-11'}
+function showToast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},3500)}
+function openM(id){document.getElementById(id).classList.add('show');if(id==='stockM')populateStockKarats()}
+function closeM(id){document.getElementById(id).classList.remove('show')}
+function setPeriod(p){period=p;document.querySelectorAll('.pbtn').forEach(function(b){b.classList.remove('active')});document.getElementById('btn'+p.charAt(0).toUpperCase()+p.slice(1)).classList.add('active');document.getElementById('monthPicker').style.display=p==='month'?'flex':'none';render()}
+
+function getFilteredHistory(){
+  if(period==='all')return hLog.slice();
+  return hLog.filter(function(h){
+    if(period==='month')return getM(h.date)===selMonth&&getY(h.date)===selYear;
+    return getY(h.date)===selYear;
+  });
+}
+
+function getTotalOnHand(){return allKarats().reduce(function(s,k){return s+pools[k].weight},0)}
+function getCurrentValue(){return allKarats().reduce(function(s,k){return s+pools[k].cost},0)}
+function getTotalInvested(){return allKarats().reduce(function(s,k){return s+pools[k].totalInvested},0)}
+
+function getAvgPurity(){
+  var tw=getTotalOnHand();
+  if(tw===0)return 0;
+  return allKarats().reduce(function(s,k){return s+k*pools[k].weight},0)/tw;
+}
+
+function render(){
+  var filtered=getFilteredHistory();
+  var totalWeight=getTotalOnHand();
+  var currentValue=getCurrentValue();
+  var totalInvested=getTotalInvested();
+  var avgPurity=getAvgPurity();
+  var periodPurchases=filtered.filter(function(h){return h.type==='purchase'});
+  var periodSpent=periodPurchases.reduce(function(s,h){return s+h.cost},0);
+  var periodLabel=period==='month'?MONTHS[selMonth]+' '+selYear:period==='year'?''+selYear:'All time';
+
+  document.getElementById('statsRow').innerHTML=
+    '<div class="stat"><div class="stat-n" style="color:var(--gold)">'+totalWeight.toFixed(1)+'g</div><div class="stat-l">On hand</div></div>'+
+    '<div class="stat"><div class="stat-n" style="color:var(--amber)">'+avgPurity.toFixed(1)+'K</div><div class="stat-l">Avg purity</div></div>'+
+    '<div class="stat"><div class="stat-n" style="color:var(--green)">'+fmtS(currentValue)+'</div><div class="stat-l">Value on hand</div></div>'+
+    '<div class="stat"><div class="stat-n" style="color:var(--red)">'+fmtS(totalInvested)+'</div><div class="stat-l">Total invested</div></div>'+
+    '<div class="stat"><div class="stat-n" style="color:var(--blue)">'+fmtS(periodSpent)+'</div><div class="stat-l">Spent ('+periodLabel+')</div></div>'+
+    '<div class="stat"><div class="stat-n">'+periodPurchases.length+'</div><div class="stat-l">Purchases ('+periodLabel+')</div></div>';
+
+  // Pools — standard grid + other purities section
+  function poolCard(k){
+    var p=pools[k];
+    var avg=p.weight>0?(p.cost/p.weight):0;
+    var bg=getKBg(k);
+    if(p.weight<=0)return'<div class="pool" style="opacity:.35"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+bg+'"></div><div class="pool-head"><span class="pool-karat">'+k+'K</span><span class="pool-weight">0g</span></div><div class="pool-row"><span class="pool-row-l">Empty</span><span class="pool-row-v">\u2014</span></div></div>';
+    return'<div class="pool"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+bg+'"></div><div class="pool-head"><span class="pool-karat">'+k+'K</span><span class="pool-weight">'+p.weight.toFixed(1)+'g</span></div><div class="pool-row"><span class="pool-row-l">Avg $/g</span><span class="pool-row-v">$'+avg.toFixed(2)+'</span></div><div class="pool-row"><span class="pool-row-l">Value</span><span class="pool-row-v">'+fmtS(p.cost)+'</span></div></div>';
+  }
+  document.getElementById('poolsGrid').innerHTML=STANDARD_KARATS.map(poolCard).join('');
+  var others=allKarats().filter(function(k){return STANDARD_KARATS.indexOf(k)===-1});
+  var otherSec=document.getElementById('otherSection');
+  if(others.length){
+    otherSec.style.display='';
+    document.getElementById('otherPools').innerHTML=others.map(poolCard).join('');
+  }else{
+    otherSec.style.display='none';
+  }
+
+  renderLog();
+}
+
+function renderLog(){
+  var q=(document.getElementById('logSearch').value||'').toLowerCase();
+  var filter=document.getElementById('logFilter').value;
+  var filtered=getFilteredHistory();
+  if(filter!=='all')filtered=filtered.filter(function(h){return h.type===filter});
+  if(q)filtered=filtered.filter(function(h){return h.desc.toLowerCase().indexOf(q)!==-1||h.notes.toLowerCase().indexOf(q)!==-1});
+
+  filtered.sort(function(a,b){return b.date.localeCompare(a.date)||b.id-a.id});
+  document.getElementById('logCount').textContent=filtered.length+' entr'+(filtered.length!==1?'ies':'y');
+  var body=document.getElementById('logBody');
+  if(!filtered.length){body.innerHTML='<div class="log-empty">No entries found</div>';return}
+
+  body.innerHTML=filtered.map(function(h){
+    var kLabel=h.karat==='mixed'?'Mixed':(typeof h.karat==='number'?h.karat+'K':'—');
+    var badge='',costColor='var(--red)';
+    if(h.type==='purchase')badge='<span class="lr-badge badge-purchase">BUY</span>';
+    else if(h.type==='melt'){badge='<span class="lr-badge badge-melt">MELT</span>';costColor='var(--amber)'}
+    else if(h.type==='stock'){badge='<span class="lr-badge badge-stock">STOCK</span>';costColor='var(--green)'}
+    return'<div class="log-row"><div class="lr-date">'+fmtD(h.date)+'</div><div><div class="lr-desc">'+h.desc+'</div><div class="lr-sub">'+h.notes+'</div></div><div class="lr-karat">'+kLabel+'</div><div class="lr-weight">'+h.weight.toFixed(1)+'g</div><div class="lr-cost" style="color:'+costColor+'">'+fmt(h.cost)+'</div><div class="lr-type">'+badge+'</div></div>';
+  }).join('');
+}
+
+// ═══ MELT ═══
+function openMelt(){
+  var tw=getTotalOnHand();
+  if(tw<=0){showToast('No gold to melt');return}
+  var lines='';
+  allKarats().forEach(function(k){
+    var p=pools[k];
+    if(p.weight<=0)return;
+    lines+='<div class="melt-pool-row"><span class="melt-pool-k">'+k+'K</span><span class="melt-pool-w">'+p.weight.toFixed(2)+'g</span><span class="melt-pool-c">'+fmtS(p.cost)+'</span></div>';
+  });
+  document.getElementById('meltPoolList').innerHTML=lines;
+  var cv=getCurrentValue();
+  document.getElementById('meltTotalBox').innerHTML='<div class="melt-total-box"><span class="melt-total-label">Total in drawer</span><span style="color:var(--t1)">'+tw.toFixed(2)+'g — '+fmtS(cv)+'</span></div>';
+  document.getElementById('meltWeight').value='';
+  document.getElementById('meltNotes').value='';
+  document.getElementById('meltBtn').disabled=true;
+  document.getElementById('meltBtn').textContent='Enter bag weight';
+  openM('meltM');
+}
+
+function updateMeltBtn(){
+  var w=parseFloat(document.getElementById('meltWeight').value)||0;
+  var btn=document.getElementById('meltBtn');
+  var tw=getTotalOnHand();
+  if(w<=0){btn.disabled=true;btn.textContent='Enter bag weight'}
+  else if(w>tw+0.5){btn.disabled=true;btn.textContent='Weight exceeds '+tw.toFixed(1)+'g on hand'}
+  else{btn.disabled=false;btn.textContent='Confirm melt — '+w.toFixed(2)+'g'}
+}
+
+function confirmMelt(){
+  var bagWeight=parseFloat(document.getElementById('meltWeight').value)||0;
+  if(bagWeight<=0)return;
+  var tw=getTotalOnHand();
+  var cv=getCurrentValue();
+  var notes=document.getElementById('meltNotes').value.trim();
+  var ratio=Math.min(bagWeight/tw,1);
+
+  // Deduct proportionally from all pools
+  var totalCostRemoved=0;
+  allKarats().forEach(function(k){
+    var p=pools[k];
+    if(p.weight<=0)return;
+    var removeWeight=p.weight*ratio;
+    var removeCost=p.cost*ratio;
+    p.weight=Math.max(0,p.weight-removeWeight);
+    p.cost=Math.max(0,p.cost-removeCost);
+    totalCostRemoved+=removeCost;
+  });
+
+  hLog.unshift({id:nextHistId++,date:today(),type:'melt',desc:'Melt batch',notes:notes||'Mixed bag sent to dealer',karat:'mixed',weight:bagWeight,cost:totalCostRemoved});
+  closeM('meltM');
+  showToast('🔥 Sent '+bagWeight.toFixed(2)+'g to melt — '+fmtS(totalCostRemoved)+' value');
+  render();
+}
+
+// ═══ RETURN TO STOCK ═══
+function populateStockKarats(){
+  var sel=document.getElementById('stockKarat');
+  sel.innerHTML='<option value="">Select karat</option>';
+  allKarats().forEach(function(k){
+    if(pools[k].weight>0){
+      sel.innerHTML+='<option value="'+k+'">'+k+'K ('+pools[k].weight.toFixed(2)+'g available)</option>';
+    }
+  });
+  document.getElementById('stockAvail').textContent='';
+  document.getElementById('stockWeight').value='';
+  document.getElementById('stockNotes').value='';
+}
+
+document.getElementById('stockKarat').addEventListener('change',function(){
+  var k=parseInt(this.value);
+  if(k&&pools[k]){
+    document.getElementById('stockAvail').textContent='Available: '+pools[k].weight.toFixed(2)+'g at $'+(pools[k].cost/pools[k].weight).toFixed(2)+'/g';
+  }else{document.getElementById('stockAvail').textContent=''}
+});
+
+function confirmStock(){
+  var k=parseInt(document.getElementById('stockKarat').value);
+  var w=parseFloat(document.getElementById('stockWeight').value)||0;
+  var notes=document.getElementById('stockNotes').value.trim();
+  if(!k){showToast('Select a karat');return}
+  if(w<=0){showToast('Enter weight');return}
+  if(w>pools[k].weight+0.01){showToast('Only '+pools[k].weight.toFixed(2)+'g of '+k+'K available');return}
+
+  var avg=pools[k].cost/pools[k].weight;
+  var costRemoved=avg*w;
+  pools[k].weight=Math.max(0,pools[k].weight-w);
+  pools[k].cost=Math.max(0,pools[k].cost-costRemoved);
+
+  hLog.unshift({id:nextHistId++,date:today(),type:'stock',desc:'Return to stock',notes:notes||k+'K returned to display',karat:k,weight:w,cost:costRemoved});
+  closeM('stockM');
+  showToast('✓ '+w.toFixed(2)+'g '+k+'K returned to stock');
+  render();
+}
+
+document.querySelectorAll('.mo').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)closeM(m.id)})});
+render();
+
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

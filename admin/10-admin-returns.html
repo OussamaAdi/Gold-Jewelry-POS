@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Returns Management</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);--gold-b:rgba(212,160,23,.35);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);--green-b:rgba(76,175,124,.3);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);--red-b:rgba(230,91,91,.3);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);--blue-b:rgba(91,163,230,.3);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);--amber-b:rgba(230,162,60,.35);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);--gold-b:rgba(184,134,11,.3);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);--green-b:rgba(46,139,95,.3);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);--red-b:rgba(207,68,68,.3);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);--blue-b:rgba(61,127,196,.3);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);--amber-b:rgba(196,130,26,.35);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);min-height:100vh;display:flex;-webkit-tap-highlight-color:transparent;transition:background .25s,color .25s}
+.sidebar{width:222px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;transition:background .25s}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(128,128,128,.2)}
+.side-brand{height:64px;padding:0 18px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--bd)}
+.side-brand-name{font-size:17px;font-weight:700}
+.side-brand-name span{color:var(--gold)}
+.side-brand-sub{font-size:11px;color:var(--t4);margin-top:2px}
+.side-section{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--t4);font-weight:600;padding:16px 18px 6px}
+.side-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:14px;font-weight:500;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent;user-select:none}
+.side-item:hover{color:var(--t2);background:rgba(128,128,128,.05)}
+.side-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+.side-item .si-ico{width:20px;text-align:center;font-size:15px;flex-shrink:0}
+.side-item .si-arrow{margin-left:auto;font-size:10px;color:var(--t4)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;height:100dvh}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:var(--bg2);border-bottom:1px solid var(--bd);gap:12px;transition:background .25s;flex-shrink:0}
+.top-title{font-size:19px;font-weight:600}
+.top-right{display:flex;align-items:center;gap:10px}
+.top-user{font-size:13px;color:var(--t3);display:flex;align-items:center;gap:7px}
+.top-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#1a1a1a;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.mode-btn{font-family:var(--font);font-size:15px;padding:8px 12px;border-radius:var(--r);cursor:pointer;border:1px solid var(--bd2);background:transparent;color:var(--t3);min-height:38px}
+.mode-btn:active{transform:scale(.95)}
+.content{flex:1;padding:18px 26px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.app{flex:1;display:flex;flex-direction:column;min-height:0;width:100%}
+.page-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-shrink:0}
+.page-title{font-size:16px;font-weight:600}
+html.light .item-row,html.light .print-bar{box-shadow:0 1px 2px rgba(0,0,0,.05)}
+html.light .item-row{border-color:#c9c9cf}
+.btn{font-family:var(--font);font-size:13px;font-weight:500;padding:9px 14px;border-radius:var(--r);cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px;min-height:42px;border:1px solid var(--bd2);background:transparent;color:var(--t3)}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+.btn-gold:active{background:var(--gold-h)}
+.btn-gold:disabled{background:var(--bg5);border-color:var(--bg5);color:var(--t4);cursor:not-allowed}
+.btn-outline{border:1px solid var(--bd2);color:var(--t3)}
+
+.controls{display:flex;gap:8px;margin-bottom:10px;flex-shrink:0;align-items:center;flex-wrap:wrap}
+.view-tabs{display:flex;gap:6px}
+.view-tab{font-family:var(--font);font-size:13px;font-weight:500;padding:9px 14px;border-radius:var(--r);border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer;min-height:42px;display:inline-flex;align-items:center;gap:6px}
+.view-tab.active{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+.vt-count{font-size:11px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.1)}
+.view-tab.active .vt-count{background:rgba(0,0,0,.15)}
+.search-wrap{flex:1;position:relative;min-width:180px}
+.search-input{width:100%;font-family:var(--font);font-size:14px;padding:10px 14px 10px 38px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);-webkit-appearance:none}
+.search-input::placeholder{color:var(--t4)}
+.search-input:focus{outline:none;border-color:var(--gold)}
+.search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--t4);font-size:15px;pointer-events:none}
+.sort-btn{font-family:var(--font);font-size:13px;font-weight:500;padding:9px 14px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t2);cursor:pointer;min-height:42px;display:inline-flex;align-items:center;gap:6px}
+.sort-btn:active{transform:scale(.97)}
+
+/* Print action bar */
+.print-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--gold-bg);border:1px solid var(--gold-b);border-radius:var(--rl);margin-bottom:10px;flex-shrink:0}
+.print-bar-info{font-size:13px;color:var(--gold);font-weight:500}
+.print-bar-actions{display:flex;gap:6px}
+
+/* List */
+.list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0}
+.list::-webkit-scrollbar{width:3px}
+.list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+.date-group{margin-bottom:14px}
+.date-head{display:flex;align-items:center;gap:10px;padding:4px 2px 8px;position:sticky;top:0;background:var(--bg);z-index:5}
+.date-title{font-size:13px;font-weight:600;color:var(--t2)}
+.date-count{font-size:11px;color:var(--t4)}
+.date-line{flex:1;height:1px;background:var(--bd)}
+.date-selectall{font-family:var(--font);font-size:11px;font-weight:500;padding:4px 10px;border-radius:6px;border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer}
+.date-selectall:active{background:var(--gold-bg);color:var(--gold);border-color:var(--gold)}
+
+.item-row{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;transition:border-color .15s}
+.item-row.checked{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.item-row.printed{opacity:.75}
+.item-cb{width:22px;height:22px;border-radius:6px;border:2px solid var(--bd2);background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .15s}
+.item-row.checked .item-cb{background:var(--gold);border-color:var(--gold)}
+.item-cb svg{opacity:0;transition:opacity .15s}
+.item-row.checked .item-cb svg{opacity:1}
+.item-cb.disabled{border-color:var(--bg5);cursor:not-allowed}
+
+.item-main{flex:1;min-width:0;cursor:pointer}
+.item-name{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.item-meta{font-size:12px;color:var(--t3);margin-top:2px}
+.item-meta .sku{font-family:'SF Mono','Fira Code',monospace;font-size:11px}
+.item-cust{font-size:12px;color:var(--t4);margin-top:2px}
+
+.badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;white-space:nowrap}
+.badge-printed{background:var(--green-bg);color:var(--green)}
+.badge-needs{background:var(--amber-bg);color:var(--amber)}
+.badge-melt{background:var(--red-bg);color:var(--red)}
+.badge-cond{background:var(--bg4);color:var(--t3)}
+
+.item-right{text-align:right;flex-shrink:0}
+.item-amt{font-size:14px;font-weight:600;color:var(--red)}
+.item-time{font-size:11px;color:var(--t4);margin-top:2px}
+.item-print-one{font-family:var(--font);font-size:11px;font-weight:500;padding:5px 10px;border-radius:6px;border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer;margin-top:4px}
+.item-print-one:active{background:var(--gold-bg);color:var(--gold);border-color:var(--gold)}
+
+.list-empty{text-align:center;padding:50px 20px;color:var(--t4);font-size:14px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#fff;color:#1a1a1a;padding:14px 28px;border-radius:var(--r);font-size:14px;font-weight:500;font-family:var(--font);box-shadow:0 8px 30px rgba(0,0,0,.4);opacity:0;transition:all .35s;z-index:200;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="side-brand">
+    <div class="side-brand-name">Gold <span>Jewelry</span> POS</div>
+    <div class="side-brand-sub">Management System</div>
+  </div>
+  <div class="side-section">Main</div>
+  <div class="side-item"><span class="si-ico">🏠</span> Dashboard</div>
+  <div class="side-item"><span class="si-ico">📊</span> Reports <span class="si-arrow">▼</span></div>
+  <div class="side-item"><span class="si-ico">📦</span> Inventory</div>
+  <div class="side-item"><span class="si-ico">🏷️</span> Pricing</div>
+  <div class="side-item"><span class="si-ico">👥</span> Customers</div>
+  <div class="side-item"><span class="si-ico"><svg width="17" height="13" viewBox="0 0 16 12" fill="none"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/></svg></span> Used gold</div>
+  <div class="side-item active"><span class="si-ico">↩️</span> Returns management</div>
+  <div class="side-item"><span class="si-ico">💼</span> Staff</div>
+  <div class="side-section">System</div>
+  <div class="side-item"><span class="si-ico">🖥️</span> POS</div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <span class="top-title">Returns management</span>
+    <div class="top-right">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()">☀️</button>
+      <span class="top-user"><span class="top-avatar">AD</span> user1@example.com</span>
+    </div>
+  </div>
+  <div class="content">
+  <div class="app">
+  <div class="page-head"><span class="page-title">🏷️ Returned items — tag printing</span></div>
+
+  <div class="controls">
+    <div class="view-tabs">
+      <div class="view-tab active" data-v="needs" onclick="setView('needs')">Needs tags <span class="vt-count" id="cntNeeds">0</span></div>
+      <div class="view-tab" data-v="printed" onclick="setView('printed')">Printed <span class="vt-count" id="cntPrinted">0</span></div>
+      <div class="view-tab" data-v="all" onclick="setView('all')">All returns <span class="vt-count" id="cntAll">0</span></div>
+    </div>
+    <div class="search-wrap">
+      <span class="search-ico">⌕</span>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search item, SKU, customer, receipt..." oninput="render()" autocomplete="off">
+    </div>
+    <button class="sort-btn" id="sortBtn" onclick="toggleSort()">↓ Newest first</button>
+  </div>
+
+  <div class="print-bar" id="printBar" style="display:none">
+    <span class="print-bar-info" id="printBarInfo"></span>
+    <div class="print-bar-actions">
+      <button class="btn btn-gold" id="printBtn" onclick="printSelected()">🖨️ Print tags</button>
+      <button class="btn btn-outline" onclick="clearSelection()">Clear</button>
+    </div>
+  </div>
+
+  <div class="list" id="list" style="flex:1;overflow-y:auto;min-height:0"></div>
+  </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+
+var TODAY=new Date('2026-06-11');
+var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// Returned items — destination 'stock' items need tags; 'melt' items never get tags
+var items=[
+  {id:1,name:'Quarter Lira Ring',sku:'RG260482',karat:21,weight:'3.78g',qty:2,amount:1776.60,customer:'Jesse Simmons',phone:'7805550101',receipt:'SALE-20260414-0010',date:'2026-06-11',time:'10:42 AM',reason:'Changed mind',condition:'Good',dest:'stock',printed:false,printedDate:null},
+  {id:2,name:'Sonbli Bracelet',sku:'BC260222',karat:18,weight:'11.29g',qty:1,amount:2314.45,customer:'Jesse Simmons',phone:'7805550101',receipt:'SALE-20260414-0010',date:'2026-06-11',time:'10:42 AM',reason:'Changed mind',condition:'Needs polish',dest:'stock',printed:false,printedDate:null},
+  {id:3,name:'Heart Earrings',sku:'ER260345',karat:21,weight:'3.75g',qty:1,amount:881.25,customer:'Robin Freeman',phone:'7805550192',receipt:'SALE-20260415-0008',date:'2026-06-11',time:'9:15 AM',reason:'Wrong item',condition:'Good',dest:'stock',printed:false,printedDate:null},
+  {id:4,name:'Star Earrings',sku:'ER260346',karat:21,weight:'1.71g',qty:1,amount:401.85,customer:'Morgan Hayes',phone:'7805550100',receipt:'SALE-20260417-0002',date:'2026-06-10',time:'4:20 PM',reason:'Defective',condition:'Damaged',dest:'melt',printed:false,printedDate:null},
+  {id:5,name:'Hexagon Bracelet',sku:'BC260218',karat:18,weight:'17.24g',qty:1,amount:3534.20,customer:'Noel Morales',phone:'5875550174',receipt:'SALE-20260410-0007',date:'2026-06-10',time:'1:05 PM',reason:'Size issue',condition:'Good',dest:'stock',printed:true,printedDate:'2026-06-11'},
+  {id:6,name:'Gold Bar Stamp Ring',sku:'RG260481',karat:21,weight:'4.67g',qty:1,amount:1097.45,customer:'Taylor Ramos',phone:'7805550141',receipt:'SALE-20260402-0005',date:'2026-06-09',time:'3:48 PM',reason:'Gift return',condition:'Good',dest:'stock',printed:true,printedDate:'2026-06-10'},
+  {id:7,name:'Flower Earrings',sku:'ER260339',karat:21,weight:'4.08g',qty:1,amount:958.80,customer:'Sydney Long',phone:'7805550102',receipt:'SALE-20260417-0001',date:'2026-06-09',time:'11:30 AM',reason:'Changed mind',condition:'Good',dest:'stock',printed:true,printedDate:'2026-06-10'},
+  {id:8,name:'Rope Chain',sku:'CH260118',karat:18,weight:'8.40g',qty:1,amount:1680.00,customer:'Casey Jenkins',phone:'7805550106',receipt:'SALE-20260520-0019',date:'2026-06-08',time:'5:12 PM',reason:'Not as expected',condition:'Needs polish',dest:'stock',printed:true,printedDate:'2026-06-09'},
+  {id:9,name:'Half Lira Ring',sku:'RG260483',karat:21,weight:'5.02g',qty:1,amount:1179.70,customer:'Peyton Young',phone:'7805550103',receipt:'SALE-20260417-0002',date:'2026-06-07',time:'2:25 PM',reason:'Defective',condition:'Damaged',dest:'melt',printed:false,printedDate:null},
+];
+
+var view='needs';
+var sortDesc=true;
+var selected={};
+
+function fmt(n){return'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function parseD(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])}
+function fmtDate(s){
+  var d=parseD(s);
+  var diff=Math.round((TODAY-d)/864e5);
+  if(diff===0)return'Today';
+  if(diff===1)return'Yesterday';
+  return MONTHS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+}
+function showToast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},3000)}
+
+function setView(v){view=v;selected={};document.querySelectorAll('.view-tab').forEach(function(t){t.classList.toggle('active',t.dataset.v===v)});render()}
+function toggleSort(){sortDesc=!sortDesc;document.getElementById('sortBtn').textContent=sortDesc?'↓ Newest first':'↑ Oldest first';render()}
+
+function getFiltered(){
+  var q=(document.getElementById('searchInput').value||'').toLowerCase();
+  var qph=q.replace(/[^0-9]/g,'');
+  return items.filter(function(it){
+    if(view==='needs'&&(it.printed||it.dest!=='stock'))return false;
+    if(view==='printed'&&!it.printed)return false;
+    if(q){
+      var hit=it.name.toLowerCase().indexOf(q)!==-1||it.sku.toLowerCase().indexOf(q)!==-1||it.customer.toLowerCase().indexOf(q)!==-1||it.receipt.toLowerCase().indexOf(q)!==-1||(qph.length>0&&it.phone.indexOf(qph)!==-1);
+      if(!hit)return false;
+    }
+    return true;
+  });
+}
+
+function render(){
+  // counts
+  document.getElementById('cntNeeds').textContent=items.filter(function(i){return !i.printed&&i.dest==='stock'}).length;
+  document.getElementById('cntPrinted').textContent=items.filter(function(i){return i.printed}).length;
+  document.getElementById('cntAll').textContent=items.length;
+
+  var filtered=getFiltered();
+  filtered.sort(function(a,b){
+    var c=a.date===b.date?0:(a.date<b.date?-1:1);
+    return sortDesc?-c:c;
+  });
+
+  // group by date
+  var groups={};var order=[];
+  filtered.forEach(function(it){
+    if(!groups[it.date]){groups[it.date]=[];order.push(it.date)}
+    groups[it.date].push(it);
+  });
+
+  var list=document.getElementById('list');
+  if(!filtered.length){list.innerHTML='<div class="list-empty">'+(view==='needs'?'No items waiting for tags 🎉':'No items found')+'</div>';updatePrintBar();return}
+
+  list.innerHTML=order.map(function(date){
+    var dayItems=groups[date];
+    var needsInDay=dayItems.filter(function(i){return !i.printed&&i.dest==='stock'});
+    var selectAllBtn=needsInDay.length?'<button class="date-selectall" onclick="selectDay(\''+date+'\')">Select all ('+needsInDay.length+')</button>':'';
+    var rows=dayItems.map(function(it){
+      var canSelect=!it.printed&&it.dest==='stock';
+      var isChecked=!!selected[it.id];
+      var rowCls='item-row'+(isChecked?' checked':'')+(it.printed?' printed':'');
+      var cb=canSelect
+        ?'<div class="item-cb" onclick="toggleSel('+it.id+')"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5.5L4 8.5L11 1.5" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+        :'<div class="item-cb disabled"></div>';
+      var badges='';
+      if(it.printed)badges+='<span class="badge badge-printed">🏷️ TAG PRINTED</span>';
+      else if(it.dest==='stock')badges+='<span class="badge badge-needs">NEEDS TAG</span>';
+      if(it.dest==='melt')badges+='<span class="badge badge-melt">🔥 MELT</span>';
+      badges+='<span class="badge badge-cond">'+it.condition+'</span>';
+      var qtyStr=it.qty>1?' (×'+it.qty+')':'';
+      var printedInfo=it.printed&&it.printedDate?'<div class="item-time">Printed '+fmtDate(it.printedDate)+'</div>':'';
+      var printOne='';
+      if(!it.printed&&it.dest==='stock')printOne='<button class="item-print-one" onclick="printOne('+it.id+')">🖨️ Print</button>';
+      else if(it.printed)printOne='<button class="item-print-one" onclick="reprintOne('+it.id+')">🖨️ Reprint</button>';
+      return'<div class="'+rowCls+'">'+cb+
+        '<div class="item-main" '+(canSelect?'onclick="toggleSel('+it.id+')"':'')+'>'+
+          '<div class="item-name">'+it.name+qtyStr+' '+badges+'</div>'+
+          '<div class="item-meta">'+it.karat+'K · '+it.weight+' · <span class="sku">'+it.sku+'</span> · '+it.reason+'</div>'+
+          '<div class="item-cust">'+it.customer+' · '+it.receipt+'</div>'+
+        '</div>'+
+        '<div class="item-right"><div class="item-amt">−'+fmt(it.amount)+'</div><div class="item-time">'+it.time+'</div>'+printedInfo+printOne+'</div>'+
+      '</div>';
+    }).join('');
+    return'<div class="date-group"><div class="date-head"><span class="date-title">'+fmtDate(date)+'</span><span class="date-count">'+dayItems.length+' item'+(dayItems.length!==1?'s':'')+'</span><div class="date-line"></div>'+selectAllBtn+'</div>'+rows+'</div>';
+  }).join('');
+
+  updatePrintBar();
+}
+
+// ═══ SELECTION ═══
+function toggleSel(id){
+  var it=items.find(function(x){return x.id===id});
+  if(!it||it.printed||it.dest!=='stock')return;
+  if(selected[id])delete selected[id];else selected[id]=true;
+  render();
+}
+function selectDay(date){
+  items.forEach(function(it){
+    if(it.date===date&&!it.printed&&it.dest==='stock')selected[it.id]=true;
+  });
+  render();
+}
+function clearSelection(){selected={};render()}
+function updatePrintBar(){
+  var n=Object.keys(selected).length;
+  var bar=document.getElementById('printBar');
+  if(n===0){bar.style.display='none';return}
+  bar.style.display='flex';
+  document.getElementById('printBarInfo').textContent=n+' item'+(n!==1?'s':'')+' selected for tag printing';
+  document.getElementById('printBtn').textContent='🖨️ Print '+n+' tag'+(n!==1?'s':'');
+}
+
+// ═══ PRINTING ═══
+function todayStr(){return TODAY.getFullYear()+'-'+String(TODAY.getMonth()+1).padStart(2,'0')+'-'+String(TODAY.getDate()).padStart(2,'0')}
+function printSelected(){
+  var ids=Object.keys(selected).map(Number);
+  if(!ids.length)return;
+  ids.forEach(function(id){
+    var it=items.find(function(x){return x.id===id});
+    if(it){it.printed=true;it.printedDate=todayStr()}
+  });
+  selected={};
+  showToast('🖨️ '+ids.length+' tag'+(ids.length!==1?'s':'')+' sent to printer');
+  render();
+}
+function printOne(id){
+  var it=items.find(function(x){return x.id===id});if(!it)return;
+  it.printed=true;it.printedDate=todayStr();
+  delete selected[id];
+  showToast('🖨️ Tag printed — '+it.name+' ('+it.sku+')');
+  render();
+}
+function reprintOne(id){
+  var it=items.find(function(x){return x.id===id});if(!it)return;
+  it.printedDate=todayStr();
+  showToast('🖨️ Tag reprinted — '+it.name+' ('+it.sku+')');
+  render();
+}
+
+render();
+
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

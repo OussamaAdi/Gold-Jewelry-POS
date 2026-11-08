@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Repair Orders</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+/* ═══ LIGHT MODE ═══ */
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);--bd3:rgba(0,0,0,.3);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);--blue-b:rgba(61,127,196,.35);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);--green-b:rgba(46,139,95,.35);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);--red-b:rgba(207,68,68,.35);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);--amber-b:rgba(196,130,26,.35);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);--purple-b:rgba(122,107,204,.35);
+}
+html.light .toast{background:#1f1f1f;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+html.light .modal{border-color:#c9c9cf;box-shadow:0 8px 30px rgba(0,0,0,.15)}
+html.light .modal-overlay{background:rgba(0,0,0,.4)}
+html.light .card,html.light .completed-card,html.light .stat{box-shadow:0 1px 3px rgba(0,0,0,.06)}
+html.light .hdr-icon{background:rgba(0,0,0,.05)}
+html.light .tab-btn:hover,html.light .tab-btn:active,html.light .pay-opt:active{border-color:rgba(0,0,0,.3)}
+body{transition:background .25s,color .25s}
+.mode-btn{font-family:var(--font);font-size:15px;padding:9px 12px;border-radius:var(--r);cursor:pointer;display:inline-flex;align-items:center;min-height:42px;border:1px solid var(--bd2);background:transparent;color:var(--t3);transition:all .12s}
+.mode-btn:active{transform:scale(.95)}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);min-height:100vh;min-height:100dvh;padding:20px;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+.app{max-width:1100px;margin:0 auto}
+
+/* Header */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-icon{width:36px;height:36px;background:rgba(255,255,255,.06);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:18px}
+.hdr-title{font-size:18px;font-weight:600}
+.hdr-count{font-size:13px;color:var(--t3)}
+
+/* Controls */
+.controls{display:flex;gap:8px;margin-bottom:14px;align-items:center}
+.search-wrap{flex:1;position:relative}
+.search-input{width:100%;font-family:var(--font);font-size:15px;padding:12px 14px 12px 40px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);transition:border-color .2s;-webkit-appearance:none}
+.search-input::placeholder{color:var(--t4)}
+.search-input:focus{outline:none;border-color:var(--gold)}
+.search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--t4);font-size:15px;pointer-events:none}
+.filter-select{font-family:var(--font);font-size:14px;padding:12px 38px 12px 14px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);appearance:none;-webkit-appearance:none;cursor:pointer;min-width:145px;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.filter-select:focus{outline:none;border-color:var(--gold)}
+.tab-btn{font-family:var(--font);font-size:13px;font-weight:500;padding:12px 20px;border-radius:var(--r);border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer;transition:all .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.tab-btn:hover,.tab-btn:active{border-color:rgba(255,255,255,.3);color:var(--t2)}
+.tab-btn.active{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.stat{background:var(--bg4);border-radius:var(--r);padding:12px 10px;text-align:center;border:1px solid var(--bd)}
+.stat-num{font-size:20px;font-weight:600}
+.stat-label{font-size:11px;color:var(--t3);margin-top:2px}
+
+/* Board */
+.board{display:grid;gap:12px;transition:all .25s}
+.board.cols-2{grid-template-columns:1fr 1fr}
+.board.cols-1{grid-template-columns:1fr}
+.col{min-width:0}
+.col-border{border-bottom:2.5px solid var(--t4);margin-bottom:8px}
+.col-progress .col-border{border-color:var(--amber)}
+.col-done .col-border{border-color:var(--green)}
+.col-head{font-size:12px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;padding:0 4px 10px;display:flex;justify-content:space-between;align-items:center}
+.col-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+
+/* Cards */
+.card{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;margin-bottom:8px;transition:border-color .15s}
+.card:active{border-color:var(--bd2)}
+.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.card-code{font-size:12px;font-weight:500;color:var(--t3);font-family:'SF Mono','Fira Code',monospace}
+.card-slot{font-size:11px;font-weight:600;padding:3px 10px;border-radius:4px;background:var(--bg5);color:var(--t2)}
+.card-customer{font-size:15px;font-weight:600;margin-bottom:2px}
+.card-phone{font-size:12px;color:var(--t3);margin-bottom:8px}
+.card-notes{font-size:12px;color:var(--t2);line-height:1.6;padding:8px 12px;background:var(--bg4);border-radius:8px;margin-bottom:10px;white-space:pre-wrap}
+.card-row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.card-cost{font-size:14px;font-weight:600}
+.badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:12px;white-space:nowrap}
+.b-overdue{background:var(--red-bg);color:var(--red)}
+.b-today{background:var(--amber-bg);color:var(--amber)}
+.b-upcoming{background:var(--bg5);color:var(--t3)}
+.b-paid{background:var(--green-bg);color:var(--green)}
+.b-unpaid{background:var(--red-bg);color:var(--red)}
+.b-notified{background:var(--green-bg);color:var(--green)}
+.b-notnotified{background:var(--amber-bg);color:var(--amber)}
+.card-waited{font-size:11px;color:var(--t4);margin-top:6px;font-style:italic}
+.card-actions{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)}
+.card-actions-2{display:flex;gap:6px;margin-top:6px}
+.card-actions button,.card-actions-2 button{flex:1;font-size:12px;font-weight:600;font-family:var(--font);padding:10px 4px;border-radius:8px;cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;min-height:44px;-webkit-tap-highlight-color:transparent}
+.act-primary{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(91,163,230,.3)}
+.act-primary:active{background:var(--blue);color:#fff}
+.act-secondary{background:transparent;color:var(--t3);border:1px solid var(--bd2)}
+.act-secondary:active{background:var(--bg5);color:var(--t2)}
+.act-success{background:var(--green-bg);color:var(--green);border:1px solid rgba(76,175,124,.3)}
+.act-success:active{background:var(--green);color:#fff}
+.act-notify{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(230,162,60,.35)}
+.act-notify:active{background:var(--amber);color:#1a1a1a}
+.act-detail{background:transparent;color:var(--t3);border:1px solid var(--bd2)}
+.act-detail:active{background:var(--bg5);color:var(--t2)}
+.empty-col{text-align:center;padding:30px 10px;font-size:13px;color:var(--t4)}
+
+/* Completed */
+.completed-section{margin-top:4px}
+.completed-section.hidden{display:none}
+.completed-card{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;margin-bottom:8px;opacity:.8;transition:opacity .15s}
+.completed-card:active{opacity:1}
+.completed-info{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.completed-detail{font-size:12px;color:var(--t3)}
+.completed-detail span{color:var(--t2);font-weight:500}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;justify-content:center;align-items:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:500px;max-height:90vh;max-height:90dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:6px 10px;border-radius:6px;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center}
+.modal-close:active{background:var(--bg5);color:var(--t1)}
+.modal-body{padding:20px}
+.form-group{margin-bottom:16px}
+.form-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);margin-bottom:6px;font-weight:500;display:block}
+.form-input,.form-textarea{width:100%;font-family:var(--font);font-size:15px;padding:12px 14px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);-webkit-appearance:none}
+.form-input:focus,.form-textarea:focus{outline:none;border-color:var(--blue)}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.6}
+.form-static{font-size:14px;color:var(--t2);padding:8px 0}
+.modal-actions{display:flex;gap:8px;margin-top:20px}
+.modal-actions button{flex:1;font-family:var(--font);font-size:14px;font-weight:600;padding:14px;border-radius:8px;cursor:pointer;transition:all .15s;min-height:48px;-webkit-tap-highlight-color:transparent}
+.btn-save{background:var(--gold);border:none;color:#1a1a1a}
+.btn-save:active{background:var(--gold-h)}
+.btn-cancel-repair{background:var(--red-bg);border:1px solid rgba(230,91,91,.3);color:var(--red)}
+.btn-cancel-repair:active{background:var(--red);color:#fff}
+.btn-close-modal{background:transparent;border:1px solid var(--bd2);color:var(--t3)}
+.btn-close-modal:active{background:var(--bg5);color:var(--t2)}
+
+/* Notify prompt */
+.notify-options{display:flex;gap:10px;margin:16px 0 4px}
+.notify-opt{flex:1;padding:18px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font);-webkit-tap-highlight-color:transparent}
+.notify-opt:active{transform:scale(.97)}
+.notify-opt-yes{border-color:rgba(76,175,124,.35)}
+.notify-opt-yes:active{background:var(--green-bg)}
+.notify-opt-no:active{background:var(--bg5)}
+.notify-opt-icon{font-size:26px;display:block;margin-bottom:6px}
+.notify-opt-label{font-size:14px;font-weight:600;color:var(--t1);display:block}
+.notify-opt-sub{font-size:11px;color:var(--t4);display:block;margin-top:3px}
+
+/* Detail modal */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.detail-label{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--t4);margin-bottom:3px;font-weight:500}
+.detail-value{font-size:14px;color:var(--t1);font-weight:500}
+.detail-notes{margin-top:4px}
+.detail-notes-box{font-size:13px;color:var(--t2);line-height:1.7;padding:12px 14px;background:var(--bg4);border-radius:8px;white-space:pre-wrap}
+.detail-timeline{margin-top:16px}
+.timeline-item{display:flex;gap:12px;padding:8px 0;position:relative}
+.timeline-dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.timeline-line{position:absolute;left:4px;top:22px;bottom:-8px;width:2px;background:var(--bd)}
+.timeline-item:last-child .timeline-line{display:none}
+.timeline-text{font-size:13px;color:var(--t2)}
+.timeline-date{font-size:11px;color:var(--t4);margin-top:1px}
+
+/* Payment modal */
+.pay-options{display:flex;gap:10px;margin-bottom:16px}
+.pay-opt{flex:1;padding:16px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font);min-height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+.pay-opt:active{border-color:rgba(255,255,255,.3)}
+.pay-opt.selected{border-color:var(--green);background:var(--green-bg);box-shadow:0 0 0 1px var(--green)}
+.pay-opt-icon{font-size:24px;display:block;margin-bottom:4px}
+.pay-opt-label{font-size:14px;font-weight:600;color:var(--t1)}
+.pay-opt.selected .pay-opt-label{color:var(--green)}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#fff;color:#1a1a1a;padding:14px 28px;border-radius:var(--r);font-size:14px;font-weight:500;font-family:var(--font);box-shadow:0 8px 30px rgba(0,0,0,.4);opacity:0;transition:all .35s;z-index:200;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(min-width:700px) and (max-width:1200px){
+  body{padding:20px 24px}
+  .app{max-width:100%}
+  .board.cols-2{gap:14px}
+  .card{padding:14px 16px}
+  .card-actions button,.card-actions-2 button{padding:10px 6px;font-size:12px}
+}
+@media(max-width:699px){
+  .board.cols-2{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .controls{flex-wrap:wrap}
+  .search-wrap{min-width:100%}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-icon">⚙</div>
+      <span class="hdr-title">Repair orders</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()" title="Light / dark mode">☀️</button>
+      <span class="hdr-count" id="hdrCount"></span>
+      <button class="tab-btn" onclick="showToast('Back to POS')" style="min-height:42px">← Back to POS</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <span class="search-ico">⌕</span>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search by name, phone, or repair code..." autocomplete="off" autocorrect="off" autocapitalize="off">
+    </div>
+    <select class="filter-select" id="statusFilter">
+      <option value="all">All active</option>
+      <option value="progress">In progress</option>
+      <option value="done">Done</option>
+      <option value="awaiting">Awaiting call</option>
+    </select>
+    <button class="tab-btn active" id="activeTab" onclick="setView('active')">Active</button>
+    <button class="tab-btn" id="completedTab" onclick="setView('completed')">Completed</button>
+  </div>
+
+  <div class="stats" id="statsBar"></div>
+
+  <div id="activeView">
+    <div class="board cols-2" id="board">
+      <div class="col col-progress" id="colProgress">
+        <div class="col-border"></div>
+        <div class="col-head"><span><span class="col-dot" style="background:var(--amber)"></span>In progress</span><span id="countProgress">0</span></div>
+        <div id="cardsProgress"></div>
+      </div>
+      <div class="col col-done" id="colDone">
+        <div class="col-border"></div>
+        <div class="col-head"><span><span class="col-dot" style="background:var(--green)"></span>Done</span><span id="countDone">0</span></div>
+        <div id="cardsDone"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="completed-section hidden" id="completedView">
+    <div id="completedCards"></div>
+  </div>
+</div>
+
+<!-- Notify prompt modal -->
+<div class="modal-overlay" id="notifyModal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-head">
+      <span class="modal-title">Repair done 🎉</span>
+      <button class="modal-close" onclick="closeModal('notifyModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="notifyInfo" style="font-size:13px;color:var(--t3)"></div>
+      <div style="font-size:15px;font-weight:600;margin-top:8px">Did you notify the customer?</div>
+      <div class="notify-options">
+        <div class="notify-opt notify-opt-yes" onclick="finishReady(true)">
+          <span class="notify-opt-icon">📞</span>
+          <span class="notify-opt-label">Yes, notified</span>
+          <span class="notify-opt-sub">Customer was called</span>
+        </div>
+        <div class="notify-opt notify-opt-no" onclick="finishReady(false)">
+          <span class="notify-opt-icon">⏳</span>
+          <span class="notify-opt-label">Not yet</span>
+          <span class="notify-opt-sub">Will call later</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="editTitle">Edit repair</span>
+      <button class="modal-close" onclick="closeModal('editModal')">✕</button>
+    </div>
+    <div class="modal-body" id="editBody"></div>
+  </div>
+</div>
+
+<!-- Detail modal -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="detailTitle">Repair details</span>
+      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+  </div>
+</div>
+
+<!-- Payment modal -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">Collect payment</span>
+      <button class="modal-close" onclick="closeModal('payModal')">✕</button>
+    </div>
+    <div class="modal-body" id="payBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+
+var TODAY = new Date('2026-05-13');
+
+// status: 'progress' | 'done' | 'completed' | 'cancelled'
+// done repairs carry notified:true/false (+ notifiedDate when true)
+var repairs = [
+  {id:'R-000008',slot:8,customer:'Morgan Hayes',phone:'7805550100',notes:'Ring to size 7 (weight 6.34)\nPolish + rhodium plate',cost:45,paid:false,payMethod:'',status:'progress',notified:false,dueDate:'2026-05-13',orderDate:'2026-05-10',notifiedDate:null,pickedUpDate:null,cancelledDate:null},
+  {id:'R-000007',slot:7,customer:'Sydney Long',phone:'7805550102',notes:'Necklace clasp replacement',cost:25,paid:true,payMethod:'Cash',status:'progress',notified:false,dueDate:'2026-05-14',orderDate:'2026-05-09',notifiedDate:null,pickedUpDate:null,cancelledDate:null},
+  {id:'R-000006',slot:6,customer:'Noel Morales',phone:'5875550174',notes:'Earring post re-solder\nClean both earrings',cost:15,paid:false,payMethod:'',status:'done',notified:true,dueDate:'2026-05-08',orderDate:'2026-05-05',notifiedDate:'2026-05-08',pickedUpDate:null,cancelledDate:null},
+  {id:'R-000005',slot:5,customer:'Taylor Ramos',phone:'7805550141',notes:'Pendant bail repair (weight 8.1)',cost:25,paid:true,payMethod:'Card',status:'done',notified:true,dueDate:'2026-05-09',orderDate:'2026-05-06',notifiedDate:'2026-05-11',pickedUpDate:null,cancelledDate:null},
+  {id:'R-000004',slot:4,customer:'Jesse Simmons',phone:'7805550101',notes:'Weld bracelet (weight 14.8)\nReplace spring ring clasp',cost:40,paid:false,payMethod:'',status:'progress',notified:false,dueDate:'2026-05-11',orderDate:'2026-05-08',notifiedDate:null,pickedUpDate:null,cancelledDate:null},
+  {id:'R-000003',slot:3,customer:'Jesse Simmons',phone:'7805550101',notes:'Ring to size 9 (weight 4.12)',cost:30,paid:true,payMethod:'Cash',status:'done',notified:false,dueDate:'2026-05-11',orderDate:'2026-05-08',notifiedDate:null,pickedUpDate:null,cancelledDate:null},
+  {id:'R-000002',slot:2,customer:'Peyton Young',phone:'7805550103',notes:'Chain solder + replace spring ring',cost:20,paid:false,payMethod:'',status:'progress',notified:false,dueDate:'2026-05-09',orderDate:'2026-05-07',notifiedDate:null,pickedUpDate:null,cancelledDate:null},
+  {id:'R-000001',slot:1,customer:'Skyler King',phone:'7805550105',notes:'Resize engagement ring (weight 3.2)',cost:30,paid:true,payMethod:'Cash',status:'completed',notified:true,dueDate:'2026-05-08',orderDate:'2026-05-06',notifiedDate:'2026-05-08',pickedUpDate:'2026-05-09',cancelledDate:null},
+  {id:'R-000009',slot:null,customer:'Robin Freeman',phone:'7805550192',notes:'Bracelet link removal (weight 22.4)',cost:20,paid:true,payMethod:'Card',status:'completed',notified:true,dueDate:'2026-05-05',orderDate:'2026-05-03',notifiedDate:'2026-05-05',pickedUpDate:'2026-05-06',cancelledDate:null},
+  {id:'R-000010',slot:null,customer:'Casey Jenkins',phone:'7805550106',notes:'Watch battery replacement',cost:15,paid:true,payMethod:'Cash',status:'completed',notified:true,dueDate:'2026-05-04',orderDate:'2026-05-04',notifiedDate:'2026-05-04',pickedUpDate:'2026-05-04',cancelledDate:null},
+  {id:'R-000011',slot:null,customer:'Morgan Hayes',phone:'7805550100',notes:'Chain solder repair',cost:20,paid:true,payMethod:'Cash',status:'cancelled',notified:false,dueDate:'2026-05-06',orderDate:'2026-05-04',notifiedDate:null,pickedUpDate:null,cancelledDate:'2026-05-05'},
+];
+
+var currentView='active',currentFilter='all',searchQuery='';
+
+function fmt(n){return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fmtPhone(p){if(p.length===10)return p.slice(0,3)+'-'+p.slice(3,6)+'-'+p.slice(6);return p}
+function daysBetween(a,b){return Math.round((b-a)/(1000*60*60*24))}
+function parseDate(s){var p=s.split('-');return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]))}
+function fmtDate(s){if(!s)return '—';var d=parseDate(s);var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return m[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()}
+function todayStr(){return TODAY.getFullYear()+'-'+String(TODAY.getMonth()+1).padStart(2,'0')+'-'+String(TODAY.getDate()).padStart(2,'0')}
+
+function getDueBadge(dueDate){
+  var due=parseDate(dueDate);var diff=daysBetween(TODAY,due);
+  if(diff<0)return '<span class="badge b-overdue">Overdue '+Math.abs(diff)+' day'+(Math.abs(diff)!==1?'s':'')+'</span>';
+  if(diff===0)return '<span class="badge b-today">Due today</span>';
+  if(diff===1)return '<span class="badge b-upcoming">Due tomorrow</span>';
+  return '<span class="badge b-upcoming">Due '+fmtDate(dueDate)+'</span>';
+}
+
+function matchesSearch(r,q){
+  if(!q)return true;
+  q=q.toLowerCase().trim();
+  var phoneDigits=q.replace(/[^0-9]/g,'');
+  var matchName=r.customer.toLowerCase().indexOf(q)!==-1;
+  var matchPhone=phoneDigits.length>0&&r.phone.indexOf(phoneDigits)!==-1;
+  var matchCode=r.id.toLowerCase().indexOf(q)!==-1;
+  return matchName||matchPhone||matchCode;
+}
+
+function getActive(){return repairs.filter(function(r){return r.status==='progress'||r.status==='done'})}
+function getCompleted(){return repairs.filter(function(r){return r.status==='completed'||r.status==='cancelled'})}
+
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},3000)}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+
+function getStatusLabel(s,notified){
+  if(s==='progress')return'In progress';
+  if(s==='done')return notified?'Done — customer notified':'Done — awaiting call';
+  if(s==='completed')return'Picked up';
+  if(s==='cancelled')return'Cancelled';return s;
+}
+function getStatusColor(s){
+  if(s==='progress')return'var(--amber)';if(s==='done')return'var(--green)';
+  if(s==='completed')return'var(--green)';if(s==='cancelled')return'var(--red)';return'var(--t3)';
+}
+
+function render(){
+  var active=getActive();var completed=getCompleted();var q=searchQuery;var filter=currentFilter;
+  var filtered=active.filter(function(r){return matchesSearch(r,q)});
+  var prog=filtered.filter(function(r){return r.status==='progress'});
+  var done=filtered.filter(function(r){return r.status==='done'});
+  if(filter==='awaiting')done=done.filter(function(r){return !r.notified});
+  var awaiting=filtered.filter(function(r){return r.status==='done'&&!r.notified});
+
+  var unpaid=filtered.filter(function(r){return !r.paid}).reduce(function(s,r){return s+r.cost},0);
+  document.getElementById('statsBar').innerHTML=
+    '<div class="stat"><div class="stat-num" style="color:var(--amber)">'+prog.length+'</div><div class="stat-label">In progress</div></div>'+
+    '<div class="stat"><div class="stat-num" style="color:var(--green)">'+filtered.filter(function(r){return r.status==='done'}).length+'</div><div class="stat-label">Done</div></div>'+
+    '<div class="stat"><div class="stat-num" style="color:'+(awaiting.length?'var(--amber)':'var(--t3)')+'">'+awaiting.length+'</div><div class="stat-label">Awaiting call</div></div>'+
+    '<div class="stat"><div class="stat-num" style="color:var(--red)">'+fmt(unpaid)+'</div><div class="stat-label">Unpaid</div></div>';
+
+  document.getElementById('hdrCount').textContent=filtered.length+' active repair'+(filtered.length!==1?'s':'');
+
+  var board=document.getElementById('board');
+  var showProg=(filter==='all'||filter==='progress');
+  var showDone=(filter==='all'||filter==='done'||filter==='awaiting');
+  var visibleCols=(showProg?1:0)+(showDone?1:0);
+  board.className='board cols-'+visibleCols;
+  document.getElementById('colProgress').style.display=showProg?'':'none';
+  document.getElementById('colDone').style.display=showDone?'':'none';
+
+  document.getElementById('countProgress').textContent=prog.length;
+  document.getElementById('countDone').textContent=done.length;
+
+  document.getElementById('cardsProgress').innerHTML=prog.length?prog.map(renderCard).join(''):'<div class="empty-col">No repairs in progress</div>';
+  document.getElementById('cardsDone').innerHTML=done.length?done.map(renderCard).join(''):'<div class="empty-col">No finished repairs waiting</div>';
+
+  document.getElementById('activeView').style.display=currentView==='active'?'':'none';
+  document.getElementById('completedView').className=currentView==='completed'?'completed-section':'completed-section hidden';
+  document.getElementById('activeTab').className='tab-btn'+(currentView==='active'?' active':'');
+  document.getElementById('completedTab').className='tab-btn'+(currentView==='completed'?' active':'');
+  document.getElementById('statsBar').style.display=currentView==='active'?'':'none';
+  document.getElementById('statusFilter').style.display=currentView==='active'?'':'none';
+
+  if(currentView==='completed'){
+    var fc=completed.filter(function(r){return matchesSearch(r,q)});
+    document.getElementById('hdrCount').textContent=fc.length+' completed repair'+(fc.length!==1?'s':'');
+    document.getElementById('completedCards').innerHTML=fc.length?fc.map(renderCompletedCard).join(''):'<div class="empty-col" style="padding:40px">No completed repairs found</div>';
+  }
+}
+
+function renderCard(r){
+  var actionsRow1='',actionsRow2='',notifyBadge='',waitedLine='';
+
+  if(r.status==='progress'){
+    actionsRow1='<button class="act-primary" onclick="markReady(\''+r.id+'\')">✓ Mark ready</button><button class="act-detail" onclick="openDetail(\''+r.id+'\')">⋯ Details</button><button class="act-secondary" onclick="openEdit(\''+r.id+'\')">✎ Edit</button>';
+  }else if(r.status==='done'){
+    if(r.notified){
+      notifyBadge='<span class="badge b-notified">📞 Notified</span>';
+      var days=r.notifiedDate?daysBetween(parseDate(r.notifiedDate),TODAY):0;
+      if(days===0)waitedLine='<div class="card-waited">Called today</div>';
+      else if(days===1)waitedLine='<div class="card-waited">Called yesterday</div>';
+      else waitedLine='<div class="card-waited">Called '+days+' days ago</div>';
+      actionsRow1='<button class="act-success" onclick="markPickedUp(\''+r.id+'\')">↗ Picked up</button><button class="act-secondary" onclick="markNotified(\''+r.id+'\')">☎ Again</button>';
+    }else{
+      notifyBadge='<span class="badge b-notnotified">⏳ Awaiting call</span>';
+      actionsRow1='<button class="act-notify" onclick="markNotified(\''+r.id+'\')">📞 Notified</button><button class="act-success" onclick="markPickedUp(\''+r.id+'\')">↗ Picked up</button>';
+    }
+    actionsRow2='<button class="act-detail" onclick="openDetail(\''+r.id+'\')">⋯ Details</button><button class="act-secondary" onclick="openEdit(\''+r.id+'\')">✎ Edit</button>';
+  }
+
+  return '<div class="card">'+
+    '<div class="card-top"><span class="card-code">'+r.id+'</span><span class="card-slot">Slot '+r.slot+'</span></div>'+
+    '<div class="card-customer">'+r.customer+'</div>'+
+    '<div class="card-phone">'+fmtPhone(r.phone)+'</div>'+
+    '<div class="card-notes">'+r.notes+'</div>'+
+    '<div class="card-row">'+
+      '<span class="card-cost">'+fmt(r.cost)+'</span>'+
+      getDueBadge(r.dueDate)+
+    '</div>'+
+    '<div class="card-row" style="margin-top:4px">'+
+      '<span class="badge '+(r.paid?'b-paid':'b-unpaid')+'">'+(r.paid?'Paid — '+r.payMethod:'Unpaid')+'</span>'+
+      notifyBadge+
+    '</div>'+
+    waitedLine+
+    '<div class="card-actions">'+actionsRow1+'</div>'+
+    (actionsRow2?'<div class="card-actions-2">'+actionsRow2+'</div>':'')+
+  '</div>';
+}
+
+function renderCompletedCard(r){
+  var sl=r.status==='cancelled'?'<span class="badge b-overdue">Cancelled</span>':'<span class="badge b-paid">Picked up</span>';
+  return '<div class="completed-card">'+
+    '<div class="card-top"><span class="card-code">'+r.id+'</span>'+sl+'</div>'+
+    '<div class="card-customer" style="margin-bottom:0">'+r.customer+'</div>'+
+    '<div class="completed-info">'+
+      '<span class="completed-detail">'+fmtPhone(r.phone)+'</span>'+
+      '<span class="completed-detail">Ordered <span>'+fmtDate(r.orderDate)+'</span></span>'+
+      '<span class="completed-detail">Cost <span>'+fmt(r.cost)+'</span></span>'+
+      (r.pickedUpDate?'<span class="completed-detail">Picked up <span>'+fmtDate(r.pickedUpDate)+'</span></span>':'')+
+      (r.cancelledDate?'<span class="completed-detail">Cancelled <span>'+fmtDate(r.cancelledDate)+'</span></span>':'')+
+      (r.payMethod?'<span class="completed-detail">Paid <span>'+r.payMethod+'</span></span>':'')+
+    '</div>'+
+    '<div class="card-notes" style="margin-top:8px">'+r.notes+'</div>'+
+  '</div>';
+}
+
+// ═══ VIEW DETAILS ═══
+function openDetail(id){
+  var r=repairs.find(function(x){return x.id===id});
+  if(!r)return;
+  document.getElementById('detailTitle').textContent=r.id+' — Details';
+
+  var daysInShop=daysBetween(parseDate(r.orderDate),TODAY);
+
+  var timeline='<div class="detail-timeline">';
+  timeline+='<div class="timeline-item"><div class="timeline-dot" style="background:var(--t3)"></div><div class="timeline-line"></div><div><div class="timeline-text">Repair dropped off</div><div class="timeline-date">'+fmtDate(r.orderDate)+' — '+daysInShop+' day'+(daysInShop!==1?'s':'')+' ago</div></div></div>';
+
+  if(r.status==='done'||r.status==='completed'){
+    timeline+='<div class="timeline-item"><div class="timeline-dot" style="background:var(--green)"></div><div class="timeline-line"></div><div><div class="timeline-text">Repair completed</div><div class="timeline-date">Marked done</div></div></div>';
+  }
+  if(r.notifiedDate){
+    var nDays=daysBetween(parseDate(r.notifiedDate),TODAY);
+    timeline+='<div class="timeline-item"><div class="timeline-dot" style="background:var(--purple)"></div><div class="timeline-line"></div><div><div class="timeline-text">Customer notified</div><div class="timeline-date">'+fmtDate(r.notifiedDate)+(nDays>0?' — '+nDays+' day'+(nDays!==1?'s':'')+' ago':'')+'</div></div></div>';
+  }else if(r.status==='done'){
+    timeline+='<div class="timeline-item"><div class="timeline-dot" style="background:var(--amber);opacity:.6"></div><div class="timeline-line"></div><div><div class="timeline-text" style="color:var(--amber)">Customer not yet notified</div><div class="timeline-date">Call when possible</div></div></div>';
+  }
+  if(r.pickedUpDate){
+    timeline+='<div class="timeline-item"><div class="timeline-dot" style="background:var(--green)"></div><div class="timeline-line"></div><div><div class="timeline-text">Picked up by customer</div><div class="timeline-date">'+fmtDate(r.pickedUpDate)+'</div></div></div>';
+  }
+  if(r.cancelledDate){
+    timeline+='<div class="timeline-item"><div class="timeline-dot" style="background:var(--red)"></div><div class="timeline-line"></div><div><div class="timeline-text">Repair cancelled</div><div class="timeline-date">'+fmtDate(r.cancelledDate)+'</div></div></div>';
+  }
+  if(r.status==='progress'){
+    timeline+='<div class="timeline-item"><div class="timeline-dot" style="background:var(--amber);opacity:.4"></div><div><div class="timeline-text" style="color:var(--t4)">Waiting to be completed...</div></div></div>';
+  }
+  timeline+='</div>';
+
+  document.getElementById('detailBody').innerHTML=
+    '<div class="detail-grid">'+
+      '<div><div class="detail-label">Customer</div><div class="detail-value">'+r.customer+'</div></div>'+
+      '<div><div class="detail-label">Phone</div><div class="detail-value">'+fmtPhone(r.phone)+'</div></div>'+
+      '<div><div class="detail-label">Repair code</div><div class="detail-value">'+r.id+'</div></div>'+
+      '<div><div class="detail-label">Slot</div><div class="detail-value">'+(r.slot?'Slot '+r.slot:'—')+'</div></div>'+
+      '<div><div class="detail-label">Cost</div><div class="detail-value">'+fmt(r.cost)+'</div></div>'+
+      '<div><div class="detail-label">Payment</div><div class="detail-value" style="color:'+(r.paid?'var(--green)':'var(--red)')+'">'+(r.paid?'Paid — '+r.payMethod:'Unpaid')+'</div></div>'+
+      '<div><div class="detail-label">Due date</div><div class="detail-value">'+fmtDate(r.dueDate)+'</div></div>'+
+      '<div><div class="detail-label">Status</div><div class="detail-value" style="color:'+getStatusColor(r.status)+'">'+getStatusLabel(r.status,r.notified)+'</div></div>'+
+      '<div><div class="detail-label">Dropped off</div><div class="detail-value">'+fmtDate(r.orderDate)+'</div></div>'+
+      '<div><div class="detail-label">Days in shop</div><div class="detail-value">'+daysInShop+' day'+(daysInShop!==1?'s':'')+'</div></div>'+
+    '</div>'+
+    '<div class="detail-notes"><div class="detail-label">Repair notes</div><div class="detail-notes-box">'+r.notes+'</div></div>'+
+    '<div class="detail-label" style="margin-top:16px">Timeline</div>'+
+    timeline;
+
+  document.getElementById('detailModal').classList.add('show');
+}
+
+// ═══ ACTIONS ═══
+var readyingId=null;
+function markReady(id){
+  var r=repairs.find(function(x){return x.id===id});if(!r)return;
+  readyingId=id;
+  document.getElementById('notifyInfo').textContent=r.id+' — '+r.customer+' ('+fmtPhone(r.phone)+')';
+  document.getElementById('notifyModal').classList.add('show');
+}
+function finishReady(didNotify){
+  var r=repairs.find(function(x){return x.id===readyingId});if(!r)return;
+  r.status='done';
+  r.notified=!!didNotify;
+  if(didNotify)r.notifiedDate=todayStr();
+  closeModal('notifyModal');readyingId=null;
+  showToast(r.id+' — '+r.customer+(didNotify?' done & customer notified':' done — call customer when possible'));
+  render();
+}
+function markNotified(id){
+  var r=repairs.find(function(x){return x.id===id});if(!r)return;
+  r.notified=true;
+  r.notifiedDate=todayStr();
+  showToast('📞 '+r.id+' — '+r.customer+' notified');render();
+}
+function markPickedUp(id){
+  var r=repairs.find(function(x){return x.id===id});if(!r)return;
+  if(!r.paid){openPaymentModal(id);return;}
+  r.status='completed';
+  r.pickedUpDate=todayStr();r.slot=null;
+  showToast('✓ '+r.id+' — '+r.customer+' picked up');render();
+}
+
+var selectedPayMethod='',payRepairCost=0;
+function openPaymentModal(id){
+  var r=repairs.find(function(x){return x.id===id});if(!r)return;
+  selectedPayMethod='';payRepairCost=r.cost;
+  document.getElementById('payBody').innerHTML=
+    '<div style="margin-bottom:16px"><span style="font-size:13px;color:var(--t3)">'+r.customer+' — '+r.id+'</span></div>'+
+    '<div style="font-size:24px;font-weight:600;margin-bottom:20px;text-align:center">'+fmt(r.cost)+'</div>'+
+    '<div class="form-label">Payment method</div>'+
+    '<div class="pay-options" id="payOpts">'+
+      '<div class="pay-opt" onclick="selectPay(this,\'Cash\')"><span class="pay-opt-icon">💵</span><span class="pay-opt-label">Cash</span></div>'+
+      '<div class="pay-opt" onclick="selectPay(this,\'Card\')"><span class="pay-opt-icon">💳</span><span class="pay-opt-label">Card</span></div>'+
+      '<div class="pay-opt" onclick="selectPay(this,\'Split\')"><span class="pay-opt-icon">↔</span><span class="pay-opt-label">Split</span></div>'+
+    '</div>'+
+    '<div id="splitFields" style="display:none;margin-bottom:16px">'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+
+        '<div><div class="form-label">Cash</div><input type="number" class="form-input" id="splitCash" value="0" min="0" step="any" inputmode="decimal" oninput="onSplitInput(\'cash\')"></div>'+
+        '<div><div class="form-label">Card</div><input type="number" class="form-input" id="splitCard" value="0" min="0" step="any" inputmode="decimal" oninput="onSplitInput(\'card\')"></div>'+
+      '</div>'+
+      '<div id="splitStatus" style="font-size:12px;margin-top:8px;text-align:center"></div>'+
+    '</div>'+
+    '<div class="modal-actions">'+
+      '<button class="btn-save" id="payConfirmBtn" onclick="confirmPay(\''+id+'\')" disabled style="opacity:.5">Confirm pickup</button>'+
+      '<button class="btn-close-modal" onclick="closeModal(\'payModal\')">Cancel</button>'+
+    '</div>';
+  document.getElementById('payModal').classList.add('show');
+}
+function selectPay(el,method){
+  selectedPayMethod=method;
+  document.querySelectorAll('#payOpts .pay-opt').forEach(function(o){o.classList.remove('selected')});
+  el.classList.add('selected');
+  var sf=document.getElementById('splitFields');
+  var btn=document.getElementById('payConfirmBtn');
+  if(method==='Split'){
+    sf.style.display='block';
+    document.getElementById('splitCash').value=payRepairCost.toFixed(2);
+    document.getElementById('splitCard').value='0.00';
+    updateSplitStatus();
+  }else{
+    sf.style.display='none';
+    btn.disabled=false;btn.style.opacity='1';
+  }
+}
+function onSplitInput(which){
+  var ci=document.getElementById('splitCash'),ca=document.getElementById('splitCard');
+  if(which==='cash'){ca.value=Math.max(0,payRepairCost-(parseFloat(ci.value)||0)).toFixed(2)}
+  else{ci.value=Math.max(0,payRepairCost-(parseFloat(ca.value)||0)).toFixed(2)}
+  updateSplitStatus();
+}
+function updateSplitStatus(){
+  var ci=parseFloat(document.getElementById('splitCash').value)||0;
+  var ca=parseFloat(document.getElementById('splitCard').value)||0;
+  var rem=payRepairCost-ci-ca;
+  var st=document.getElementById('splitStatus');
+  var btn=document.getElementById('payConfirmBtn');
+  if(Math.abs(rem)<.01){st.style.color='var(--green)';st.textContent='Split: '+fmt(ci)+' cash + '+fmt(ca)+' card';btn.disabled=false;btn.style.opacity='1'}
+  else{st.style.color='var(--red)';st.textContent=rem>0?fmt(rem)+' remaining':'Amounts exceed total';btn.disabled=true;btn.style.opacity='.5'}
+}
+function confirmPay(id){
+  if(!selectedPayMethod)return;
+  var r=repairs.find(function(x){return x.id===id});if(!r)return;
+  var methodLabel=selectedPayMethod;
+  if(selectedPayMethod==='Split'){
+    var ci=parseFloat(document.getElementById('splitCash').value)||0;
+    var ca=parseFloat(document.getElementById('splitCard').value)||0;
+    if(Math.abs(payRepairCost-ci-ca)>=.01)return;
+    methodLabel='Split ('+fmt(ci)+' cash / '+fmt(ca)+' card)';
+  }
+  r.paid=true;r.payMethod=methodLabel;r.status='completed';
+  r.pickedUpDate=todayStr();r.slot=null;selectedPayMethod='';
+  closeModal('payModal');
+  showToast('✓ '+r.id+' — '+r.customer+' paid ('+r.payMethod+') and picked up');render();
+}
+
+// ═══ EDIT ═══
+function openEdit(id){
+  var r=repairs.find(function(x){return x.id===id});if(!r)return;
+  document.getElementById('editTitle').textContent='Edit '+r.id;
+  document.getElementById('editBody').innerHTML=
+    '<div class="form-group"><div class="form-label">Customer</div><div class="form-static">'+r.customer+' — '+fmtPhone(r.phone)+'</div></div>'+
+    '<div class="form-group"><div class="form-label">Slot</div><div class="form-static">Slot '+r.slot+'</div></div>'+
+    '<div class="form-group"><div class="form-label">Notes</div><textarea class="form-textarea" id="editNotes">'+r.notes+'</textarea></div>'+
+    '<div class="form-group"><div class="form-label">Cost ($)</div><input type="number" class="form-input" id="editCost" value="'+r.cost+'" min="0" step="0.01" inputmode="decimal"></div>'+
+    '<div class="form-group"><div class="form-label">Payment status</div>'+
+      '<select class="form-input" id="editPaid" style="appearance:auto;-webkit-appearance:auto">'+
+        '<option value="unpaid"'+(r.paid?'':' selected')+'>Unpaid</option>'+
+        '<option value="paid"'+(r.paid?' selected':'')+'>Paid</option>'+
+      '</select></div>'+
+    '<div class="form-group"><div class="form-label">Due date</div><input type="date" class="form-input" id="editDue" value="'+r.dueDate+'"></div>'+
+    '<div class="modal-actions">'+
+      '<button class="btn-save" onclick="saveEdit(\''+id+'\')">Save changes</button>'+
+      '<button class="btn-cancel-repair" onclick="cancelRepair(\''+id+'\')">Cancel repair</button>'+
+    '</div>'+
+    '<div style="margin-top:8px"><button class="btn-close-modal" style="width:100%;padding:14px" onclick="closeModal(\'editModal\')">Close</button></div>';
+  document.getElementById('editModal').classList.add('show');
+}
+function saveEdit(id){
+  var r=repairs.find(function(x){return x.id===id});if(!r)return;
+  r.notes=document.getElementById('editNotes').value;
+  r.cost=parseFloat(document.getElementById('editCost').value)||0;
+  r.dueDate=document.getElementById('editDue').value;
+  var pv=document.getElementById('editPaid').value;
+  r.paid=(pv==='paid');if(!r.paid)r.payMethod='';
+  closeModal('editModal');showToast(r.id+' updated');render();
+}
+function cancelRepair(id){
+  if(!confirm('Cancel repair '+id+'? This will move it to completed.'))return;
+  var r=repairs.find(function(x){return x.id===id});if(!r)return;
+  r.status='cancelled';
+  r.cancelledDate=todayStr();r.slot=null;
+  closeModal('editModal');showToast(r.id+' — '+r.customer+' cancelled');render();
+}
+
+// ═══ CONTROLS ═══
+function setView(view){
+  currentView=view;searchQuery='';document.getElementById('searchInput').value='';render();
+}
+document.getElementById('searchInput').addEventListener('input',function(e){searchQuery=e.target.value;render()});
+document.getElementById('statusFilter').addEventListener('change',function(e){currentFilter=e.target.value;render()});
+document.querySelectorAll('.modal-overlay').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)closeModal(m.id)})});
+
+render();
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

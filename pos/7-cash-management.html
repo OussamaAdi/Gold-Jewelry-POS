@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Cash Management</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);--green-b:rgba(76,175,124,.3);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);--red-b:rgba(230,91,91,.3);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);--blue-b:rgba(91,163,230,.3);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);--amber-b:rgba(230,162,60,.35);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+/* ═══ LIGHT MODE ═══ */
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);--bd3:rgba(0,0,0,.3);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);--blue-b:rgba(61,127,196,.35);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);--green-b:rgba(46,139,95,.35);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);--red-b:rgba(207,68,68,.35);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);--amber-b:rgba(196,130,26,.35);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);--purple-b:rgba(122,107,204,.35);
+}
+html.light .toast{background:#1f1f1f;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+html.light .modal{border-color:#c9c9cf;box-shadow:0 8px 30px rgba(0,0,0,.15)}
+html.light .box-card,html.light .log-panel,html.light .pin-modal{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+html.light .mo{background:rgba(0,0,0,.4)}
+html.light .pin-overlay{background:rgba(255,255,255,.85)}
+html.light .hdr-icon{background:rgba(0,0,0,.05)}
+html.light .log-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15)}
+html.light .log-row:hover{background:rgba(0,0,0,.02)}
+body{transition:background .25s,color .25s}
+.mode-btn{font-family:var(--font);font-size:15px;padding:9px 12px;border-radius:var(--r);cursor:pointer;display:inline-flex;align-items:center;min-height:42px;border:1px solid var(--bd2);background:transparent;color:var(--t3);transition:all .12s}
+.mode-btn:active{transform:scale(.95)}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);min-height:100vh;padding:16px;-webkit-tap-highlight-color:transparent}
+.app{max-width:1100px;margin:0 auto}
+
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px;flex-wrap:wrap}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-icon{width:36px;height:36px;background:rgba(255,255,255,.06);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:18px}
+.hdr-title{font-size:18px;font-weight:600}
+.hdr-date{font-size:13px;color:var(--t3)}
+
+/* Boxes */
+.boxes{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px}
+.box-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:18px 20px;position:relative;overflow:hidden}
+.box-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.box-store::before{background:var(--green)}
+.box-store{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.box-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);margin-bottom:6px;font-weight:500;display:flex;align-items:center;gap:6px}
+.box-balance{font-size:28px;font-weight:600;margin-bottom:8px}
+.box-main .box-balance{margin-bottom:0}
+.box-today{min-width:200px}
+.box-store .box-balance{color:var(--green)}
+.box-row{display:flex;justify-content:space-between;gap:24px;font-size:12px;padding:2px 0}
+.box-in{color:var(--green)}
+.box-out{color:var(--red)}
+
+/* Actions */
+.actions{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.btn{font-family:var(--font);font-size:13px;font-weight:500;padding:10px 16px;border-radius:var(--r);cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:6px;min-height:44px;border:1px solid var(--bd2);background:transparent;color:var(--t3)}
+.btn:active{transform:scale(.97)}
+.btn-green{background:var(--green-bg);border-color:var(--green-b);color:var(--green)}
+.btn-red{background:var(--red-bg);border-color:var(--red-b);color:var(--red)}
+.btn-gold{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+.btn-gold:active{background:var(--gold-h)}
+.btn-outline{border:1px solid var(--bd2);color:var(--t3)}
+
+/* Log */
+.log-panel{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden}
+.log-head{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.log-title{font-size:14px;font-weight:500;color:var(--t3)}
+.log-controls{display:flex;gap:6px;align-items:center}
+.log-search{font-family:var(--font);font-size:13px;padding:8px 12px 8px 32px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:200px;-webkit-appearance:none}
+.log-search::placeholder{color:var(--t4)}
+.log-search:focus{outline:none;border-color:var(--gold)}
+.log-search-wrap{position:relative}
+.log-search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t4);font-size:13px;pointer-events:none}
+.log-filter{font-family:var(--font);font-size:13px;padding:8px 30px 8px 10px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);-webkit-appearance:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.log-filter:focus{outline:none;border-color:var(--gold)}
+
+.log-body{max-height:420px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.log-body::-webkit-scrollbar{width:3px}
+.log-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+
+.log-row{display:grid;grid-template-columns:75px 1fr 95px 75px 112px;gap:8px;padding:10px 16px;border-bottom:1px solid var(--bd);align-items:center;font-size:13px}
+.log-row:last-child{border-bottom:none}
+.log-row:hover{background:rgba(255,255,255,.02)}
+.log-row.voided{opacity:.4}
+.log-row.voided .log-desc{text-decoration:line-through}
+.log-row.is-correction{border-left:3px solid var(--amber)}
+.log-row.is-void-entry{border-left:3px solid var(--red)}
+.voided-tag{font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--red-bg);color:var(--red);margin-left:6px;vertical-align:middle}
+.log-date{color:var(--t3);font-size:12px}
+.log-desc{color:var(--t1)}
+.log-desc-sub{font-size:11px;color:var(--t4);margin-top:1px}
+.log-amount{text-align:right;font-weight:600;font-size:13px}
+.log-amount.in{color:var(--green)}
+.log-amount.out{color:var(--red)}
+.log-balance{text-align:right;color:var(--t3);font-size:12px}
+.log-actions{display:flex;gap:4px;justify-content:flex-end}
+.log-act{font-family:var(--font);font-size:10px;font-weight:500;padding:4px 8px;border-radius:5px;cursor:pointer;border:1px solid var(--bd2);background:transparent;color:var(--t4);transition:all .1s;white-space:nowrap}
+.log-act:active{transform:scale(.95)}
+.log-act.act-correct:active{background:var(--amber-bg);color:var(--amber);border-color:var(--amber)}
+.log-act.act-void:active{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.log-empty{padding:40px;text-align:center;color:var(--t4);font-size:13px}
+
+.log-cols{display:grid;grid-template-columns:75px 1fr 95px 75px 112px;gap:8px;padding:8px 16px;border-bottom:1px solid var(--bd);font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--t4);font-weight:500}
+
+/* Modals */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;justify-content:center;align-items:center;padding:20px}
+.mo.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
+.mh{padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1}
+.mh-title{font-size:16px;font-weight:600}
+.mh-x{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:4px 8px;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.mh-x:active{background:var(--bg5);color:var(--t1)}
+.mb{padding:18px}
+.fg{margin-bottom:12px}
+.fg label{font-size:12px;color:var(--t3);display:block;margin-bottom:4px;font-weight:500}
+.fg input,.fg select,.fg textarea{font-family:var(--font);font-size:14px;padding:10px 12px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:100%;-webkit-appearance:none}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--blue)}
+.fg select{appearance:auto;-webkit-appearance:auto}
+.fg textarea{resize:vertical;min-height:60px;line-height:1.5}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.m-btns{display:flex;gap:8px;margin-top:16px}
+.m-btns .btn{flex:1;justify-content:center;padding:13px;font-size:14px}
+
+/* PIN */
+.pin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:60;justify-content:center;align-items:center;padding:20px}
+.pin-overlay.show{display:flex}
+.pin-modal{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:320px;padding:24px;text-align:center}
+.pin-title{font-size:16px;font-weight:600;margin-bottom:4px}
+.pin-sub{font-size:12px;color:var(--t3);margin-bottom:20px}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:20px}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--bd2);background:transparent;transition:all .15s}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold)}
+.pin-dot.wrong{background:var(--red);border-color:var(--red);animation:shake .3s}
+.pin-pad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;max-width:240px;margin:0 auto}
+.pin-key{font-family:var(--font);font-size:20px;font-weight:500;padding:14px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);cursor:pointer;min-height:52px;display:flex;align-items:center;justify-content:center;transition:all .1s}
+.pin-key:active{background:var(--bg5);transform:scale(.95)}
+.pin-key.empty{visibility:hidden}
+.pin-key.del{font-size:14px;color:var(--t3)}
+.pin-error{font-size:12px;color:var(--red);margin-top:12px;min-height:18px}
+.pin-cancel{font-family:var(--font);font-size:13px;color:var(--t3);background:none;border:none;cursor:pointer;margin-top:12px;padding:8px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#fff;color:#1a1a1a;padding:14px 28px;border-radius:var(--r);font-size:14px;font-weight:500;font-family:var(--font);box-shadow:0 8px 30px rgba(0,0,0,.4);opacity:0;transition:all .35s;z-index:200;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:700px){
+  .box-store{flex-direction:column;align-items:stretch;gap:8px}
+  .box-today{min-width:0}
+  .log-row,.log-cols{grid-template-columns:65px 1fr 70px 112px}
+  .log-balance,.log-col-cat{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-icon">💰</div>
+      <span class="hdr-title">Cash management</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()" title="Light / dark mode">☀️</button>
+      <span class="hdr-date" id="todayDate"></span>
+      <button onclick="showToast('Back to POS')" style="font-family:var(--font);font-size:13px;font-weight:500;padding:9px 14px;border-radius:10px;border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer;min-height:42px;display:inline-flex;align-items:center;gap:5px">← Back to POS</button>
+    </div>
+  </div>
+
+  <div class="boxes">
+    <div class="box-card box-store">
+      <div class="box-main">
+        <div class="box-label">🏪 Store cash box</div>
+        <div class="box-balance" id="storeBalance">$0.00</div>
+      </div>
+      <div class="box-today">
+        <div class="box-row"><span>Today in</span><span class="box-in" id="storeTodayIn">+$0</span></div>
+        <div class="box-row"><span>Today out</span><span class="box-out" id="storeTodayOut">−$0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-red" onclick="openM('expenseM')">− Add expense</button>
+    <button class="btn btn-green" onclick="openM('manualM')">+ Manual cash in</button>
+  </div>
+
+  <div class="log-panel">
+    <div class="log-head">
+      <span class="log-title">Transaction log</span>
+      <div class="log-controls">
+        <div class="log-search-wrap">
+          <span class="log-search-ico">⌕</span>
+          <input type="text" class="log-search" id="logSearch" placeholder="Search..." oninput="renderLog()" autocomplete="off">
+        </div>
+        <select class="log-filter" id="logTypeFilter" onchange="renderLog()">
+          <option value="all">All types</option>
+          <option value="in">Cash in</option>
+          <option value="out">Cash out</option>
+        </select>
+      </div>
+    </div>
+    <div class="log-cols">
+      <span>Date</span><span>Description</span><span style="text-align:right">Amount</span><span class="log-col-cat" style="text-align:right">Category</span><span></span>
+    </div>
+    <div class="log-body" id="logBody"></div>
+  </div>
+</div>
+
+<!-- Expense Modal -->
+<div class="mo" id="expenseM">
+  <div class="modal">
+    <div class="mh"><span class="mh-title">Add expense</span><button class="mh-x" onclick="closeM('expenseM')">✕</button></div>
+    <div class="mb">
+      <div class="fg">
+        <label>Category *</label>
+        <select id="expCat">
+          <option value="">Select category</option>
+          <option value="Shipping">Shipping</option>
+          <option value="Salaries">Salaries</option>
+          <option value="Donations">Donations</option>
+          <option value="Supplies">Supplies</option>
+          <option value="Rent">Rent</option>
+          <option value="Owner Withdrawal">Owner Withdrawal</option>
+          <option value="Transfer to supplier">Transfer to supplier</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Amount ($) *</label>
+        <input type="number" id="expAmt" value="" min="0" step="any" inputmode="decimal" placeholder="0.00">
+      </div>
+      <div class="fg">
+        <label>Notes *</label>
+        <textarea id="expNotes" placeholder="What is this expense for?"></textarea>
+      </div>
+      <div class="m-btns">
+        <button class="btn btn-gold" onclick="submitExpense()">Add expense</button>
+        <button class="btn btn-outline" onclick="closeM('expenseM')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Manual Cash In Modal -->
+<div class="mo" id="manualM">
+  <div class="modal">
+    <div class="mh"><span class="mh-title">Manual cash in</span><button class="mh-x" onclick="closeM('manualM')">✕</button></div>
+    <div class="mb">
+      <div class="fg">
+        <label>Source *</label>
+        <select id="manSrc">
+          <option value="">Select source</option>
+          <option value="Sale (cash)">Sale (cash portion)</option>
+          <option value="Repair payment">Repair payment</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Amount ($) *</label>
+        <input type="number" id="manAmt" value="" min="0" step="any" inputmode="decimal" placeholder="0.00">
+      </div>
+      <div class="fg">
+        <label>Notes</label>
+        <input type="text" id="manNotes" placeholder="Optional details">
+      </div>
+      <div class="m-btns">
+        <button class="btn btn-gold" onclick="submitManual()">Add cash in</button>
+        <button class="btn btn-outline" onclick="closeM('manualM')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Correction Modal -->
+<div class="mo" id="correctM">
+  <div class="modal">
+    <div class="mh"><span class="mh-title">Correct entry</span><button class="mh-x" onclick="closeM('correctM')">✕</button></div>
+    <div class="mb">
+      <div style="padding:10px 14px;background:var(--bg4);border-radius:8px;margin-bottom:14px">
+        <div style="font-size:11px;color:var(--t4);margin-bottom:4px">ORIGINAL ENTRY</div>
+        <div style="font-size:14px;font-weight:500" id="corrOrigDesc"></div>
+        <div style="font-size:13px;color:var(--t3);margin-top:2px" id="corrOrigAmt"></div>
+      </div>
+      <div class="fg">
+        <label>Correct amount to ($) *</label>
+        <input type="number" id="corrNewAmt" value="" min="0" step="any" inputmode="decimal" placeholder="Enter correct amount">
+      </div>
+      <div style="padding:8px 12px;background:var(--amber-bg);border-radius:8px;margin-bottom:12px;font-size:13px;color:var(--amber);display:none" id="corrDiff"></div>
+      <div class="fg">
+        <label>Reason for correction *</label>
+        <textarea id="corrReason" placeholder="Why is this being corrected?"></textarea>
+      </div>
+      <div class="m-btns">
+        <button class="btn btn-gold" onclick="submitCorrection()">Submit correction</button>
+        <button class="btn btn-outline" onclick="closeM('correctM')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Void Modal -->
+<div class="mo" id="voidM">
+  <div class="modal">
+    <div class="mh"><span class="mh-title">Void entry</span><button class="mh-x" onclick="closeM('voidM')">✕</button></div>
+    <div class="mb">
+      <div style="padding:10px 14px;background:var(--bg4);border-radius:8px;margin-bottom:14px">
+        <div style="font-size:11px;color:var(--t4);margin-bottom:4px">ENTRY TO VOID</div>
+        <div style="font-size:14px;font-weight:500" id="voidOrigDesc"></div>
+        <div style="font-size:13px;color:var(--t3);margin-top:2px" id="voidOrigAmt"></div>
+      </div>
+      <div style="padding:10px 14px;background:var(--red-bg);border-radius:8px;margin-bottom:14px;font-size:13px;color:var(--red)">
+        This will create a reversal entry for the full amount. The original will be marked as voided but remains in the log.
+      </div>
+      <div class="fg">
+        <label>Reason for void *</label>
+        <textarea id="voidReason" placeholder="Why is this entry being voided?"></textarea>
+      </div>
+      <div class="m-btns">
+        <button class="btn" style="background:var(--red-bg);border-color:var(--red-b);color:var(--red);flex:1;justify-content:center;padding:13px;font-size:14px" onclick="submitVoid()">Void entry</button>
+        <button class="btn btn-outline" style="flex:1;justify-content:center;padding:13px;font-size:14px" onclick="closeM('voidM')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PIN Modal -->
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-modal">
+    <div class="pin-title">Owner authorization</div>
+    <div class="pin-sub">Enter 4-digit PIN to approve withdrawal</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-pad">
+      <div class="pin-key" onclick="pinKey('1')">1</div>
+      <div class="pin-key" onclick="pinKey('2')">2</div>
+      <div class="pin-key" onclick="pinKey('3')">3</div>
+      <div class="pin-key" onclick="pinKey('4')">4</div>
+      <div class="pin-key" onclick="pinKey('5')">5</div>
+      <div class="pin-key" onclick="pinKey('6')">6</div>
+      <div class="pin-key" onclick="pinKey('7')">7</div>
+      <div class="pin-key" onclick="pinKey('8')">8</div>
+      <div class="pin-key" onclick="pinKey('9')">9</div>
+      <div class="pin-key empty"></div>
+      <div class="pin-key" onclick="pinKey('0')">0</div>
+      <div class="pin-key del" onclick="pinDel()">⌫</div>
+    </div>
+    <div class="pin-error" id="pinError"></div>
+    <button class="pin-cancel" onclick="pinCancel()">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+
+var OWNER_PIN='1234'; // Change this
+var TODAY='2026-05-18';
+var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// Balances
+var storeBalance=13340.50;
+
+// Transaction log
+var nextLogId=15;
+var log=[
+  {id:1,date:'2026-05-18',type:'in',amount:2659.60,desc:'Sale SALE-20260518-0033',notes:'Cash portion of sale',cat:'Sale',voided:false,entryType:'normal'},
+  {id:2,date:'2026-05-18',type:'in',amount:399.75,desc:'Sale SALE-20260518-0039',notes:'Cash portion of sale',cat:'Sale',voided:false,entryType:'normal'},
+  {id:3,date:'2026-05-18',type:'out',amount:45.00,desc:'Expense: Shipping',notes:'FedEx shipment to supplier in Toronto',cat:'Shipping',voided:false,entryType:'normal'},
+  {id:4,date:'2026-05-17',type:'in',amount:5459.15,desc:'Sale SALE-20260517-0031',notes:"Men's Rolex Bracelet — cash",cat:'Sale',voided:false,entryType:'normal'},
+  {id:5,date:'2026-05-17',type:'out',amount:1029.30,desc:'Refund SALE-20260414-0010',notes:'Quarter Lira Ring return — cash',cat:'Refund',voided:false,entryType:'normal'},
+  {id:6,date:'2026-05-17',type:'in',amount:30.00,desc:'Repair payment R-000003',notes:'Jesse Simmons — Ring resize',cat:'Repair',voided:false,entryType:'normal'},
+  {id:7,date:'2026-05-17',type:'out',amount:2500.00,desc:'Expense: Owner Withdrawal',notes:'Owner withdrawal',cat:'Owner Withdrawal',voided:false,entryType:'normal'},
+  {id:8,date:'2026-05-17',type:'out',amount:120.00,desc:'Expense: Donations',notes:'Charity donation — monthly',cat:'Donations',voided:false,entryType:'normal'},
+  {id:9,date:'2026-05-16',type:'in',amount:3534.20,desc:'Sale SALE-20260516-0028',notes:'Hexagon Bracelet — cash',cat:'Sale',voided:false,entryType:'normal'},
+  {id:10,date:'2026-05-16',type:'out',amount:1337.15,desc:'Used gold purchase',notes:'21K ring 5.69g from Morgan Hayes',cat:'Used Gold',voided:false,entryType:'normal'},
+  {id:11,date:'2026-05-16',type:'out',amount:1100.00,desc:'Expense: Transfer to supplier',notes:'Payment for gold stock order',cat:'Transfer to supplier',voided:false,entryType:'normal'},
+  {id:12,date:'2026-05-15',type:'in',amount:888.30,desc:'Sale SALE-20260515-0025',notes:'Quarter Lira Ring — cash',cat:'Sale',voided:false,entryType:'normal'},
+  {id:13,date:'2026-05-15',type:'out',amount:500.00,desc:'Expense: Salaries',notes:'Part-time employee — weekly',cat:'Salaries',voided:false,entryType:'normal'},
+  {id:14,date:'2026-05-15',type:'in',amount:20.00,desc:'Repair payment R-000002',notes:'Peyton Young — chain solder',cat:'Repair',voided:false,entryType:'normal'},
+];
+
+function fmt(n){return '$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fmtShort(n){return '$'+Math.round(Math.abs(n))}
+function fmtDate(d){var p=d.split('-');return MONTHS[+p[1]-1]+' '+parseInt(p[2])+', '+p[0]}
+function fmtDateShort(d){var p=d.split('-');return MONTHS[+p[1]-1]+' '+parseInt(p[2])}
+function showToast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},3500)}
+function openM(id){document.getElementById(id).classList.add('show')}
+function closeM(id){document.getElementById(id).classList.remove('show')}
+
+document.getElementById('todayDate').textContent=fmtDate(TODAY);
+
+// ═══ RENDER ═══
+function render(){
+  document.getElementById('storeBalance').textContent=fmt(storeBalance);
+
+  // Today's in/out: each live entry dated today counts at its current amount (original plus
+  // its corrections), on its own side. Voided entries and void reversals are left out, so a
+  // voided transaction nets to zero. Correction rows are counted through their entry.
+  var stIn=0,stOut=0;
+  log.forEach(function(l){
+    if(l.date!==TODAY||l.voided||l.entryType!=='normal')return;
+    if(l.type==='in')stIn+=currentAmount(l);else stOut+=currentAmount(l);
+  });
+  document.getElementById('storeTodayIn').textContent='+'+fmtShort(stIn);
+  document.getElementById('storeTodayOut').textContent='−'+fmtShort(stOut);
+
+  renderLog();
+}
+
+function renderLog(){
+  var q=(document.getElementById('logSearch').value||'').toLowerCase();
+  var typeF=document.getElementById('logTypeFilter').value;
+
+  var filtered=log.filter(function(l){
+    if(typeF!=='all'&&l.type!==typeF)return false;
+    if(q&&l.desc.toLowerCase().indexOf(q)===-1&&l.notes.toLowerCase().indexOf(q)===-1&&l.cat.toLowerCase().indexOf(q)===-1)return false;
+    return true;
+  });
+
+  var body=document.getElementById('logBody');
+  if(!filtered.length){body.innerHTML='<div class="log-empty">No transactions found</div>';return}
+
+  body.innerHTML=filtered.map(function(l){
+    var amtClass=l.type==='in'?'in':'out';
+    var amtSign=l.type==='in'?'+':'−';
+    var rowClass='log-row';
+    if(l.voided)rowClass+=' voided';
+    if(l.entryType==='correction')rowClass+=' is-correction';
+    if(l.entryType==='void-reversal')rowClass+=' is-void-entry';
+    var voidedTag=l.voided?'<span class="voided-tag">VOIDED</span>':'';
+    var actions='';
+    if(!l.voided&&l.entryType==='normal'){
+      actions='<div class="log-actions">'+
+        '<button class="log-act act-correct" onclick="openCorrect('+l.id+')">Correct</button>'+
+        '<button class="log-act act-void" onclick="openVoid('+l.id+')">Void</button>'+
+      '</div>';
+    }
+    return '<div class="'+rowClass+'">'+
+      '<div class="log-date">'+fmtDateShort(l.date)+'</div>'+
+      '<div><div class="log-desc">'+l.desc+voidedTag+'</div>'+(l.notes?'<div class="log-desc-sub">'+l.notes+'</div>':'')+'</div>'+
+      '<div class="log-amount '+amtClass+'">'+amtSign+fmt(l.amount)+'</div>'+
+      '<div class="log-balance">'+l.cat+'</div>'+
+      '<div>'+actions+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ═══ EXPENSE ═══
+var pendingExpense=null;
+
+function submitExpense(){
+  var cat=document.getElementById('expCat').value;
+  var amt=parseFloat(document.getElementById('expAmt').value)||0;
+  var notes=document.getElementById('expNotes').value.trim();
+  if(!cat){showToast('Select a category');return}
+  if(amt<=0){showToast('Enter an amount');return}
+  if(!notes){showToast('Notes are required');return}
+  if(amt>storeBalance){showToast('Store box only has '+fmt(storeBalance));return}
+
+  if(cat==='Owner Withdrawal'){
+    pendingExpense={cat:cat,amt:amt,notes:notes};
+    openPin();
+    return;
+  }
+
+  addExpense(cat,amt,notes);
+}
+
+function addExpense(cat,amt,notes){
+  storeBalance-=amt;
+  log.unshift({id:nextLogId++,date:TODAY,type:'out',amount:amt,desc:'Expense: '+cat,notes:notes,cat:cat,voided:false,entryType:'normal'});
+  closeM('expenseM');
+  document.getElementById('expCat').value='';document.getElementById('expAmt').value='';document.getElementById('expNotes').value='';
+  showToast('Expense added: '+cat+' — '+fmt(amt));
+  render();
+}
+
+// ═══ MANUAL CASH IN ═══
+function submitManual(){
+  var src=document.getElementById('manSrc').value;
+  var amt=parseFloat(document.getElementById('manAmt').value)||0;
+  var notes=document.getElementById('manNotes').value.trim();
+  if(!src){showToast('Select a source');return}
+  if(amt<=0){showToast('Enter an amount');return}
+
+  storeBalance+=amt;
+  log.unshift({id:nextLogId++,date:TODAY,type:'in',amount:amt,desc:'Manual: '+src,notes:notes||src,cat:src,voided:false,entryType:'normal'});
+  closeM('manualM');
+  document.getElementById('manSrc').value='';document.getElementById('manAmt').value='';document.getElementById('manNotes').value='';
+  showToast('Cash in: '+fmt(amt)+' — '+src);
+  render();
+}
+
+// ═══ CORRECT & VOID ═══
+var correctingId=null;
+var voidingId=null;
+
+// Corrections are linked to their entry by corrOf. Only normal, non-voided entries can be
+// corrected or voided; correction and void rows are changed through their original entry.
+function canEdit(entry){return entry&&!entry.voided&&entry.entryType==='normal'}
+function correctionsOf(entry){return log.filter(function(l){return l.corrOf===entry.id&&!l.voided})}
+
+// Current amount of an entry in its own direction: the original plus all its live corrections
+function currentAmount(entry){
+  var dir=entry.type==='in'?1:-1;
+  var net=dir*entry.amount;
+  correctionsOf(entry).forEach(function(c){net+=(c.type==='in'?1:-1)*c.amount});
+  return Math.round(dir*net*100)/100;
+}
+function amountLabel(entry){
+  var sign=entry.type==='in'?'+':'−';
+  var cur=currentAmount(entry);
+  return sign+fmt(cur)+(Math.abs(cur-entry.amount)>0.001?' (originally '+fmt(entry.amount)+')':'');
+}
+
+function openCorrect(id){
+  var entry=log.find(function(l){return l.id===id});
+  if(!canEdit(entry))return;
+  correctingId=id;
+  var curAmt=currentAmount(entry);
+  document.getElementById('corrOrigDesc').textContent=entry.desc;
+  document.getElementById('corrOrigAmt').textContent=amountLabel(entry);
+  document.getElementById('corrNewAmt').value='';
+  document.getElementById('corrReason').value='';
+  document.getElementById('corrDiff').style.display='none';
+  openM('correctM');
+  // Live diff preview
+  document.getElementById('corrNewAmt').oninput=function(){
+    var newAmt=parseFloat(this.value)||0;
+    var diff=newAmt-curAmt;
+    var diffEl=document.getElementById('corrDiff');
+    if(newAmt>0&&Math.abs(diff)>0.01){
+      diffEl.style.display='block';
+      // Direction depends on entry type: increasing an expense REMOVES more cash; decreasing an expense ADDS cash back
+      var addsCash=(entry.type==='in'&&diff>0)||(entry.type==='out'&&diff<0);
+      diffEl.textContent='Difference: '+(diff>0?'+':'−')+fmt(Math.abs(diff))+' → will '+(addsCash?'add ':'remove ')+fmt(Math.abs(diff));
+    }else{diffEl.style.display='none'}
+  };
+}
+
+function submitCorrection(){
+  var entry=log.find(function(l){return l.id===correctingId});
+  if(!canEdit(entry))return;
+  var newAmt=parseFloat(document.getElementById('corrNewAmt').value)||0;
+  var reason=document.getElementById('corrReason').value.trim();
+  if(newAmt<=0){showToast('Enter the correct amount');return}
+  if(!reason){showToast('Reason is required');return}
+  var curAmt=currentAmount(entry);
+  var diff=Math.round((newAmt-curAmt)*100)/100;
+  if(Math.abs(diff)<0.01){showToast('Amount is the same — no correction needed');return}
+
+  // Create adjustment entry (diff is measured from the current amount, so repeat corrections stack correctly)
+  // If the entry is cash-in of $500 and correct is $350, diff is -150
+  // We need to remove $150 (cash-out adjustment)
+  // If the entry is cash-out of $500 and correct is $350, diff is -150
+  // We need to add $150 back (cash-in adjustment)
+  var adjType,adjAmt;
+  if(entry.type==='in'){
+    // Original was income
+    if(diff>0){adjType='in';adjAmt=diff}
+    else{adjType='out';adjAmt=Math.abs(diff)}
+  }else{
+    // Original was expense
+    if(diff>0){adjType='out';adjAmt=diff}
+    else{adjType='in';adjAmt=Math.abs(diff)}
+  }
+
+  // Update balance
+  if(adjType==='in')storeBalance+=adjAmt;else storeBalance-=adjAmt;
+  storeBalance=Math.round(storeBalance*100)/100;
+
+  log.unshift({
+    id:nextLogId++,date:TODAY,type:adjType,amount:adjAmt,
+    desc:'Correction: '+entry.desc,
+    notes:'Was: '+fmt(curAmt)+' → Corrected to: '+fmt(newAmt)+'. Reason: '+reason,
+    cat:'Correction',voided:false,entryType:'correction',corrOf:entry.id
+  });
+
+  closeM('correctM');correctingId=null;
+  showToast('Correction applied: '+(adjType==='in'?'+':'−')+fmt(adjAmt));
+  render();
+}
+
+function openVoid(id){
+  var entry=log.find(function(l){return l.id===id});
+  if(!canEdit(entry))return;
+  voidingId=id;
+  document.getElementById('voidOrigDesc').textContent=entry.desc;
+  document.getElementById('voidOrigAmt').textContent=amountLabel(entry);
+  document.getElementById('voidReason').value='';
+  openM('voidM');
+}
+
+function submitVoid(){
+  var entry=log.find(function(l){return l.id===voidingId});
+  if(!canEdit(entry))return;
+  var reason=document.getElementById('voidReason').value.trim();
+  if(!reason){showToast('Reason is required');return}
+
+  // Reverse the full current amount (original + corrections), then mark the entry and its corrections voided
+  var revAmt=currentAmount(entry);
+  var corrections=correctionsOf(entry);
+  entry.voided=true;
+  corrections.forEach(function(c){c.voided=true});
+  var revType=entry.type==='in'?'out':'in';
+  if(revType==='in')storeBalance+=revAmt;else storeBalance-=revAmt;
+  storeBalance=Math.round(storeBalance*100)/100;
+  log.unshift({
+    id:nextLogId++,date:TODAY,type:revType,amount:revAmt,
+    desc:'Void: '+entry.desc,
+    notes:'Reversed voided entry'+(corrections.length?' incl. '+corrections.length+' correction'+(corrections.length>1?'s':''):'')+'. Reason: '+reason,
+    cat:'Void',voided:false,entryType:'void-reversal',voidOf:entry.id
+  });
+
+  closeM('voidM');voidingId=null;
+  showToast('Entry voided — '+fmt(revAmt)+' reversed');
+  render();
+}
+
+// ═══ PIN SYSTEM ═══
+var pinEntry='';
+var pinAttempts=0;
+
+function openPin(){
+  pinEntry='';pinAttempts=0;
+  updatePinDots();
+  document.getElementById('pinError').textContent='';
+  document.getElementById('pinOverlay').classList.add('show');
+}
+
+function pinCancel(){
+  document.getElementById('pinOverlay').classList.remove('show');
+  pendingExpense=null;pinEntry='';
+}
+
+function pinKey(n){
+  if(pinEntry.length>=4)return;
+  pinEntry+=n;
+  updatePinDots();
+  if(pinEntry.length===4){
+    setTimeout(function(){checkPin()},200);
+  }
+}
+
+function pinDel(){
+  if(pinEntry.length>0)pinEntry=pinEntry.slice(0,-1);
+  updatePinDots();
+  document.getElementById('pinError').textContent='';
+}
+
+function updatePinDots(){
+  for(var i=0;i<4;i++){
+    var dot=document.getElementById('pd'+i);
+    dot.className='pin-dot'+(i<pinEntry.length?' filled':'');
+  }
+}
+
+function checkPin(){
+  if(pinEntry===OWNER_PIN){
+    document.getElementById('pinOverlay').classList.remove('show');
+    if(pendingExpense){
+      addExpense(pendingExpense.cat,pendingExpense.amt,pendingExpense.notes);
+      pendingExpense=null;
+    }
+  }else{
+    pinAttempts++;
+    document.querySelectorAll('.pin-dot').forEach(function(d){d.classList.add('wrong')});
+    document.getElementById('pinError').textContent='Wrong PIN'+(pinAttempts>=3?' — '+pinAttempts+' attempts':'');
+    setTimeout(function(){
+      pinEntry='';
+      updatePinDots();
+    },500);
+  }
+}
+
+// Close modals on bg
+document.querySelectorAll('.mo').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)closeM(m.id)})});
+
+render();
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

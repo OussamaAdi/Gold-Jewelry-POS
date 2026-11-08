@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — New Repair</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);--bd3:rgba(255,255,255,.25);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);--blue-b:rgba(91,163,230,.3);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);--green-b:rgba(76,175,124,.3);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);--amber-b:rgba(230,162,60,.35);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);--purple-b:rgba(155,141,230,.35);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+/* ═══ LIGHT MODE ═══ */
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);--bd3:rgba(0,0,0,.3);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);--blue-b:rgba(61,127,196,.35);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);--green-b:rgba(46,139,95,.35);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);--red-b:rgba(207,68,68,.35);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);--amber-b:rgba(196,130,26,.35);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);--purple-b:rgba(122,107,204,.35);
+}
+html.light .toast{background:#1f1f1f;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+html.light .modal{border-color:#c9c9cf;box-shadow:0 8px 30px rgba(0,0,0,.15)}
+html.light .top-bar,html.light .panel{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+html.light .mo{background:rgba(0,0,0,.4)}
+html.light .pay-tab.sel-unpaid{background:rgba(0,0,0,.05)}
+.top-actions{display:flex;gap:6px}
+body{transition:background .25s,color .25s}
+.mode-btn{font-family:var(--font);font-size:15px;padding:9px 12px;border-radius:var(--r);cursor:pointer;display:inline-flex;align-items:center;min-height:42px;border:1px solid var(--bd2);background:transparent;color:var(--t3);transition:all .12s}
+.mode-btn:active{transform:scale(.95)}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);height:100vh;height:100dvh;overflow:hidden;padding:14px;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent}
+.app{flex:1;display:flex;flex-direction:column;max-width:1200px;margin:0 auto;width:100%;min-height:0}
+
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);margin-bottom:10px;flex-shrink:0}
+.top-title{font-size:16px;font-weight:600;color:var(--gold)}
+.btn{font-family:var(--font);font-size:13px;font-weight:500;padding:9px 14px;border-radius:var(--r);cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px;min-height:42px;border:1px solid var(--bd2);background:transparent;color:var(--t3)}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+.btn-gold:active{background:var(--gold-h)}
+.btn-outline{border:1px solid var(--bd2);background:transparent;color:var(--t3)}
+
+.main{flex:1;display:grid;grid-template-columns:1fr 310px;gap:10px;min-height:0}
+
+/* LEFT */
+.left{display:flex;flex-direction:column;gap:10px;min-height:0}
+.panel{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;flex-shrink:0}
+.panel-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--t4);margin-bottom:7px;font-weight:500}
+
+.notes-panel{flex:1;display:flex;flex-direction:column;min-height:0}
+.notes-ta{flex:1;font-family:var(--font);font-size:14px;line-height:1.7;padding:10px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);resize:none;width:100%;min-height:100px;-webkit-appearance:none}
+.notes-ta:focus{outline:none;border-color:var(--blue)}
+.notes-ta::placeholder{color:var(--t4)}
+.notes-hint{font-size:11px;color:var(--t4);margin-top:4px;font-style:italic}
+
+.fg{margin-bottom:10px}
+.fg:last-child{margin-bottom:0}
+.fg label{font-size:11px;color:var(--t3);display:block;margin-bottom:4px;font-weight:500}
+.fg input,.fg select{font-family:var(--font);font-size:14px;padding:9px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:100%;-webkit-appearance:none}
+.fg input:focus{outline:none;border-color:var(--blue)}
+.fg select{appearance:auto;-webkit-appearance:auto}
+
+/* Payment tabs */
+.pay-tabs{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:8px}
+.pay-tab{padding:9px 4px;border-radius:var(--r);border:1px solid var(--bd2);background:transparent;cursor:pointer;text-align:center;transition:all .12s;font-family:var(--font)}
+.pay-tab:active{border-color:var(--bd3)}
+.pay-tab.sel-cash{border-color:var(--green);background:var(--green-bg);box-shadow:0 0 0 1px var(--green)}
+.pay-tab.sel-card{border-color:var(--purple);background:var(--purple-bg);box-shadow:0 0 0 1px var(--purple)}
+.pay-tab.sel-split{border-color:var(--amber);background:var(--amber-bg);box-shadow:0 0 0 1px var(--amber)}
+.pay-tab.sel-unpaid{border-color:var(--t3);background:rgba(255,255,255,.06);box-shadow:0 0 0 1px var(--t3)}
+.pt-ico{font-size:18px;display:block;margin-bottom:1px}
+.pt-lbl{font-size:11px;font-weight:500;color:var(--t3)}
+.pay-tab.sel-cash .pt-lbl,.pay-tab.sel-cash .pt-ico{color:var(--green)}
+.pay-tab.sel-card .pt-lbl,.pay-tab.sel-card .pt-ico{color:var(--purple)}
+.pay-tab.sel-split .pt-lbl,.pay-tab.sel-split .pt-ico{color:var(--amber)}
+.pay-tab.sel-unpaid .pt-lbl,.pay-tab.sel-unpaid .pt-ico{color:var(--t2)}
+.pay-fields{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pf{display:flex;flex-direction:column;gap:3px;min-width:0}
+.pf label{font-size:11px;color:var(--t4)}
+.pf input{font-family:var(--font);font-size:14px;padding:8px 10px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:100%;min-width:0;-webkit-appearance:none}
+.pf input:focus{outline:none;border-color:var(--green)}
+.pf input:disabled{opacity:.25;cursor:not-allowed}
+.pay-status{font-size:12px;margin-top:6px;padding:6px 10px;border-radius:var(--r);text-align:center}
+.pay-ok{background:var(--green-bg);color:var(--green)}
+.pay-partial{background:var(--red-bg);color:var(--red)}
+
+/* RIGHT */
+.right{display:flex;flex-direction:column;gap:8px;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.right::-webkit-scrollbar{width:0}
+
+/* Customer */
+.cust-search-wrap{position:relative}
+.cust-search{font-family:var(--font);font-size:14px;padding:9px 12px 9px 34px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:100%;-webkit-appearance:none}
+.cust-search::placeholder{color:var(--t4)}
+.cust-search:focus{outline:none;border-color:var(--gold)}
+.cust-search-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--t4);font-size:14px;pointer-events:none}
+.cust-drop{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:1px solid var(--bd2);border-radius:var(--r);margin-top:4px;z-index:20;max-height:140px;overflow-y:auto;display:none}
+.cust-drop.show{display:block}
+.cust-opt{padding:9px 12px;cursor:pointer;font-size:13px;display:flex;justify-content:space-between}
+.cust-opt:active{background:var(--bg5)}
+.cust-opt-ph{color:var(--t4);font-size:11px}
+
+.cust-sel{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--green-bg);border:1px solid var(--green-b);border-radius:var(--r)}
+.cust-av{width:36px;height:36px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:#fff;flex-shrink:0}
+.cust-info{flex:1;min-width:0}
+.cust-nm{font-size:14px;font-weight:600}
+.cust-ph{font-size:12px;color:var(--green)}
+.cust-x{background:none;border:none;color:var(--t4);font-size:16px;cursor:pointer;padding:4px;min-width:30px;min-height:30px;display:flex;align-items:center;justify-content:center;border-radius:5px;flex-shrink:0}
+.cust-x:active{background:var(--red-bg);color:var(--red)}
+
+/* Slot */
+.slot-badge{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--blue-bg);border:1px solid var(--blue-b);border-radius:var(--r)}
+.slot-num{font-size:20px;font-weight:600;color:var(--blue)}
+.slot-text{font-size:13px;color:var(--blue)}
+.slot-sub{font-size:11px;color:var(--t4)}
+
+/* Receiver */
+.recv-row{display:flex;align-items:center;gap:8px;cursor:pointer}
+.recv-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--gold);cursor:pointer}
+.recv-label{font-size:12px;color:var(--t2);cursor:pointer}
+.recv-name{margin-top:8px;display:none}
+.recv-name.show{display:block}
+.recv-name input{font-family:var(--font);font-size:14px;padding:9px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:100%;-webkit-appearance:none}
+.recv-name input:focus{outline:none;border-color:var(--blue)}
+
+.save-btn{width:100%;padding:13px;font-size:15px;font-family:var(--font);font-weight:600;border-radius:var(--r);border:none;background:var(--gold);color:#1a1a1a;cursor:pointer;min-height:48px;flex-shrink:0}
+.save-btn:active{background:var(--gold-h);transform:scale(.99)}
+.save-btn:disabled{background:var(--bg5);color:var(--t4);cursor:not-allowed;transform:none}
+.cancel-link{text-align:center;font-size:12px;color:var(--t4);cursor:pointer;margin-top:3px;padding:5px;flex-shrink:0}
+
+/* Modals */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;justify-content:center;align-items:center;padding:20px}
+.mo.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
+.mh{padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1}
+.mh-title{font-size:16px;font-weight:600}
+.mh-x{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:4px 8px;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.mh-x:active{background:var(--bg5);color:var(--t1)}
+.mb{padding:18px}
+.m-btns{display:flex;gap:8px;margin-top:16px}
+.m-btns .btn{flex:1;justify-content:center;padding:13px;font-size:14px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#fff;color:#1a1a1a;padding:14px 28px;border-radius:var(--r);font-size:14px;font-weight:500;font-family:var(--font);box-shadow:0 8px 30px rgba(0,0,0,.4);opacity:0;transition:all .35s;z-index:200;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top-bar">
+    <span class="top-title">🔧 New repair</span>
+    <div class="top-actions">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()" title="Light / dark mode">☀️</button>
+      <button class="btn btn-outline" onclick="showToast('Back to POS')">← Back to POS</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- LEFT: Notes + Pricing -->
+    <div class="left">
+      <div class="panel notes-panel">
+        <div class="panel-label">Repair notes *</div>
+        <textarea class="notes-ta" id="repNotes" placeholder="Ring to size 7 (weight 6.34)&#10;Weld Bracelet (weight 14.8)&#10;Chain solder + replace spring ring"></textarea>
+        <div class="notes-hint">Printed directly on the receipt</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-label">Pricing</div>
+        <div class="fg">
+          <label>Cost ($)</label>
+          <input type="number" id="repCost" value="0" min="0" step="any" inputmode="decimal" oninput="recalc()">
+        </div>
+        <div class="panel-label" style="margin-top:10px">Payment</div>
+        <div class="pay-tabs" id="payTabs">
+          <div class="pay-tab" data-m="unpaid" onclick="setPay('unpaid')"><span class="pt-ico" style="color:var(--t4)">—</span><span class="pt-lbl">Unpaid</span></div>
+          <div class="pay-tab" data-m="cash" onclick="setPay('cash')"><span class="pt-ico">💵</span><span class="pt-lbl">Cash</span></div>
+          <div class="pay-tab" data-m="card" onclick="setPay('card')"><span class="pt-ico">💳</span><span class="pt-lbl">Card</span></div>
+          <div class="pay-tab" data-m="split" onclick="setPay('split')"><span class="pt-ico">↔</span><span class="pt-lbl">Split</span></div>
+        </div>
+        <div class="pay-fields" id="payFields" style="display:none">
+          <div class="pf"><label>Cash</label><input type="number" id="payCash" value="0" min="0" step="any" inputmode="decimal" oninput="onPayIn('cash')"></div>
+          <div class="pf"><label>Card</label><input type="number" id="payCard" value="0" min="0" step="any" inputmode="decimal" oninput="onPayIn('card')"></div>
+        </div>
+        <div id="payStatus"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Customer + Details -->
+    <div class="right">
+      <div class="panel" id="custPanel"></div>
+
+      <div class="panel">
+        <div class="panel-label">Slot assignment</div>
+        <div class="slot-badge">
+          <span class="slot-num" id="slotNum">3</span>
+          <div>
+            <div class="slot-text">Slot <span id="slotDisplay">3</span></div>
+            <div class="slot-sub">Next available</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-label">Schedule</div>
+        <div class="fg">
+          <label>Due date *</label>
+          <input type="date" id="repDue" value="">
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="recv-row" onclick="toggleRecv()">
+          <input type="checkbox" id="recvCheck">
+          <span class="recv-label">Receiver is different from customer</span>
+        </div>
+        <div class="recv-name" id="recvNameBox">
+          <input type="text" id="recvName" placeholder="Enter receiver name">
+        </div>
+      </div>
+
+      <button class="save-btn" id="saveBtn" disabled onclick="saveRepair()">Fill in required fields</button>
+      <div class="cancel-link" onclick="clearForm()">Cancel</div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Customer Modal -->
+<div class="mo" id="addCM">
+  <div class="modal">
+    <div class="mh"><span class="mh-title">Add new customer</span><button class="mh-x" onclick="closeM('addCM')">✕</button></div>
+    <div class="mb">
+      <div class="fg"><label>Customer name *</label><input type="text" id="ncName" placeholder="Enter customer name"></div>
+      <div class="fg"><label>Phone number *</label><input type="tel" id="ncPhone" placeholder="780-555-0123" inputmode="tel" maxlength="12" oninput="formatPhoneInput(this)"></div>
+      <div class="fg"><label>Email</label><input type="email" id="ncEmail" placeholder="Optional"></div>
+      <div class="fg"><label>Birthday</label><input type="date" id="ncBday"></div>
+      <div class="m-btns"><button class="btn btn-gold" onclick="saveNewCust()">Save customer</button><button class="btn btn-outline" onclick="closeM('addCM')">Cancel</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+
+var customers=[
+  {name:'Jesse Simmons',phone:'7805550101'},
+  {name:'Robin Freeman',phone:'7805550192'},
+  {name:'Noel Morales',phone:'5875550174'},
+  {name:'Taylor Ramos',phone:'7805550141'},
+  {name:'Morgan Hayes',phone:'7805550100'},
+  {name:'Peyton Young',phone:'7805550103'},
+  {name:'Skyler King',phone:'7805550105'},
+  {name:'Sydney Long',phone:'7805550102'},
+  {name:'Casey Jenkins',phone:'7805550106'}
+];
+
+var occupiedSlots=[1,2,4,5,7];
+var selectedCust=null;
+var payMethod='unpaid';
+var lastPayEdited='cash';
+var repairCode='R-000012';
+
+function fmt(n){return '$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fmtPh(p){if(!p)return'';p=p.replace(/[^0-9]/g,'');if(p.length===10)return p.slice(0,3)+'-'+p.slice(3,6)+'-'+p.slice(6);return p}
+function formatPhoneInput(el){var d=el.value.replace(/[^0-9]/g,'').slice(0,10);var out=d;if(d.length>6)out=d.slice(0,3)+'-'+d.slice(3,6)+'-'+d.slice(6);else if(d.length>3)out=d.slice(0,3)+'-'+d.slice(3);el.value=out}
+function showToast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},3000)}
+function openM(id){document.getElementById(id).classList.add('show')}
+function closeM(id){document.getElementById(id).classList.remove('show')}
+
+// Set default due date to 3 days from now
+(function(){
+  var d=new Date();d.setDate(d.getDate()+3);
+  var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  document.getElementById('repDue').value=ds;
+})();
+
+// Next available slot
+function getNextSlot(){
+  for(var i=1;i<=50;i++){if(occupiedSlots.indexOf(i)===-1)return i}
+  return occupiedSlots.length+1;
+}
+(function(){
+  var s=getNextSlot();
+  document.getElementById('slotNum').textContent=s;
+  document.getElementById('slotDisplay').textContent=s;
+})();
+
+// ═══ CUSTOMER ═══
+function renderCust(){
+  var p=document.getElementById('custPanel');
+  if(selectedCust){
+    var ini=selectedCust.name.split(' ').map(function(w){return w[0]}).join('').toUpperCase();
+    p.innerHTML='<div class="panel-label">Customer</div><div class="cust-sel"><div class="cust-av">'+ini+'</div><div class="cust-info"><div class="cust-nm">'+selectedCust.name+'</div><div class="cust-ph">'+fmtPh(selectedCust.phone)+'</div></div><button class="cust-x" onclick="clearCust()">✕</button></div>';
+  }else{
+    p.innerHTML='<div class="panel-label">Customer *</div><div class="cust-search-wrap"><span class="cust-search-ico">⌕</span><input type="text" class="cust-search" id="custIn" placeholder="Search customer..." oninput="searchCust(this.value)" onfocus="searchCust(this.value)" autocomplete="off"><div class="cust-drop" id="custDr"></div></div><div style="margin-top:6px"><button class="btn btn-outline" style="width:100%;justify-content:center;font-size:12px;padding:8px" onclick="openM(\'addCM\')">+ New customer</button></div>';
+  }
+  validate();
+}
+function searchCust(q){
+  var d=document.getElementById('custDr');
+  if(!q||!q.trim()){d.classList.remove('show');return}
+  var ql=q.toLowerCase();var ph=q.replace(/[^0-9]/g,'');
+  var r=customers.filter(function(c){return c.name.toLowerCase().indexOf(ql)!==-1||(ph.length>0&&c.phone.indexOf(ph)!==-1)});
+  if(!r.length){d.classList.remove('show');return}
+  d.innerHTML=r.map(function(c){return'<div class="cust-opt" onclick="pickCust(\''+c.name+'\')"><span>'+c.name+'</span><span class="cust-opt-ph">'+fmtPh(c.phone)+'</span></div>'}).join('');
+  d.classList.add('show');
+}
+function pickCust(n){selectedCust=customers.find(function(c){return c.name===n});renderCust()}
+function clearCust(){selectedCust=null;renderCust()}
+function saveNewCust(){
+  var n=document.getElementById('ncName').value.trim();
+  var ph=document.getElementById('ncPhone').value.trim().replace(/[^0-9]/g,'');
+  if(!n||!ph){showToast('Name and phone required');return}
+  var c={name:n,phone:ph};customers.push(c);selectedCust=c;
+  closeM('addCM');renderCust();showToast(n+' added');
+  document.getElementById('ncName').value='';document.getElementById('ncPhone').value='';document.getElementById('ncEmail').value='';document.getElementById('ncBday').value='';
+}
+
+// ═══ RECEIVER ═══
+function toggleRecv(){
+  var cb=document.getElementById('recvCheck');
+  cb.checked=!cb.checked;
+  document.getElementById('recvNameBox').className=cb.checked?'recv-name show':'recv-name';
+  if(cb.checked)document.getElementById('recvName').focus();
+}
+
+// ═══ PAYMENT ═══
+function setPay(m){
+  payMethod=m;lastPayEdited='cash';
+  document.querySelectorAll('#payTabs .pay-tab').forEach(function(t){
+    t.className='pay-tab'+(t.dataset.m===m?' sel-'+m:'');
+  });
+  var fields=document.getElementById('payFields');
+  var ci=document.getElementById('payCash'),ca=document.getElementById('payCard');
+
+  if(m==='unpaid'){
+    fields.style.display='none';
+  }else if(m==='cash'){
+    fields.style.display='grid';
+    ci.disabled=false;ca.disabled=true;ca.value='0';
+  }else if(m==='card'){
+    fields.style.display='grid';
+    ci.disabled=true;ci.value='0';ca.disabled=false;
+  }else if(m==='split'){
+    fields.style.display='grid';
+    ci.disabled=false;ca.disabled=false;
+  }
+  recalc();
+}
+
+function onPayIn(which){
+  if(payMethod!=='split'){recalc();return}
+  lastPayEdited=which;
+  var cost=parseFloat(document.getElementById('repCost').value)||0;
+  var ci=document.getElementById('payCash'),ca=document.getElementById('payCard');
+  if(which==='cash'){
+    var cv=parseFloat(ci.value)||0;
+    ca.value=Math.max(0,cost-cv).toFixed(2);
+  }else{
+    var cardv=parseFloat(ca.value)||0;
+    ci.value=Math.max(0,cost-cardv).toFixed(2);
+  }
+  validate();
+}
+
+function recalc(){
+  var cost=parseFloat(document.getElementById('repCost').value)||0;
+  var ci=document.getElementById('payCash'),ca=document.getElementById('payCard');
+
+  if(payMethod==='cash'){ci.value=cost.toFixed(2)}
+  else if(payMethod==='card'){ca.value=cost.toFixed(2)}
+  else if(payMethod==='split'){
+    if(lastPayEdited==='cash'){
+      var cv=parseFloat(ci.value)||0;
+      ca.value=Math.max(0,cost-cv).toFixed(2);
+    }else{
+      var cardv=parseFloat(ca.value)||0;
+      ci.value=Math.max(0,cost-cardv).toFixed(2);
+    }
+  }
+
+  // Payment status display
+  var ps=document.getElementById('payStatus');
+  if(payMethod==='unpaid'){
+    ps.innerHTML=cost>0?'<div class="pay-status pay-partial" style="margin-top:8px">Unpaid — '+fmt(cost)+' due at pickup</div>':'';
+  }else if(payMethod==='split'){
+    var paid=(parseFloat(ci.value)||0)+(parseFloat(ca.value)||0);
+    var rem=cost-paid;
+    if(Math.abs(rem)<0.01)ps.innerHTML='<div class="pay-status pay-ok" style="margin-top:8px">Fully paid — split '+fmt(parseFloat(ci.value)||0)+' cash / '+fmt(parseFloat(ca.value)||0)+' card</div>';
+    else ps.innerHTML='<div class="pay-status pay-partial" style="margin-top:8px">'+fmt(Math.abs(rem))+' '+(rem>0?'remaining':'overpaid')+'</div>';
+  }else{
+    if(cost>0)ps.innerHTML='<div class="pay-status pay-ok" style="margin-top:8px">Paid in full — '+payMethod+'</div>';
+    else ps.innerHTML='';
+  }
+
+  validate();
+}
+
+function validate(){
+  var btn=document.getElementById('saveBtn');
+  var notes=document.getElementById('repNotes').value.trim();
+  var cost=parseFloat(document.getElementById('repCost').value)||0;
+  var due=document.getElementById('repDue').value;
+  var reasons=[];
+
+  if(!selectedCust)reasons.push('customer');
+  if(!notes)reasons.push('notes');
+  if(!due)reasons.push('due date');
+
+  if(reasons.length){
+    btn.disabled=true;
+    btn.textContent='Missing: '+reasons.join(', ');
+  }else{
+    btn.disabled=false;
+    btn.textContent=cost>0?'Save repair — '+fmt(cost):'Save repair';
+  }
+}
+
+document.getElementById('repNotes').addEventListener('input',validate);
+document.getElementById('repDue').addEventListener('input',validate);
+document.getElementById('repCost').addEventListener('input',recalc);
+
+function saveRepair(){
+  if(document.getElementById('saveBtn').disabled)return;
+  var cost=parseFloat(document.getElementById('repCost').value)||0;
+  var slot=getNextSlot();
+  var recv=document.getElementById('recvCheck').checked?document.getElementById('recvName').value.trim():'';
+  showToast('✓ '+repairCode+' saved — '+selectedCust.name+' · Slot '+slot+(cost>0?' · '+fmt(cost):''));
+  clearForm();
+}
+
+function clearForm(){
+  selectedCust=null;payMethod='unpaid';lastPayEdited='cash';
+  document.getElementById('repNotes').value='';
+  document.getElementById('repCost').value='0';
+  document.getElementById('recvCheck').checked=false;
+  document.getElementById('recvNameBox').className='recv-name';
+  document.getElementById('recvName').value='';
+  setPay('unpaid');renderCust();recalc();
+}
+
+// Close modals & dropdowns
+document.querySelectorAll('.mo').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)closeM(m.id)})});
+document.addEventListener('click',function(e){var d=document.getElementById('custDr');if(d&&!e.target.closest('.cust-search-wrap'))d.classList.remove('show')});
+
+renderCust();recalc();
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Used Gold</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);--green-b:rgba(76,175,124,.3);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);--blue-b:rgba(91,163,230,.3);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);--purple-b:rgba(155,141,230,.35);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+/* ═══ LIGHT MODE ═══ */
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);--bd3:rgba(0,0,0,.3);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);--blue-b:rgba(61,127,196,.35);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);--green-b:rgba(46,139,95,.35);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);--red-b:rgba(207,68,68,.35);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);--amber-b:rgba(196,130,26,.35);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);--purple-b:rgba(122,107,204,.35);
+}
+html.light .toast{background:#1f1f1f;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+html.light .modal{border-color:#c9c9cf;box-shadow:0 8px 30px rgba(0,0,0,.15)}
+html.light .top-bar,html.light .panel,html.light .gold-box{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+html.light .mo{background:rgba(0,0,0,.4)}
+html.light .gold-items::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15)}
+.top-actions{display:flex;gap:6px}
+body{transition:background .25s,color .25s}
+.mode-btn{font-family:var(--font);font-size:15px;padding:9px 12px;border-radius:var(--r);cursor:pointer;display:inline-flex;align-items:center;min-height:42px;border:1px solid var(--bd2);background:transparent;color:var(--t3);transition:all .12s}
+.mode-btn:active{transform:scale(.95)}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);height:100vh;height:100dvh;overflow:hidden;padding:14px;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent}
+.app{flex:1;display:flex;flex-direction:column;max-width:1200px;margin:0 auto;width:100%;min-height:0}
+
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);margin-bottom:10px;flex-shrink:0}
+.top-title{font-size:16px;font-weight:600;color:var(--gold);display:flex;align-items:center;gap:8px}
+.btn{font-family:var(--font);font-size:13px;font-weight:500;padding:9px 14px;border-radius:var(--r);cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px;min-height:42px;border:1px solid var(--bd2);background:transparent;color:var(--t3)}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+.btn-gold:active{background:var(--gold-h)}
+.btn-outline{border:1px solid var(--bd2);color:var(--t3)}
+
+.main{flex:1;display:grid;grid-template-columns:1fr 310px;gap:10px;min-height:0}
+
+/* LEFT */
+.left{display:flex;flex-direction:column;min-height:0}
+.panel{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;flex-shrink:0}
+.panel-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--t4);margin-bottom:7px;font-weight:500}
+
+.gold-box{flex:1;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.gold-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.gold-title{font-size:14px;font-weight:500;color:var(--t3)}
+.gold-count{font-size:12px;color:var(--t4)}
+.gold-cols{display:grid;grid-template-columns:68px 1fr 1fr 90px 28px;gap:6px;padding:7px 14px;border-bottom:1px solid var(--bd);flex-shrink:0;align-items:center}
+.col-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--t4);font-weight:500}
+.gold-items{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 14px}
+.gold-items::-webkit-scrollbar{width:3px}
+.gold-items::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+.gold-row{display:grid;grid-template-columns:68px 1fr 1fr 90px 28px;gap:6px;padding:9px 0;border-bottom:1px solid var(--bd);align-items:center}
+.gold-row:last-child{border-bottom:none}
+.gr-karat{font-size:13px;font-weight:600;padding:6px 4px;border-radius:6px;text-align:center;letter-spacing:.3px}
+.gr-input{font-family:var(--font);font-size:13px;padding:6px 4px;border-radius:6px;border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);text-align:center;width:100%;-webkit-appearance:none}
+.gr-input:focus{outline:none;border-color:var(--gold)}
+.gr-sub{font-size:13px;font-weight:600;text-align:right;white-space:nowrap}
+.gr-sub.has-val{color:var(--red)}
+.gr-sub.empty{color:var(--t4)}
+.gr-remove{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;color:var(--t4);font-size:14px;background:transparent;border:none;transition:all .1s}
+.gr-remove:active{background:var(--red-bg);color:var(--red)}
+.gold-footer{padding:8px 14px;border-top:1px solid var(--bd);flex-shrink:0}
+.gold-footer .btn{width:100%;justify-content:center}
+
+/* RIGHT */
+.right{display:flex;flex-direction:column;gap:8px;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.right::-webkit-scrollbar{width:0}
+
+/* Customer */
+.cust-search-wrap{position:relative}
+.cust-search{font-family:var(--font);font-size:14px;padding:9px 12px 9px 34px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:100%;-webkit-appearance:none}
+.cust-search::placeholder{color:var(--t4)}
+.cust-search:focus{outline:none;border-color:var(--gold)}
+.cust-search-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--t4);font-size:14px;pointer-events:none}
+.cust-drop{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:1px solid var(--bd2);border-radius:var(--r);margin-top:4px;z-index:20;max-height:140px;overflow-y:auto;display:none}
+.cust-drop.show{display:block}
+.cust-opt{padding:9px 12px;cursor:pointer;font-size:13px;display:flex;justify-content:space-between}
+.cust-opt:active{background:var(--bg5)}
+.cust-sel{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--green-bg);border:1px solid var(--green-b);border-radius:var(--r)}
+.cust-av{width:36px;height:36px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:#fff;flex-shrink:0}
+.cust-info{flex:1;min-width:0}
+.cust-nm{font-size:14px;font-weight:600}
+.cust-ph{font-size:12px;color:var(--green)}
+.cust-x{background:none;border:none;color:var(--t4);font-size:16px;cursor:pointer;padding:4px;min-width:30px;min-height:30px;display:flex;align-items:center;justify-content:center;border-radius:5px;flex-shrink:0}
+.cust-x:active{background:var(--red-bg);color:var(--red)}
+
+/* Payment method */
+.pay-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px}
+.pay-tab{padding:10px 4px;border-radius:var(--r);border:1px solid var(--bd2);background:transparent;cursor:pointer;text-align:center;transition:all .12s;font-family:var(--font)}
+.pay-tab.sel-cash{border-color:var(--green);background:var(--green-bg);box-shadow:0 0 0 1px var(--green)}
+.pay-tab.sel-etransfer{border-color:var(--purple);background:var(--purple-bg);box-shadow:0 0 0 1px var(--purple)}
+.pt-ico{font-size:18px;display:block;margin-bottom:1px}
+.pt-lbl{font-size:11px;font-weight:500;color:var(--t3)}
+.pay-tab.sel-cash .pt-lbl,.pay-tab.sel-cash .pt-ico{color:var(--green)}
+.pay-tab.sel-etransfer .pt-lbl,.pay-tab.sel-etransfer .pt-ico{color:var(--purple)}
+
+/* Notes */
+.notes-ta{font-family:var(--font);font-size:13px;line-height:1.5;padding:8px 10px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:100%;min-height:50px;resize:none;-webkit-appearance:none}
+.notes-ta:focus{outline:none;border-color:var(--blue)}
+.notes-ta::placeholder{color:var(--t4)}
+
+/* Summary */
+.sum-row{display:flex;justify-content:space-between;padding:3px 0;font-size:13px;color:var(--t3)}
+.sum-total{display:flex;justify-content:space-between;padding:7px 0 0;margin-top:5px;border-top:1px solid var(--bd);font-size:17px;font-weight:600}
+.sum-total-price{color:var(--red)}
+.sum-sub-label{font-size:11px;color:var(--t4);margin-top:2px;text-align:right}
+.sum-weight{display:flex;justify-content:space-between;padding:6px 0 0;font-size:12px;color:var(--t4)}
+
+.save-btn{width:100%;padding:13px;font-size:15px;font-family:var(--font);font-weight:600;border-radius:var(--r);border:none;background:var(--gold);color:#1a1a1a;cursor:pointer;min-height:48px;flex-shrink:0}
+.save-btn:active{background:var(--gold-h);transform:scale(.99)}
+.save-btn:disabled{background:var(--bg5);color:var(--t4);cursor:not-allowed;transform:none}
+.cancel-link{text-align:center;font-size:12px;color:var(--t4);cursor:pointer;margin-top:3px;padding:5px;flex-shrink:0}
+
+/* Add karat modal */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;justify-content:center;align-items:center;padding:20px}
+.mo.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:380px;overflow:hidden}
+.mh{padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+.mh-title{font-size:16px;font-weight:600}
+.mh-x{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:4px 8px;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.mh-x:active{background:var(--bg5);color:var(--t1)}
+.mb{padding:18px}
+.fg{margin-bottom:12px}
+.fg label{font-size:12px;color:var(--t3);display:block;margin-bottom:4px;font-weight:500}
+.fg input,.fg select{font-family:var(--font);font-size:14px;padding:10px 12px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:100%;-webkit-appearance:none}
+.fg input:focus{outline:none;border-color:var(--blue)}
+.fg select{appearance:auto;-webkit-appearance:auto}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.m-btns{display:flex;gap:8px;margin-top:16px}
+.m-btns .btn{flex:1;justify-content:center;padding:13px;font-size:14px}
+
+/* Add customer modal */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#fff;color:#1a1a1a;padding:14px 28px;border-radius:var(--r);font-size:14px;font-weight:500;font-family:var(--font);box-shadow:0 8px 30px rgba(0,0,0,.4);opacity:0;transition:all .35s;z-index:200;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top-bar">
+    <span class="top-title"><svg width="22" height="17" viewBox="0 0 16 12" fill="none" style="flex-shrink:0"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/><path d="M4.5 3h5" stroke="#C49520" stroke-width=".5"/></svg> Used gold purchase</span>
+    <div class="top-actions">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()" title="Light / dark mode">☀️</button>
+      <button class="btn btn-outline" onclick="showToast('Back to POS')">← Back to POS</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="left">
+      <div class="gold-box">
+        <div class="gold-header">
+          <span class="gold-title">Gold items</span>
+          <span class="gold-count" id="goldCount">0 items · 0g</span>
+        </div>
+        <div class="gold-cols">
+          <span class="col-lbl">Karat</span>
+          <span class="col-lbl" style="text-align:center">Weight (g)</span>
+          <span class="col-lbl" style="text-align:center">$/gram</span>
+          <span class="col-lbl" style="text-align:right">Subtotal</span>
+          <span></span>
+        </div>
+        <div class="gold-items" id="goldItems"></div>
+        <div class="gold-footer">
+          <button class="btn btn-outline" onclick="openM('addKaratM')">+ Add karat row</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="panel" id="custPanel"></div>
+      <div class="panel">
+        <div class="panel-label">Payment method</div>
+        <div class="pay-tabs" id="payTabs">
+          <div class="pay-tab sel-cash" data-m="cash" onclick="setPayM('cash')"><span class="pt-ico">💵</span><span class="pt-lbl">Cash</span></div>
+          <div class="pay-tab" data-m="etransfer" onclick="setPayM('etransfer')"><span class="pt-ico">📲</span><span class="pt-lbl">E-Transfer</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Notes</div>
+        <textarea class="notes-ta" id="ugNotes" placeholder="e.g. 21K ring, 24K broken chain, tested with acid"></textarea>
+      </div>
+      <div class="panel">
+        <div id="sumLines"></div>
+        <div class="sum-total"><span>Pay to seller</span><span class="sum-total-price" id="sumTotal">$0.00</span></div>
+        <div class="sum-sub-label" id="sumMethod">Cash out from store box</div>
+        <div class="sum-weight" id="sumWeight"><span>Total weight</span><span>0g</span></div>
+      </div>
+      <button class="save-btn" id="saveBtn" disabled onclick="savePurchase()">Add gold items to start</button>
+      <div class="cancel-link" onclick="clearAll()">Cancel</div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Karat Modal -->
+<div class="mo" id="addKaratM">
+  <div class="modal">
+    <div class="mh"><span class="mh-title">Add karat row</span><button class="mh-x" onclick="closeM('addKaratM')">✕</button></div>
+    <div class="mb">
+      <div class="fg">
+        <label>Karat *</label>
+        <input type="number" id="akKarat" value="" min="1" max="24" placeholder="e.g. 9, 12, 19">
+      </div>
+      <div class="fg">
+        <label>Default price/gram ($)</label>
+        <input type="number" id="akPPG" value="0" min="0" step="any" inputmode="decimal">
+      </div>
+      <div class="m-btns">
+        <button class="btn btn-gold" onclick="addKaratRow()">Add row</button>
+        <button class="btn btn-outline" onclick="closeM('addKaratM')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Customer Modal -->
+<div class="mo" id="addCM">
+  <div class="modal">
+    <div class="mh"><span class="mh-title">Add new seller</span><button class="mh-x" onclick="closeM('addCM')">✕</button></div>
+    <div class="mb">
+      <div class="fg"><label>Name *</label><input type="text" id="ncName" placeholder="Enter name"></div>
+      <div class="fg"><label>Phone *</label><input type="tel" id="ncPhone" placeholder="780-555-0123" inputmode="tel" maxlength="12" oninput="formatPhoneInput(this)"></div>
+      <div class="m-btns">
+        <button class="btn btn-gold" onclick="saveNewCust()">Save</button>
+        <button class="btn btn-outline" onclick="closeM('addCM')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+
+// Gold karat colors — rich gold to pale
+var KARAT_COLORS={
+  24:{bg:'#D4A017',text:'#1a1a1a'},
+  22:{bg:'#C9952A',text:'#1a1a1a'},
+  21:{bg:'#BF8C30',text:'#1a1a1a'},
+  18:{bg:'#B28535',text:'#1a1a1a'},
+  14:{bg:'#A07A3B',text:'#1a1a1a'},
+  10:{bg:'#8C6D3F',text:'#fff'},
+  9:{bg:'#7D6340',text:'#fff'},
+};
+function getKaratColor(k){
+  if(KARAT_COLORS[k])return KARAT_COLORS[k];
+  if(k>=20)return{bg:'#C09030',text:'#1a1a1a'};
+  if(k>=15)return{bg:'#A07A3B',text:'#1a1a1a'};
+  return{bg:'#7D6340',text:'#fff'};
+}
+
+// Default used gold buy prices (lower than sell prices)
+var DEFAULT_PRICES={24:90,22:82,21:175,18:150,14:120,10:95};
+
+var customers=[
+  {name:'Jesse Simmons',phone:'7805550101'},
+  {name:'Robin Freeman',phone:'7805550192'},
+  {name:'Noel Morales',phone:'5875550174'},
+  {name:'Taylor Ramos',phone:'7805550141'},
+  {name:'Morgan Hayes',phone:'7805550100'},
+  {name:'Peyton Young',phone:'7805550103'},
+  {name:'Skyler King',phone:'7805550105'},
+  {name:'Sydney Long',phone:'7805550102'},
+  {name:'Casey Jenkins',phone:'7805550106'}
+];
+
+var rows=[];
+var nextId=1;
+var selectedCust=null;
+var payMethod='cash';
+
+// Init default rows
+function initRows(){
+  [24,22,21,18,14,10].forEach(function(k){
+    rows.push({id:nextId++,karat:k,weight:0,ppg:DEFAULT_PRICES[k]||0});
+  });
+}
+
+function fmt(n){return '$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fmtPh(p){if(!p)return'';p=p.replace(/[^0-9]/g,'');if(p.length===10)return p.slice(0,3)+'-'+p.slice(3,6)+'-'+p.slice(6);return p}
+function formatPhoneInput(el){var d=el.value.replace(/[^0-9]/g,'').slice(0,10);var out=d;if(d.length>6)out=d.slice(0,3)+'-'+d.slice(3,6)+'-'+d.slice(6);else if(d.length>3)out=d.slice(0,3)+'-'+d.slice(3);el.value=out}
+function showToast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},3000)}
+function openM(id){document.getElementById(id).classList.add('show')}
+function closeM(id){document.getElementById(id).classList.remove('show')}
+
+// ═══ CUSTOMER ═══
+function renderCust(){
+  var p=document.getElementById('custPanel');
+  if(selectedCust){
+    var ini=selectedCust.name.split(' ').map(function(w){return w[0]}).join('').toUpperCase();
+    p.innerHTML='<div class="panel-label">Seller</div><div class="cust-sel"><div class="cust-av">'+ini+'</div><div class="cust-info"><div class="cust-nm">'+selectedCust.name+'</div><div class="cust-ph">'+fmtPh(selectedCust.phone)+'</div></div><button class="cust-x" onclick="clearCust()">✕</button></div>';
+  }else{
+    p.innerHTML='<div class="panel-label">Seller *</div><div class="cust-search-wrap"><span class="cust-search-ico">⌕</span><input type="text" class="cust-search" id="custIn" placeholder="Search seller..." oninput="searchCust(this.value)" onfocus="searchCust(this.value)" autocomplete="off"><div class="cust-drop" id="custDr"></div></div><div style="margin-top:6px"><button class="btn btn-outline" style="width:100%;justify-content:center;font-size:12px;padding:8px" onclick="openM(\'addCM\')">+ New seller</button></div>';
+  }
+  validate();
+}
+function searchCust(q){
+  var d=document.getElementById('custDr');
+  if(!q||!q.trim()){d.classList.remove('show');return}
+  var ql=q.toLowerCase();var ph=q.replace(/[^0-9]/g,'');
+  var r=customers.filter(function(c){return c.name.toLowerCase().indexOf(ql)!==-1||(ph.length>0&&c.phone.indexOf(ph)!==-1)});
+  if(!r.length){d.classList.remove('show');return}
+  d.innerHTML=r.map(function(c){return'<div class="cust-opt" onclick="pickCust(\''+c.name+'\')"><span>'+c.name+'</span><span style="color:var(--t4);font-size:11px">'+fmtPh(c.phone)+'</span></div>'}).join('');
+  d.classList.add('show');
+}
+function pickCust(n){selectedCust=customers.find(function(c){return c.name===n});renderCust()}
+function clearCust(){selectedCust=null;renderCust()}
+function saveNewCust(){
+  var n=document.getElementById('ncName').value.trim();
+  var ph=document.getElementById('ncPhone').value.trim().replace(/[^0-9]/g,'');
+  if(!n||!ph){showToast('Name and phone required');return}
+  var c={name:n,phone:ph};customers.push(c);selectedCust=c;
+  closeM('addCM');renderCust();showToast(n+' added');
+  document.getElementById('ncName').value='';document.getElementById('ncPhone').value='';
+}
+
+// ═══ GOLD ROWS ═══
+function renderGold(){
+  var el=document.getElementById('goldItems');
+  el.innerHTML=rows.map(function(row){
+    var sub=row.weight*row.ppg;
+    var c=getKaratColor(row.karat);
+    var subClass=sub>0?'gr-sub has-val':'gr-sub empty';
+    return '<div class="gold-row" id="row-'+row.id+'">'+
+      '<div class="gr-karat" style="background:'+c.bg+';color:'+c.text+'">'+row.karat+'K</div>'+
+      '<input class="gr-input" type="number" value="'+(row.weight||'')+'" min="0" step="any" inputmode="decimal" placeholder="0" oninput="updateRow('+row.id+',\'weight\',this.value)">'+
+      '<input class="gr-input" type="number" value="'+row.ppg+'" min="0" step="any" inputmode="decimal" oninput="updateRow('+row.id+',\'ppg\',this.value)">'+
+      '<div class="'+subClass+'" id="sub-'+row.id+'">'+fmt(sub)+'</div>'+
+      '<button class="gr-remove" onclick="removeRow('+row.id+')">✕</button>'+
+    '</div>';
+  }).join('');
+  updateCounts();
+  recalc();
+}
+
+function updateRow(id,field,value){
+  var row=rows.find(function(r){return r.id===id});
+  if(!row)return;
+  if(field==='weight')row.weight=Math.max(0,parseFloat(value)||0);
+  if(field==='ppg')row.ppg=Math.max(0,parseFloat(value)||0);
+  var sub=row.weight*row.ppg;
+  var el=document.getElementById('sub-'+id);
+  if(el){
+    el.textContent=fmt(sub);
+    el.className=sub>0?'gr-sub has-val':'gr-sub empty';
+  }
+  updateCounts();
+  recalc();
+}
+
+function removeRow(id){
+  rows=rows.filter(function(r){return r.id!==id});
+  renderGold();
+}
+
+function updateCounts(){
+  var active=rows.filter(function(r){return r.weight>0});
+  var totalWeight=rows.reduce(function(s,r){return s+r.weight},0);
+  document.getElementById('goldCount').textContent=active.length+' item'+(active.length!==1?'s':'')+' · '+totalWeight.toFixed(2)+'g';
+}
+
+function addKaratRow(){
+  var k=parseInt(document.getElementById('akKarat').value)||0;
+  var ppg=parseFloat(document.getElementById('akPPG').value)||0;
+  if(k<1||k>24){showToast('Karat must be between 1 and 24');return}
+  var exists=rows.find(function(r){return r.karat===k});
+  if(exists){showToast(k+'K already exists');return}
+  rows.push({id:nextId++,karat:k,weight:0,ppg:ppg});
+  rows.sort(function(a,b){return b.karat-a.karat});
+  closeM('addKaratM');
+  document.getElementById('akKarat').value='';document.getElementById('akPPG').value='0';
+  renderGold();
+  showToast(k+'K row added');
+}
+
+// ═══ PAYMENT ═══
+function setPayM(m){
+  payMethod=m;
+  document.querySelectorAll('#payTabs .pay-tab').forEach(function(t){
+    t.className='pay-tab'+(t.dataset.m===m?' sel-'+m:'');
+  });
+  recalc();
+}
+
+// ═══ RECALC ═══
+function recalc(){
+  var active=rows.filter(function(r){return r.weight>0&&r.ppg>0});
+  var total=0;
+  var totalWeight=0;
+  var lines='';
+  active.forEach(function(r){
+    var sub=r.weight*r.ppg;
+    total+=sub;
+    totalWeight+=r.weight;
+    lines+='<div class="sum-row"><span>'+r.karat+'K — '+r.weight.toFixed(2)+'g × $'+r.ppg+'</span><span>'+fmt(sub)+'</span></div>';
+  });
+  document.getElementById('sumLines').innerHTML=lines;
+  document.getElementById('sumTotal').textContent=fmt(total);
+  document.getElementById('sumWeight').innerHTML='<span>Total weight</span><span>'+totalWeight.toFixed(2)+'g</span>';
+  document.getElementById('sumMethod').textContent=payMethod==='cash'?'Cash out from store box':'E-Transfer to seller';
+  validate();
+}
+
+function validate(){
+  var btn=document.getElementById('saveBtn');
+  var active=rows.filter(function(r){return r.weight>0&&r.ppg>0});
+  var total=active.reduce(function(s,r){return s+(r.weight*r.ppg)},0);
+  if(!active.length){btn.disabled=true;btn.textContent='Add gold items to start'}
+  else if(!selectedCust){btn.disabled=true;btn.textContent='Select a seller'}
+  else if(total<=0){btn.disabled=true;btn.textContent='Total must be > $0'}
+  else{btn.disabled=false;btn.textContent='Pay '+fmt(total)+' — '+(payMethod==='cash'?'cash out':'e-transfer')}
+}
+
+function savePurchase(){
+  if(document.getElementById('saveBtn').disabled)return;
+  var active=rows.filter(function(r){return r.weight>0&&r.ppg>0});
+  var total=active.reduce(function(s,r){return s+(r.weight*r.ppg)},0);
+  var totalWeight=active.reduce(function(s,r){return s+r.weight},0);
+  var desc=active.map(function(r){return r.karat+'K '+r.weight.toFixed(2)+'g'}).join(', ');
+  var method=payMethod==='cash'?'Cash':'E-Transfer';
+  showToast('✓ Purchased '+totalWeight.toFixed(2)+'g from '+selectedCust.name+' — '+fmt(total)+' ('+method+')');
+  clearAll();
+}
+
+function clearAll(){
+  selectedCust=null;payMethod='cash';
+  document.getElementById('ugNotes').value='';
+  rows=[];nextId=1;initRows();
+  setPayM('cash');renderCust();renderGold();
+}
+
+document.querySelectorAll('.mo').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)closeM(m.id)})});
+document.addEventListener('click',function(e){var d=document.getElementById('custDr');if(d&&!e.target.closest('.cust-search-wrap'))d.classList.remove('show')});
+
+initRows();renderCust();renderGold();
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

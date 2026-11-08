@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Customers Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);min-height:100vh;display:flex;-webkit-tap-highlight-color:transparent;transition:background .25s,color .25s}
+.sidebar{width:222px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;transition:background .25s}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(128,128,128,.2)}
+.side-brand{height:64px;padding:0 18px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--bd)}
+.side-brand-name{font-size:17px;font-weight:700}
+.side-brand-name span{color:var(--gold)}
+.side-brand-sub{font-size:11px;color:var(--t4);margin-top:2px}
+.side-section{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--t4);font-weight:600;padding:16px 18px 6px}
+.side-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:14px;font-weight:500;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent;user-select:none}
+.side-item:hover{color:var(--t2);background:rgba(128,128,128,.05)}
+.side-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+.side-item .si-ico{width:20px;text-align:center;font-size:15px;flex-shrink:0}
+.side-item .si-arrow{margin-left:auto;font-size:10px;transition:transform .2s;color:var(--t4)}
+.side-item.open .si-arrow{transform:rotate(180deg)}
+.side-sub{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.side-sub.open{max-height:200px}
+.side-sub-item{display:block;padding:9px 18px 9px 48px;font-size:13px;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent}
+.side-sub-item:hover{color:var(--t2)}
+.side-sub-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:var(--bg2);border-bottom:1px solid var(--bd);gap:12px;transition:background .25s;flex-shrink:0}
+.top-title{font-size:19px;font-weight:600}
+.top-right{display:flex;align-items:center;gap:10px}
+.top-user{font-size:13px;color:var(--t3);display:flex;align-items:center;gap:7px}
+.top-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#1a1a1a;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.mode-btn{font-family:var(--font);font-size:15px;padding:8px 12px;border-radius:var(--r);cursor:pointer;border:1px solid var(--bd2);background:transparent;color:var(--t3);min-height:38px}
+.mode-btn:active{transform:scale(.95)}
+.content{flex:1;padding:22px 26px;overflow-y:auto}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+.sec-title{font-size:13px;font-weight:600;color:var(--t3);margin:0 0 10px 2px;text-transform:uppercase;letter-spacing:.5px}
+.period-bar{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.pbtn{font-family:var(--font);font-size:13px;font-weight:500;padding:10px 18px;border-radius:var(--r);border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer;min-height:42px}
+.pbtn.active{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+.date-input{font-family:var(--font);font-size:13px;padding:9px 10px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);min-height:42px;-webkit-appearance:none;color-scheme:dark}
+html.light .date-input{color-scheme:light}
+.date-input:focus{outline:none;border-color:var(--gold)}
+.apply-btn{font-family:var(--font);font-size:13px;font-weight:600;padding:10px 18px;border-radius:var(--r);border:none;background:var(--gold);color:#1a1a1a;cursor:pointer;min-height:42px}
+.apply-btn:active{background:var(--gold-h)}
+.stats4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.scard{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;position:relative;overflow:hidden;transition:background .25s,border-color .25s}
+html.light .scard,html.light .panel{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.scard::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--bd2)}
+.sc-green::before{background:var(--green)}
+.sc-gold::before{background:var(--gold)}
+.sc-blue::before{background:var(--blue)}
+.sc-purple::before{background:var(--purple)}
+.sc-red::before{background:var(--red)}
+.scard-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--t4);font-weight:500;margin-bottom:6px}
+.scard-value{font-size:21px;font-weight:700}
+.scard-sub{font-size:12px;color:var(--t4);margin-top:3px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.panel{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px;transition:background .25s,border-color .25s;margin-bottom:18px}
+.grid2 .panel{margin-bottom:0}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px}
+.panel-title{font-size:14px;font-weight:600}
+.panel-sub{font-size:11px;color:var(--t4)}
+.tier-row{display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;border-radius:8px;transition:background .12s}
+.tier-row:active{background:var(--bg3)}
+.tier-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:8px;width:76px;text-align:center;flex-shrink:0}
+.tier-track{flex:1;height:20px;background:var(--bg4);border-radius:5px;overflow:hidden}
+.tier-fill{height:100%;border-radius:5px;min-width:2px}
+.tier-amt{font-size:11px;font-weight:600;color:var(--t3);width:190px;text-align:right;flex-shrink:0;white-space:nowrap}
+.chart{display:flex;align-items:flex-end;gap:4px;height:150px}
+.chart-group{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0}
+.chart-val{font-size:9px;font-weight:600;color:var(--t3);height:13px;line-height:13px;white-space:nowrap}
+.chart-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px;background:var(--blue);opacity:.75}
+.chart-lbl{font-size:9px;color:var(--t4);height:13px;line-height:13px;margin-top:3px;white-space:nowrap;overflow:hidden}
+.tbl-scroll{max-height:330px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.tbl-scroll::-webkit-scrollbar{width:4px}
+.tbl-scroll::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25);border-radius:4px}
+.tbl-scroll thead th,.tbl-scroll tr:first-child th{position:sticky;top:0;background:var(--bg2);z-index:2}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--t4);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--bd)}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--bd);color:var(--t2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .num{text-align:right;font-weight:600}
+.search-input{font-family:var(--font);font-size:13px;padding:9px 12px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);width:200px;-webkit-appearance:none}
+.search-input:focus{outline:none;border-color:var(--gold)}
+.risk-list{max-height:248px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:4px}
+.risk-list::-webkit-scrollbar{width:3px}
+.risk-list::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25);border-radius:3px}
+.risk-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bd);font-size:13px}
+.risk-row:last-child{border-bottom:none}
+.tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px}
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;justify-content:center;align-items:center;padding:24px}
+.mo.show{display:flex}
+.mo-box{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:100%;max-width:560px;max-height:85vh;display:flex;flex-direction:column;padding:20px 24px}
+.mo-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.mo-title{font-size:17px;font-weight:600}
+.mo-sub{font-size:12px;color:var(--t4);margin-bottom:14px}
+.mo-x{background:none;border:none;color:var(--t3);font-size:24px;cursor:pointer;padding:6px 10px;border-radius:6px;min-height:44px;min-width:44px}
+.mo-x:active{background:var(--bg5);color:var(--t1)}
+.tier-members{flex:1;max-height:54vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.tier-members::-webkit-scrollbar{width:4px}
+.tier-members::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25);border-radius:4px}
+.tm-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd);font-size:13px}
+.tm-row:last-child{border-bottom:none}
+@media(max-width:1000px){.stats4{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="side-brand">
+    <div class="side-brand-name">Gold <span>Jewelry</span> POS</div>
+    <div class="side-brand-sub">Management System</div>
+  </div>
+  <div class="side-section">Main</div>
+  <div class="side-item"><span class="si-ico">🏠</span> Dashboard</div>
+  <div class="side-item open"><span class="si-ico">📊</span> Reports <span class="si-arrow">▼</span></div>
+  <div class="side-sub open">
+    <span class="side-sub-item">Sales reports</span>
+    <span class="side-sub-item">Inventory reports</span>
+    <span class="side-sub-item">Repairs reports</span>
+    <span class="side-sub-item active">Customers reports</span>
+  </div>
+  <div class="side-item"><span class="si-ico">📦</span> Inventory</div>
+  <div class="side-item"><span class="si-ico">🏷️</span> Pricing</div>
+  <div class="side-item"><span class="si-ico">👥</span> Customers</div>
+  <div class="side-item"><span class="si-ico"><svg width="17" height="13" viewBox="0 0 16 12" fill="none"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/></svg></span> Used gold</div>
+  <div class="side-item"><span class="si-ico">↩️</span> Returns management</div>
+  <div class="side-item"><span class="si-ico">💼</span> Staff</div>
+  <div class="side-section">System</div>
+  <div class="side-item"><span class="si-ico">🖥️</span> POS</div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <span class="top-title">Customers reports</span>
+    <div class="top-right">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()">☀️</button>
+      <span class="top-user"><span class="top-avatar">AD</span> user1@example.com</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- BASE (not filtered) -->
+    <div class="sec-title">Customer base right now</div>
+    <div class="stats4">
+      <div class="scard sc-blue"><div class="scard-label">Total customers</div><div class="scard-value">1,394</div><div class="scard-sub">+118 this year</div></div>
+      <div class="scard sc-green"><div class="scard-label">Repeat customers</div><div class="scard-value" style="color:var(--green)">41%</div><div class="scard-sub">571 bought more than once</div></div>
+      <div class="scard sc-gold"><div class="scard-label">Avg lifetime value</div><div class="scard-value">$17,815</div><div class="scard-sub">per customer, all time</div></div>
+      <div class="scard sc-red"><div class="scard-label">Going quiet</div><div class="scard-value" style="color:var(--red)">23</div><div class="scard-sub">big spenders, 90+ days silent</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Customer tiers</span><span class="panel-sub">by lifetime spend — tap a tier to see who's in it</span></div>
+        <div id="tierRows"></div>
+        <div style="font-size:12px;color:var(--t4);margin-top:10px">Top 134 customers (10%) generate <b style="color:var(--t2)">50% of all revenue</b></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">⚠ Going quiet — worth a call</span><span class="panel-sub">high value, no recent purchase</span></div>
+        <div class="risk-list" id="riskList"></div>
+      </div>
+    </div>
+
+    <!-- PERIOD FILTERED -->
+    <div class="sec-title" style="margin-top:4px">Activity — filtered by period</div>
+    <div class="period-bar">
+      <button class="pbtn" data-p="today" onclick="setPeriod('today')">Today</button>
+      <button class="pbtn" data-p="week" onclick="setPeriod('week')">This week</button>
+      <button class="pbtn active" data-p="month" onclick="setPeriod('month')">This month</button>
+      <button class="pbtn" data-p="year" onclick="setPeriod('year')">This year</button>
+      <button class="pbtn" data-p="all" onclick="setPeriod('all')">All time</button>
+      <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+        <input type="date" class="date-input" id="dateFrom" value="2026-06-01">
+        <span style="font-size:12px;color:var(--t4)">to</span>
+        <input type="date" class="date-input" id="dateTo" value="2026-06-11">
+        <button class="apply-btn" onclick="applyCustomRange()">Apply</button>
+      </div>
+    </div>
+
+    <div class="stats4" id="periodStats"></div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">New customers over time</span><span class="panel-sub" id="newChartSub"></span></div>
+        <div class="chart" id="newChart"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">New vs returning revenue</span><span class="panel-sub" id="mixSub"></span></div>
+        <div id="mixBars" style="margin-top:6px"></div>
+        <div style="border-top:1px solid var(--bd);margin-top:14px;padding-top:12px;font-size:12px;color:var(--t4)" id="mixNote"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Top customers</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="text" class="search-input" id="custSearch" placeholder="Search customer..." oninput="renderTable()">
+          <span class="panel-sub" id="custCount"></span>
+        </div>
+      </div>
+      <div class="tbl-scroll"><table class="tbl" id="custTbl"></table></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="mo" id="tierModal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="mo-box">
+    <div class="mo-head"><span class="mo-title" id="tierTitle"></span><button class="mo-x" onclick="document.getElementById('tierModal').classList.remove('show')">✕</button></div>
+    <div class="mo-sub" id="tierSub"></div>
+    <div class="tier-members" id="tierMembers"></div>
+  </div>
+</div>
+
+<script>
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+function fmt(n){return'$'+Math.round(n).toLocaleString()}
+
+// ═══ PER-PERIOD DATA ═══
+var DATA={
+ today:{active:29,newC:7,rev:68425,newRev:9420,retRev:59005,avgDisc:0.9,
+  chart:[{l:'9am',v:1},{l:'10am',v:2},{l:'11am',v:1},{l:'12pm',v:0},{l:'1pm',v:1},{l:'2pm',v:0},{l:'3pm',v:1},{l:'4pm',v:1},{l:'5pm',v:0}],
+  cust:[{n:'Morgan Hayes',ph:'780-555-0100',buys:3,items:4,spent:9840,disc:1.2,since:'2024',last:'Today'},
+        {n:'Noel Morales',ph:'587-555-0174',buys:1,items:2,spent:5459,disc:0,since:'2023',last:'Today'},
+        {n:'Taylor Ramos',ph:'780-555-0141',buys:2,items:2,spent:4893,disc:2.1,since:'2025',last:'Today'},
+        {n:'Ari Cook',ph:'780-555-0117',buys:2,items:3,spent:4200,disc:0,since:'2026',last:'Today'},
+        {n:'Sydney Long',ph:'780-555-0102',buys:1,items:1,spent:3293,disc:0.5,since:'2024',last:'Today'}]},
+ week:{active:148,newC:31,rev:412350,newRev:64200,retRev:348150,avgDisc:1.1,
+  chart:[{l:'Mon',v:4},{l:'Tue',v:3},{l:'Wed',v:6},{l:'Thu',v:5},{l:'Fri',v:7},{l:'Sat',v:5},{l:'Sun',v:1}],
+  cust:[{n:'Peyton Young',ph:'780-555-0103',buys:4,items:6,spent:28400,disc:1.8,since:'2023',last:'2 days ago'},
+        {n:'Morgan Hayes',ph:'780-555-0100',buys:5,items:7,spent:22180,disc:1.2,since:'2024',last:'Today'},
+        {n:'Skyler King',ph:'780-555-0105',buys:2,items:4,spent:18920,disc:2.4,since:'2022',last:'3 days ago'},
+        {n:'Noel Morales',ph:'587-555-0174',buys:3,items:3,spent:15630,disc:0.4,since:'2023',last:'Today'},
+        {n:'Robin Freeman',ph:'780-555-0192',buys:4,items:5,spent:14210,disc:1.0,since:'2025',last:'Yesterday'}]},
+ month:{active:512,newC:118,rev:1842300,newRev:286400,retRev:1555900,avgDisc:1.2,
+  chart:[{l:'Week 1',v:32},{l:'Week 2',v:29},{l:'Week 3',v:31},{l:'Week 4',v:26}],
+  cust:[{n:'Skyler King',ph:'780-555-0105',buys:8,items:13,spent:84200,disc:2.6,since:'2022',last:'3 days ago'},
+        {n:'Peyton Young',ph:'780-555-0103',buys:11,items:15,spent:71800,disc:1.9,since:'2023',last:'2 days ago'},
+        {n:'Morgan Hayes',ph:'780-555-0100',buys:14,items:18,spent:65300,disc:1.4,since:'2024',last:'Today'},
+        {n:'Casey Jenkins',ph:'780-555-0106',buys:6,items:8,spent:48900,disc:0.8,since:'2023',last:'1 week ago'},
+        {n:'Taylor Ramos',ph:'780-555-0141',buys:9,items:11,spent:44100,disc:1.1,since:'2025',last:'Today'},
+        {n:'Jesse Simmons',ph:'780-555-0101',buys:5,items:7,spent:38200,disc:0.3,since:'2023',last:'4 days ago'},
+        {n:'Cameron Campbell',ph:'780-555-0115',buys:4,items:5,spent:29800,disc:1.6,since:'2026',last:'1 week ago'},
+        {n:'Sydney Long',ph:'780-555-0102',buys:7,items:9,spent:26400,disc:1.3,since:'2024',last:'2 days ago'},
+        {n:'Jules Ortiz',ph:'780-555-0120',buys:2,items:3,spent:24800,disc:2.7,since:'2021',last:'1 week ago'},
+        {n:'Robin Freeman',ph:'780-555-0192',buys:6,items:8,spent:23100,disc:0.9,since:'2025',last:'Yesterday'},
+        {n:'Ari Cook',ph:'780-555-0117',buys:5,items:7,spent:21600,disc:0.6,since:'2026',last:'Today'},
+        {n:'Noel Morales',ph:'587-555-0174',buys:4,items:5,spent:19800,disc:0.7,since:'2023',last:'Today'},
+        {n:'Logan Mason',ph:'780-555-0116',buys:3,items:4,spent:17200,disc:1.5,since:'2024',last:'5 days ago'},
+        {n:'Charlie Wells',ph:'780-555-0114',buys:4,items:4,spent:15900,disc:1.0,since:'2023',last:'1 week ago'},
+        {n:'Avery Cole',ph:'780-555-0118',buys:3,items:3,spent:14100,disc:0.4,since:'2025',last:'3 days ago'},
+        {n:'Elliot Sanders',ph:'780-555-0113',buys:2,items:3,spent:12400,disc:0.8,since:'2024',last:'1 week ago'},
+        {n:'Ellis Shaw',ph:'780-555-0119',buys:3,items:4,spent:11800,disc:1.2,since:'2023',last:'4 days ago'},
+        {n:'Quinn James',ph:'780-555-0121',buys:1,items:1,spent:9600,disc:2.1,since:'2022',last:'2 weeks ago'},
+        {n:'Charlie Simmons',ph:'780-555-0122',buys:2,items:2,spent:8400,disc:0.5,since:'2025',last:'1 week ago'}]},
+ year:{active:1182,newC:118,rev:9418200,newRev:1218400,retRev:8199800,avgDisc:1.3,
+  chart:[{l:'Jan',v:84},{l:'Feb',v:71},{l:'Mar',v:96},{l:'Apr',v:88},{l:'May',v:92},{l:'Jun',v:118}],
+  cust:[{n:'Skyler King',ph:'780-555-0105',buys:34,items:52,spent:312400,disc:2.5,since:'2022',last:'3 days ago'},
+        {n:'Peyton Young',ph:'780-555-0103',buys:48,items:61,spent:288700,disc:2.0,since:'2023',last:'2 days ago'},
+        {n:'Morgan Hayes',ph:'780-555-0100',buys:52,items:64,spent:241900,disc:1.5,since:'2024',last:'Today'},
+        {n:'Noel Morales',ph:'587-555-0174',buys:29,items:35,spent:198400,disc:0.9,since:'2023',last:'Today'},
+        {n:'Casey Jenkins',ph:'780-555-0106',buys:22,items:27,spent:176200,disc:0.7,since:'2023',last:'1 week ago'},
+        {n:'Jules Ortiz',ph:'780-555-0120',buys:9,items:14,spent:84200,disc:2.9,since:'2021',last:'142 days ago'},
+        {n:'Quinn James',ph:'780-555-0121',buys:7,items:9,spent:61800,disc:2.2,since:'2022',last:'118 days ago'},
+        {n:'Taylor Ramos',ph:'780-555-0141',buys:24,items:31,spent:164800,disc:1.2,since:'2025',last:'Today'},
+        {n:'Jesse Simmons',ph:'780-555-0101',buys:18,items:22,spent:148200,disc:0.3,since:'2023',last:'4 days ago'},
+        {n:'Robin Freeman',ph:'780-555-0192',buys:21,items:26,spent:131500,disc:1.0,since:'2025',last:'Yesterday'},
+        {n:'Sydney Long',ph:'780-555-0102',buys:19,items:24,spent:118900,disc:1.4,since:'2024',last:'2 days ago'},
+        {n:'Drew Alexander',ph:'780-555-0123',buys:8,items:12,spent:52100,disc:1.7,since:'2022',last:'104 days ago'},
+        {n:'Casey Gonzales',ph:'780-555-0124',buys:7,items:10,spent:48700,disc:1.9,since:'2023',last:'96 days ago'},
+        {n:'Sage Dixon',ph:'780-555-0125',buys:6,items:8,spent:34800,disc:1.1,since:'2024',last:'93 days ago'},
+        {n:'Ari Cook',ph:'780-555-0117',buys:12,items:16,spent:31200,disc:0.6,since:'2026',last:'Today'}]},
+ all:{active:1394,newC:1394,rev:24831500,newRev:24831500,retRev:0,avgDisc:1.4,
+  chart:[{l:'2023',v:312},{l:'2024',v:428},{l:'2025',v:536},{l:'2026',v:118}],
+  cust:[{n:'Skyler King',ph:'780-555-0105',buys:96,items:142,spent:824100,disc:2.4,since:'2022',last:'3 days ago'},
+        {n:'Peyton Young',ph:'780-555-0103',buys:131,items:168,spent:761300,disc:1.8,since:'2023',last:'2 days ago'},
+        {n:'Morgan Hayes',ph:'780-555-0100',buys:142,items:177,spent:638200,disc:1.3,since:'2024',last:'Today'},
+        {n:'Jesse Simmons',ph:'780-555-0101',buys:88,items:104,spent:540800,disc:0.4,since:'2023',last:'4 days ago'},
+        {n:'Noel Morales',ph:'587-555-0174',buys:74,items:89,spent:498200,disc:0.8,since:'2023',last:'Today'},
+        {n:'Jules Ortiz',ph:'780-555-0120',buys:18,items:26,spent:84200,disc:2.9,since:'2021',last:'142 days ago'},
+        {n:'Robin Freeman',ph:'780-555-0192',buys:61,items:72,spent:402800,disc:1.0,since:'2025',last:'Yesterday'},
+        {n:'Casey Jenkins',ph:'780-555-0106',buys:58,items:71,spent:376200,disc:0.7,since:'2023',last:'1 week ago'},
+        {n:'Taylor Ramos',ph:'780-555-0141',buys:49,items:62,spent:341900,disc:1.1,since:'2025',last:'Today'},
+        {n:'Sydney Long',ph:'780-555-0102',buys:64,items:79,spent:318400,disc:1.3,since:'2024',last:'2 days ago'},
+        {n:'Blake Sullivan',ph:'780-555-0126',buys:22,items:31,spent:134600,disc:1.6,since:'2022',last:'3 weeks ago'},
+        {n:'Jules Ortiz',ph:'780-555-0120',buys:18,items:26,spent:84200,disc:2.9,since:'2021',last:'142 days ago'},
+        {n:'Elliot Lewis',ph:'780-555-0127',buys:14,items:17,spent:76800,disc:0.9,since:'2023',last:'1 month ago'},
+        {n:'Frankie Barnes',ph:'780-555-0128',buys:7,items:11,spent:48600,disc:1.8,since:'2024',last:'2 months ago'},
+        {n:'Finley Bailey',ph:'780-555-0129',buys:15,items:19,spent:47200,disc:0.5,since:'2022',last:'2 weeks ago'}]}
+};
+
+// ═══ TIERS — lifetime spend ═══
+var TIERS=[
+ {name:'VIP',min:'$100K+',color:'var(--gold)',bg:'var(--gold-bg)',count:7,total:2800000,members:[
+   ['Skyler King',824100,96],['Peyton Young',761300,131],['Morgan Hayes',638200,142],['Jesse Simmons',540800,88],['Noel Morales',498200,74],['Robin Freeman',402800,61],['Blake Sullivan',134600,22]]},
+ {name:'GOLD',min:'$50K+',color:'var(--amber)',bg:'var(--amber-bg)',count:31,total:3900000,members:[
+   ['Jules Ortiz',84200,18],['Casey Jenkins',76200,22],['Taylor Ramos',71400,9],['Quinn James',61800,12],['Sydney Long',58900,31],['Casey Gonzales',56200,14],['Jamie Phillips',54800,11],['Drew Alexander',52100,16],['Reese Barnes',51400,8],['Jules Cox',50300,9],
+   ['Taylor Ward',49800,13],['Frankie Barnes',48600,7],['Finley Bailey',47200,15],['Jules Ruiz',46100,6],['Frankie Patterson',45400,12],['Sawyer Ward',44800,9],['Kai Harrison',43900,11],['Alex Webb',43200,8],['Noel Hunt',42600,14],['Sydney Washington',41800,5],
+   ['Riley Green',41200,10],['Cameron Kim',40700,7],['Robin Bryant',40100,9],['Milan McDonald',39600,6],['Ari Butler',39200,12],['Morgan Murray',38800,5],['Lee Gordon',38300,8],['Quinn Coleman',37900,7],['Jules Richardson',37400,10],['Noel Kennedy',36800,4],['Finley Butler',36200,6]]},
+ {name:'SILVER',min:'$25K+',color:'var(--purple)',bg:'var(--purple-bg)',count:96,total:5800000,members:[
+   ['Sage Dixon',34800,14],['Cameron Campbell',34200,12],['Quinn Murray',33600,7],['Ari Cook',33100,19],['Avery Cole',32700,8],['Ellis Shaw',32200,15],['Logan Mason',31800,11],['Charlie Wells',31300,9],['Elliot Sanders',30900,6],['Emerson Scott',30400,10],
+   ['Lee Webb',30000,8],['Rowan Gutierrez',29600,5],['Maguy Salem',29200,11],['Ellis Taylor',28800,7],['Emerson Powell',28300,9],['Robin Campbell',27900,6],['Jesse Washington',27500,8],['Jamie Chavez',27100,4],['Ari Ortiz',26700,10],['Milan Taylor',26400,5],
+   ['Tatum Reyes',26000,7],['Corey Bennett',25800,6],['Milan Griffin',25600,9],['Jamie Freeman',25400,3],['Dana Kelly',25300,8],['Morgan Ramos',25200,5],['Finley James',25150,7],['Jordan Morales',25100,4],['Avery Roberts',25050,6],['Blake Scott',25000,5]]},
+ {name:'BRONZE',min:'$8K+',color:'var(--blue)',bg:'var(--blue-bg)',count:318,total:7400000,members:[
+   ['Charlie Simmons',22400,7],['Sage James',19800,5],['Rowan Roberts',17200,8],['Ellis Baker',15600,4],['Harper Burns',13900,6],['Elliot Wright',12400,3],['Drew Tucker',11200,5],['Marley Reynolds',9800,4],['Blake Barnes',8900,3],['Corey West',8200,2]]},
+ {name:'REGULAR',min:'under $8K',color:'var(--t4)',bg:'var(--bg4)',count:942,total:4900000,members:[
+   ['Skyler Butler',7400,3],['Jules Vasquez',6800,2],['Emerson Olson',5900,3],['Riley Butler',5100,2],['Blake Kelly',4600,2],['Rita Abou Jaoude',3900,1],['Finley Sanders',3200,2],['Bailey Scott',2800,1],['Gray Romero',1900,1],['Elliot Walker',950,1]]}
+];
+function renderTiers(){
+  var maxT=Math.max.apply(null,TIERS.map(function(t){return t.total}));
+  document.getElementById('tierRows').innerHTML=TIERS.map(function(t,i){
+    var mil=(t.total/1e6).toFixed(1);
+    return '<div class="tier-row" onclick="openTier('+i+')"><span class="tier-badge" style="background:'+t.bg+';color:'+t.color+'">'+t.name+'</span><div class="tier-track"><div class="tier-fill" style="width:'+Math.max(2,Math.round(t.total/maxT*100))+'%;background:'+t.color+'"></div></div><span class="tier-amt">'+t.count+' customers · $'+mil+'M · '+t.min+'</span></div>';
+  }).join('');
+}
+function openTier(i){
+  var t=TIERS[i];
+  document.getElementById('tierTitle').innerHTML='<span class="tier-badge" style="background:'+t.bg+';color:'+t.color+';margin-right:8px">'+t.name+'</span> '+t.min+' lifetime';
+  document.getElementById('tierSub').textContent=t.count+' customers · $'+(t.total/1e6).toFixed(1)+'M combined lifetime spend'+(t.count>t.members.length?' — showing top '+t.members.length:'');
+  document.getElementById('tierMembers').innerHTML=t.members.map(function(m,idx){
+    return '<div class="tm-row"><div><span style="color:var(--t4);font-size:11px;margin-right:8px">'+(idx+1)+'</span><span style="font-weight:600;color:var(--t1)">'+m[0]+'</span><span style="color:var(--t4);font-size:11px;margin-left:8px">'+m[2]+' purchases</span></div><span style="font-weight:600;color:var(--green)">$'+m[1].toLocaleString()+'</span></div>';
+  }).join('');
+  document.getElementById('tierModal').classList.add('show');
+}
+
+// ═══ GOING QUIET — scrollable list ═══
+var RISK=[
+ ['Jules Ortiz',84200,18,142],['Quinn James',61800,12,118],['Jules Cox',48300,9,97],
+ ['Sage Dixon',37500,14,93],['Quinn Murray',29100,7,91],['Drew Alexander',52100,16,104],
+ ['Reese Barnes',51400,8,127],['Casey Gonzales',56200,14,96],['Jamie Phillips',54800,11,90],
+ ['Charlie Simmons',22400,7,112],['Sage James',19800,5,151],['Rowan Roberts',17200,8,95],
+ ['Ellis Baker',15600,4,134],['Harper Burns',13900,6,92],['Elliot Wright',12400,3,108]
+];
+function renderRisk(){
+  RISK.sort(function(a,b){return b[1]-a[1]});
+  document.getElementById('riskList').innerHTML=RISK.map(function(r){
+    var cls=r[3]>=120?'background:var(--red-bg);color:var(--red)':'background:var(--amber-bg);color:var(--amber)';
+    return '<div class="risk-row"><div><div style="font-weight:600;color:var(--t1)">'+r[0]+'</div><div style="font-size:11px;color:var(--t4)">$'+r[1].toLocaleString()+' lifetime · '+r[2]+' purchases</div></div><span class="tag" style="'+cls+'">'+r[3]+' days</span></div>';
+  }).join('');
+}
+renderTiers();renderRisk();
+
+var period='month',periodLabel='This month';
+
+function setPeriod(p){
+  period=p;
+  var lbls={today:'Today',week:'This week',month:'This month',year:'This year',all:'All time'};
+  periodLabel=lbls[p];
+  document.querySelectorAll('.pbtn').forEach(function(b){b.classList.toggle('active',b.dataset.p===p)});
+  render();
+}
+function applyCustomRange(){
+  var f=document.getElementById('dateFrom').value,t=document.getElementById('dateTo').value;
+  if(!f||!t)return;
+  var fd=new Date(f+'T12:00:00'),td=new Date(t+'T12:00:00');
+  if(td<fd){var tmp=fd;fd=td;td=tmp}
+  var days=Math.round((td-fd)/864e5)+1;
+  var ratio=days/30;
+  var m=DATA.month;
+  function sc(n){return Math.max(0,Math.round(n*ratio))}
+  // seeded daily new-customer counts
+  function sv(i){var x=Math.sin(i*91.7+13.3)*10000;return Math.floor(Math.abs(x-Math.floor(x))*6)}
+  var chart=[];var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var step=days>31?Math.ceil(days/31):1;
+  for(var i=0;i<days;i+=step){
+    var d=new Date(fd.getTime()+i*864e5);var v=0;
+    for(var j=0;j<step&&(i+j)<days;j++)v+=sv(Math.round(fd.getTime()/864e5)+i+j);
+    chart.push({l:(days<=14||i%5===0)?(d.getMonth()+1)+'/'+d.getDate():'',v:v});
+  }
+  DATA.custom={active:sc(m.active),newC:chart.reduce(function(s,c){return s+c.v},0),rev:sc(m.rev),newRev:sc(m.newRev),retRev:sc(m.retRev),avgDisc:m.avgDisc,chart:chart,cust:m.cust};
+  period='custom';
+  periodLabel=MN[fd.getMonth()]+' '+fd.getDate()+' — '+MN[td.getMonth()]+' '+td.getDate()+', '+td.getFullYear();
+  document.querySelectorAll('.pbtn').forEach(function(b){b.classList.remove('active')});
+  render();
+}
+
+function render(){
+  var D=DATA[period];
+  document.getElementById('periodStats').innerHTML=
+    '<div class="scard sc-blue"><div class="scard-label">Active customers</div><div class="scard-value" style="color:var(--blue)">'+D.active.toLocaleString()+'</div><div class="scard-sub">bought in '+periodLabel.toLowerCase()+'</div></div>'+
+    '<div class="scard sc-green"><div class="scard-label">New customers</div><div class="scard-value" style="color:var(--green)">'+D.newC.toLocaleString()+'</div><div class="scard-sub">first purchase</div></div>'+
+    '<div class="scard sc-gold"><div class="scard-label">Avg spend per customer</div><div class="scard-value">'+fmt(D.rev/Math.max(1,D.active))+'</div><div class="scard-sub">in period</div></div>'+
+    '<div class="scard sc-purple"><div class="scard-label">Avg discount given</div><div class="scard-value" style="color:var(--purple)">'+D.avgDisc.toFixed(1)+'%</div><div class="scard-sub">across all sales</div></div>';
+
+  // new customers chart
+  var max=Math.max.apply(null,D.chart.map(function(c){return c.v}))||1;
+  document.getElementById('newChart').innerHTML=D.chart.map(function(c){
+    var h=Math.max(2,Math.round(c.v/max*112));
+    return '<div class="chart-group"><div class="chart-val">'+c.v+'</div><div class="chart-bar" style="height:'+h+'px"></div><div class="chart-lbl">'+(c.l||'')+'</div></div>';
+  }).join('');
+  document.getElementById('newChartSub').textContent=D.newC.toLocaleString()+' new — '+periodLabel.toLowerCase();
+
+  // mix bars
+  var total=D.newRev+D.retRev;
+  var newPct=total>0?Math.round(D.newRev/total*100):0;
+  document.getElementById('mixBars').innerHTML=
+    '<div style="display:flex;align-items:center;gap:10px;padding:8px 0"><span style="font-size:12px;color:var(--t3);width:70px">Returning</span><div style="flex:1;height:22px;background:var(--bg4);border-radius:6px;overflow:hidden"><div style="height:100%;width:'+(100-newPct)+'%;background:var(--gold);border-radius:6px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:#1a1a1a;min-width:fit-content;white-space:nowrap">'+(100-newPct)+'%</div></div><span style="font-size:12px;font-weight:600;width:80px;text-align:right">'+fmt(D.retRev)+'</span></div>'+
+    '<div style="display:flex;align-items:center;gap:10px;padding:8px 0"><span style="font-size:12px;color:var(--t3);width:70px">New</span><div style="flex:1;height:22px;background:var(--bg4);border-radius:6px;overflow:hidden"><div style="height:100%;width:'+Math.max(3,newPct)+'%;background:var(--green);border-radius:6px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:#fff;min-width:fit-content;white-space:nowrap">'+newPct+'%</div></div><span style="font-size:12px;font-weight:600;width:80px;text-align:right">'+fmt(D.newRev)+'</span></div>';
+  document.getElementById('mixSub').textContent=fmt(total)+' total';
+  document.getElementById('mixNote').textContent=period==='all'?'All-time view counts every customer as new on their first purchase.':'Returning customers drive '+(100-newPct)+'% of revenue — repeat business is the core of the store.';
+
+  renderTable();
+}
+
+function renderTable(){
+  var D=DATA[period];
+  var q=(document.getElementById('custSearch').value||'').toLowerCase();
+  var rows=D.cust.filter(function(c){return !q||c.n.toLowerCase().indexOf(q)!==-1||c.ph.replace(/[^0-9]/g,'').indexOf(q.replace(/[^0-9]/g,''))!==-1&&q.replace(/[^0-9]/g,'').length>0});
+  document.getElementById('custCount').textContent=rows.length+' shown';
+  document.getElementById('custTbl').innerHTML='<tr><th>Customer</th><th>Phone</th><th class="num">Purchases</th><th class="num">Items</th><th class="num">Spent</th><th class="num">Avg discount</th><th>Customer since</th><th>Last purchase</th></tr>'+
+    rows.map(function(c){
+      var dCls=c.disc>=2.5?'color:var(--red)':c.disc>=1.5?'color:var(--amber)':'color:var(--t3)';
+      return '<tr><td style="font-weight:600;color:var(--t1)">'+c.n+'</td><td style="color:var(--t4)">'+c.ph+'</td><td class="num">'+c.buys+'</td><td class="num">'+c.items+'</td><td class="num" style="color:var(--green)">'+fmt(c.spent)+'</td><td class="num" style="'+dCls+'">'+c.disc.toFixed(1)+'%</td><td>'+c.since+'</td><td>'+c.last+'</td></tr>';
+    }).join('');
+}
+
+render();
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

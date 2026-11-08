@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Apply the saved theme before the page draws */try{if(localStorage.getItem('gjpos-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gold Jewelry POS — Inventory Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;--bg5:#333;
+  --t1:#fff;--t2:#ccc;--t3:#888;--t4:#555;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);
+  --gold:#d4a017;--gold-h:#c4930f;--gold-bg:rgba(212,160,23,.15);
+  --green:#4caf7c;--green-bg:rgba(76,175,124,.12);
+  --red:#e65b5b;--red-bg:rgba(230,91,91,.12);
+  --blue:#5ba3e6;--blue-bg:rgba(91,163,230,.12);
+  --amber:#e6a23c;--amber-bg:rgba(230,162,60,.12);
+  --purple:#9b8de6;--purple-bg:rgba(155,141,230,.12);
+  --r:10px;--rl:14px;
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+html.light{
+  --bg:#f2f2f4;--bg2:#ffffff;--bg3:#f7f7f8;--bg4:#ededef;--bg5:#e2e2e5;
+  --t1:#1a1a1a;--t2:#3a3a3a;--t3:#6b6b70;--t4:#9a9aa0;
+  --bd:rgba(0,0,0,.09);--bd2:rgba(0,0,0,.18);
+  --gold:#b8860b;--gold-h:#a4780a;--gold-bg:rgba(184,134,11,.12);
+  --green:#2e8b5f;--green-bg:rgba(46,139,95,.1);
+  --red:#cf4444;--red-bg:rgba(207,68,68,.1);
+  --blue:#3d7fc4;--blue-bg:rgba(61,127,196,.1);
+  --amber:#c4821a;--amber-bg:rgba(196,130,26,.1);
+  --purple:#7a6bcc;--purple-bg:rgba(122,107,204,.1);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);min-height:100vh;display:flex;-webkit-tap-highlight-color:transparent;transition:background .25s,color .25s}
+.sidebar{width:222px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;transition:background .25s}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(128,128,128,.2)}
+.side-brand{height:64px;padding:0 18px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--bd)}
+.side-brand-name{font-size:17px;font-weight:700}
+.side-brand-name span{color:var(--gold)}
+.side-brand-sub{font-size:11px;color:var(--t4);margin-top:2px}
+.side-section{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--t4);font-weight:600;padding:16px 18px 6px}
+.side-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:14px;font-weight:500;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent;user-select:none}
+.side-item:hover{color:var(--t2);background:rgba(128,128,128,.05)}
+.side-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+.side-item .si-ico{width:20px;text-align:center;font-size:15px;flex-shrink:0}
+.side-item .si-arrow{margin-left:auto;font-size:10px;transition:transform .2s;color:var(--t4)}
+.side-item.open .si-arrow{transform:rotate(180deg)}
+.side-sub{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.side-sub.open{max-height:200px}
+.side-sub-item{display:block;padding:9px 18px 9px 48px;font-size:13px;color:var(--t3);cursor:pointer;transition:all .12s;border-left:3px solid transparent}
+.side-sub-item:hover{color:var(--t2)}
+.side-sub-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:var(--bg2);border-bottom:1px solid var(--bd);gap:12px;transition:background .25s;flex-shrink:0}
+.top-title{font-size:19px;font-weight:600}
+.top-right{display:flex;align-items:center;gap:10px}
+.top-user{font-size:13px;color:var(--t3);display:flex;align-items:center;gap:7px}
+.top-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#1a1a1a;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.mode-btn{font-family:var(--font);font-size:15px;padding:8px 12px;border-radius:var(--r);cursor:pointer;border:1px solid var(--bd2);background:transparent;color:var(--t3);min-height:38px}
+.mode-btn:active{transform:scale(.95)}
+.content{flex:1;padding:22px 26px;overflow-y:auto}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25)}
+.period-bar{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.pbtn{font-family:var(--font);font-size:13px;font-weight:500;padding:10px 18px;border-radius:var(--r);border:1px solid var(--bd2);background:transparent;color:var(--t3);cursor:pointer;min-height:42px}
+.pbtn.active{background:var(--gold);border-color:var(--gold);color:#1a1a1a;font-weight:600}
+.date-input{font-family:var(--font);font-size:13px;padding:9px 10px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--bg4);color:var(--t1);min-height:42px;-webkit-appearance:none;color-scheme:dark}
+html.light .date-input{color-scheme:light}
+.date-input:focus{outline:none;border-color:var(--gold)}
+.apply-btn{font-family:var(--font);font-size:13px;font-weight:600;padding:10px 18px;border-radius:var(--r);border:none;background:var(--gold);color:#1a1a1a;cursor:pointer;min-height:42px}
+.apply-btn:active{background:var(--gold-h);transform:scale(.97)}
+.sec-title{font-size:13px;font-weight:600;color:var(--t3);margin:0 0 10px 2px;text-transform:uppercase;letter-spacing:.5px}
+.stats4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.scard{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;position:relative;overflow:hidden;transition:background .25s,border-color .25s}
+html.light .scard,html.light .panel{border-color:#c9c9cf;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.scard::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--bd2)}
+.sc-green::before{background:var(--green)}
+.sc-red::before{background:var(--red)}
+.sc-gold::before{background:var(--gold)}
+.sc-blue::before{background:var(--blue)}
+.sc-amber::before{background:var(--amber)}
+.scard-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--t4);font-weight:500;margin-bottom:6px}
+.scard-value{font-size:21px;font-weight:700}
+.scard-sub{font-size:12px;color:var(--t4);margin-top:3px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.panel{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px;transition:background .25s,border-color .25s;margin-bottom:18px}
+.grid2 .panel{margin-bottom:0}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.panel-title{font-size:14px;font-weight:600}
+.panel-sub{font-size:11px;color:var(--t4)}
+.hbar-row{display:flex;align-items:center;gap:10px;padding:7px 0}
+.hbar-name{font-size:12px;color:var(--t2);width:120px;flex-shrink:0;font-weight:500}
+.hbar-track{flex:1;height:20px;background:var(--bg4);border-radius:5px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:5px;min-width:2px}
+.hbar-amt{font-size:11px;font-weight:600;color:var(--t3);width:150px;text-align:right;flex-shrink:0}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--t4);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--bd)}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--bd);color:var(--t2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .num{text-align:right;font-weight:600}
+.badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;white-space:nowrap}
+.b-low{background:var(--red-bg);color:var(--red)}
+.b-ok{background:var(--green-bg);color:var(--green)}
+.b-type{background:var(--bg4);color:var(--t3)}
+.mini-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mini{background:var(--bg3);border-radius:var(--r);padding:11px 13px;transition:background .25s}
+.mini-label{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--t4);font-weight:500}
+.mini-val{font-size:18px;font-weight:700;margin-top:3px}
+.mini-sub{font-size:11px;color:var(--t4);margin-top:1px}
+@media(max-width:1000px){.stats4{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.mini-grid4{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="side-brand">
+    <div class="side-brand-name">Gold <span>Jewelry</span> POS</div>
+    <div class="side-brand-sub">Management System</div>
+  </div>
+  <div class="side-section">Main</div>
+  <div class="side-item"><span class="si-ico">🏠</span> Dashboard</div>
+  <div class="side-item open"><span class="si-ico">📊</span> Reports <span class="si-arrow">▼</span></div>
+  <div class="side-sub open">
+    <span class="side-sub-item">Sales reports</span>
+    <span class="side-sub-item active">Inventory reports</span>
+    <span class="side-sub-item">Repairs reports</span>
+    <span class="side-sub-item">Customers reports</span>
+  </div>
+  <div class="side-item"><span class="si-ico">📦</span> Inventory</div>
+  <div class="side-item"><span class="si-ico">🏷️</span> Pricing</div>
+  <div class="side-item"><span class="si-ico">👥</span> Customers</div>
+  <div class="side-item"><span class="si-ico"><svg width="17" height="13" viewBox="0 0 16 12" fill="none"><path d="M2 11h12l2-5H4L2 11z" fill="#D4A017" opacity=".35"/><path d="M0 11h12l2-5H2L0 11z" fill="#D4A017"/><path d="M3 6l1-5h6l1 5" fill="#E6B422"/></svg></span> Used gold</div>
+  <div class="side-item"><span class="si-ico">↩️</span> Returns management</div>
+  <div class="side-item"><span class="si-ico">💼</span> Staff</div>
+  <div class="side-section">System</div>
+  <div class="side-item"><span class="si-ico">🖥️</span> POS</div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <span class="top-title">Inventory reports</span>
+    <div class="top-right">
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()">☀️</button>
+      <span class="top-user"><span class="top-avatar">AD</span> user1@example.com</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- CURRENT STOCK (not period filtered) -->
+    <div class="sec-title">Stock right now</div>
+    <div class="stats4">
+      <div class="scard sc-gold"><div class="scard-label">Items in stock</div><div class="scard-value">4,837</div><div class="scard-sub">across 7 categories</div></div>
+      <div class="scard sc-gold"><div class="scard-label">Total weight</div><div class="scard-value">18,939g</div><div class="scard-sub">all purities</div></div>
+      <div class="scard sc-green"><div class="scard-label">Stock value</div><div class="scard-value" style="color:var(--green)">$3,819,557</div><div class="scard-sub">at current sell prices</div></div>
+      <div class="scard sc-blue"><div class="scard-label">Avg item age</div><div class="scard-value">64 days</div><div class="scard-sub">since added to stock</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Stock by purity</span><span class="panel-sub">weight · value · items</span></div>
+        <div id="purityRows"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Stock by category</span><span class="panel-sub">share of value</span></div>
+        <div id="catRows"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><span class="panel-title">Inventory aging</span><span class="panel-sub">how long items have been sitting</span></div>
+      <div class="mini-grid4">
+        <div class="mini"><div class="mini-label">0–30 days</div><div class="mini-val" style="color:var(--green)">1,842</div><div class="mini-sub">$1,461,200 · fresh</div></div>
+        <div class="mini"><div class="mini-label">31–90 days</div><div class="mini-val">1,651</div><div class="mini-sub">$1,288,400</div></div>
+        <div class="mini"><div class="mini-label">91–180 days</div><div class="mini-val" style="color:var(--amber)">948</div><div class="mini-sub">$742,800 · slowing</div></div>
+        <div class="mini"><div class="mini-label">180+ days</div><div class="mini-val" style="color:var(--red)">396</div><div class="mini-sub">$327,157 · review these</div></div>
+      </div>
+    </div>
+
+    <!-- PERIOD FILTERED -->
+    <div class="sec-title" style="margin-top:4px">Movement & bullion — filtered by period</div>
+    <div class="period-bar">
+      <button class="pbtn" data-p="today" onclick="setPeriod('today')">Today</button>
+      <button class="pbtn" data-p="week" onclick="setPeriod('week')">This week</button>
+      <button class="pbtn active" data-p="month" onclick="setPeriod('month')">This month</button>
+      <button class="pbtn" data-p="year" onclick="setPeriod('year')">This year</button>
+      <button class="pbtn" data-p="all" onclick="setPeriod('all')">All time</button>
+      <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+        <input type="date" class="date-input" id="dateFrom" value="2026-06-01">
+        <span style="font-size:12px;color:var(--t4)">to</span>
+        <input type="date" class="date-input" id="dateTo" value="2026-06-11">
+        <button class="apply-btn" onclick="applyCustomRange()">Apply</button>
+      </div>
+    </div>
+
+    <div class="stats4" id="moveStats"></div>
+
+    <div class="panel">
+      <div class="panel-head"><span class="panel-title">🪙 Bullion & staples sold</span><span class="panel-sub" id="stapleSub"></span></div>
+      <table class="tbl" id="stapleTbl"></table>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Items added by purity</span><span class="panel-sub" id="addedSub"></span></div>
+        <div id="addedRows"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Items returned by purity</span><span class="panel-sub" id="returnedSub"></span></div>
+        <div id="returnedRows"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ═══ LIGHT / DARK MODE (saved for every page under 'gjpos-theme') ═══
+function toggleMode(){
+  var light=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('gjpos-theme',light?'light':'dark')}catch(e){}
+  document.getElementById('modeBtn').textContent=light?'🌙':'☀️';
+}
+document.getElementById('modeBtn').textContent=document.documentElement.classList.contains('light')?'🌙':'☀️';
+function fmt(n){return'$'+Math.round(n).toLocaleString()}
+
+// ═══ CURRENT STOCK (static) ═══
+var PURITY=[
+  {k:'21K',g:11240,items:2980,val:2528000},
+  {k:'18K',g:6820,items:1640,val:1366800},
+  {k:'24K',g:512,items:148,val:118300},
+  {k:'22K',g:26.4,items:9,val:6080}
+];
+var CATS=[
+  {n:'Bracelets',val:1334000},{n:'Rings',val:842000},{n:'Necklaces',val:689000},
+  {n:'Bangles',val:412000},{n:'Earrings',val:298000},{n:'Bullion',val:166557},{n:'Pendants',val:78000}
+];
+(function(){
+  var maxG=Math.max.apply(null,PURITY.map(function(p){return p.g}));
+  document.getElementById('purityRows').innerHTML=PURITY.map(function(p){
+    return '<div class="hbar-row"><span class="hbar-name">'+p.k+'</span><div class="hbar-track"><div class="hbar-fill" style="width:'+Math.max(1,Math.round(p.g/maxG*100))+'%;background:var(--gold);opacity:.85"></div></div><span class="hbar-amt">'+p.g.toLocaleString()+'g · '+fmt(p.val)+' · '+p.items.toLocaleString()+' items</span></div>';
+  }).join('');
+  var maxC=Math.max.apply(null,CATS.map(function(c){return c.val}));
+  var total=CATS.reduce(function(s,c){return s+c.val},0);
+  document.getElementById('catRows').innerHTML=CATS.map(function(c){
+    var pct=Math.round(c.val/total*100);
+    return '<div class="hbar-row"><span class="hbar-name">'+c.n+'</span><div class="hbar-track"><div class="hbar-fill" style="width:'+Math.max(1,Math.round(c.val/maxC*100))+'%;background:var(--blue);opacity:.75"></div></div><span class="hbar-amt">'+fmt(c.val)+' · '+pct+'%</span></div>';
+  }).join('');
+})();
+
+// ═══ PERIOD DATA ═══
+// staples: [in stock now, sold today, week, month, year, all]
+var STAPLES=[
+  {n:'Lira',type:'21K coin · 8g',stock:14,low:10,sold:{today:3,week:11,month:42,year:228,all:611}},
+  {n:'Half Lira',type:'21K coin · 4g',stock:22,low:10,sold:{today:1,week:8,month:31,year:164,all:447}},
+  {n:'Quarter Lira',type:'21K coin · 2g',stock:6,low:10,sold:{today:2,week:14,month:55,year:301,all:818}},
+  {n:'Jadel Bangle',type:'21K bangle',stock:18,low:8,sold:{today:1,week:5,month:19,year:96,all:241}},
+  {n:'1g Bar',type:'24K bullion',stock:46,low:20,sold:{today:2,week:9,month:38,year:204,all:520}},
+  {n:'2.5g Bar',type:'24K bullion',stock:28,low:15,sold:{today:0,week:4,month:17,year:88,all:226}},
+  {n:'5g Bar',type:'24K bullion',stock:19,low:10,sold:{today:1,week:3,month:12,year:71,all:188}},
+  {n:'10g Bar',type:'24K bullion',stock:11,low:6,sold:{today:0,week:2,month:8,year:42,all:109}},
+  {n:'Half Ounce',type:'24K bullion · 15.55g',stock:7,low:4,sold:{today:0,week:1,month:4,year:23,all:58}},
+  {n:'Ounce',type:'24K bullion · 31.1g',stock:4,low:3,sold:{today:0,week:1,month:3,year:15,all:36}}
+];
+// movement per period: added items/g, sold items/g, returned items/g, melted g
+var MOVE={
+  today:{addedI:38,addedG:312.4,soldI:38,soldG:724.6,retI:2,retG:12.1,meltG:0},
+  week:{addedI:212,addedG:1840.2,soldI:241,soldG:4385.2,retI:11,retG:78.4,meltG:215.8},
+  month:{addedI:884,addedG:7920.5,soldI:1067,soldG:19483.7,retI:48,retG:331.2,meltG:892.4},
+  year:{addedI:4720,addedG:41280.8,soldI:5641,soldG:99284.5,retI:285,retG:2316.6,meltG:4821.0},
+  all:{addedI:13240,addedG:114805.2,soldI:15233,soldG:266841.0,retI:742,retG:6105.3,meltG:13208.5}
+};
+// added/returned by purity per period (items, grams)
+var BYPURITY={
+  today:{added:[{k:'21K',i:24,g:198.3},{k:'18K',i:11,g:96.2},{k:'24K',i:3,g:17.9},{k:'22K',i:0,g:0}],ret:[{k:'21K',i:1,g:3.8},{k:'18K',i:1,g:8.3},{k:'24K',i:0,g:0},{k:'22K',i:0,g:0}]},
+  week:{added:[{k:'21K',i:128,g:1102.4},{k:'18K',i:64,g:582.1},{k:'24K',i:18,g:148.2},{k:'22K',i:2,g:7.5}],ret:[{k:'21K',i:6,g:41.2},{k:'18K',i:4,g:31.0},{k:'24K',i:1,g:6.2},{k:'22K',i:0,g:0}]},
+  month:{added:[{k:'21K',i:524,g:4680.2},{k:'18K',i:282,g:2541.8},{k:'24K',i:72,g:668.5},{k:'22K',i:6,g:30.0}],ret:[{k:'21K',i:27,g:182.4},{k:'18K',i:16,g:121.8},{k:'24K',i:5,g:27.0},{k:'22K',i:0,g:0}]},
+  year:{added:[{k:'21K',i:2780,g:24302.5},{k:'18K',i:1520,g:13480.4},{k:'24K',i:388,g:3290.2},{k:'22K',i:32,g:207.7}],ret:[{k:'21K',i:154,g:1497.4},{k:'18K',i:108,g:748.6},{k:'24K',i:23,g:70.6},{k:'22K',i:0,g:0}]},
+  all:{added:[{k:'21K',i:7820,g:68240.8},{k:'18K',i:4280,g:38120.2},{k:'24K',i:1056,g:8120.4},{k:'22K',i:84,g:323.8}],ret:[{k:'21K',i:412,g:3702.1},{k:'18K',i:268,g:2034.8},{k:'24K',i:59,g:362.0},{k:'22K',i:3,g:6.4}]}
+};
+
+var period='month',periodLabel='This month';
+var customScale=null;
+
+function setPeriod(p){
+  period=p;customScale=null;
+  var lbls={today:'Today',week:'This week',month:'This month',year:'This year',all:'All time'};
+  periodLabel=lbls[p];
+  document.querySelectorAll('.pbtn').forEach(function(b){b.classList.toggle('active',b.dataset.p===p)});
+  render();
+}
+function applyCustomRange(){
+  var f=document.getElementById('dateFrom').value,t=document.getElementById('dateTo').value;
+  if(!f||!t)return;
+  var fd=new Date(f+'T12:00:00'),td=new Date(t+'T12:00:00');
+  if(td<fd){var tmp=fd;fd=td;td=tmp}
+  var days=Math.round((td-fd)/864e5)+1;
+  customScale=days/30; // scale from month baseline
+  period='month';
+  var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  periodLabel=MN[fd.getMonth()]+' '+fd.getDate()+' — '+MN[td.getMonth()]+' '+td.getDate()+', '+td.getFullYear();
+  document.querySelectorAll('.pbtn').forEach(function(b){b.classList.remove('active')});
+  render();
+}
+function sc(n){return customScale===null?n:Math.round(n*customScale)}
+function scF(n){return customScale===null?n:+(n*customScale).toFixed(1)}
+
+function render(){
+  var m=MOVE[period];
+  document.getElementById('moveStats').innerHTML=
+    '<div class="scard sc-green"><div class="scard-label">Items added</div><div class="scard-value" style="color:var(--green)">'+sc(m.addedI).toLocaleString()+'</div><div class="scard-sub">'+scF(m.addedG).toLocaleString()+'g · '+periodLabel+'</div></div>'+
+    '<div class="scard sc-gold"><div class="scard-label">Items sold</div><div class="scard-value">'+sc(m.soldI).toLocaleString()+'</div><div class="scard-sub">'+scF(m.soldG).toLocaleString()+'g</div></div>'+
+    '<div class="scard sc-blue"><div class="scard-label">Items returned</div><div class="scard-value" style="color:var(--blue)">'+sc(m.retI).toLocaleString()+'</div><div class="scard-sub">'+scF(m.retG).toLocaleString()+'g back to stock</div></div>'+
+    '<div class="scard sc-amber"><div class="scard-label">Melted</div><div class="scard-value" style="color:var(--amber)">'+scF(m.meltG).toLocaleString()+'g</div><div class="scard-sub">sent to dealer</div></div>';
+
+  var soldKey=period;
+  var totalSold=0;
+  document.getElementById('stapleTbl').innerHTML='<tr><th>Item</th><th>Type</th><th class="num">In stock</th><th class="num">Sold ('+periodLabel.toLowerCase()+')</th><th style="text-align:center">Stock status</th></tr>'+
+    STAPLES.map(function(s){
+      var sold=sc(s.sold[soldKey]);totalSold+=sold;
+      var low=s.stock<=s.low;
+      return '<tr><td style="font-weight:600;color:var(--t1)">'+s.n+'</td><td><span class="badge b-type">'+s.type+'</span></td><td class="num">'+s.stock+'</td><td class="num" style="color:var(--gold)">'+sold+'</td><td style="text-align:center"><span class="badge '+(low?'b-low':'b-ok')+'">'+(low?'LOW — reorder':'OK')+'</span></td></tr>';
+    }).join('');
+  document.getElementById('stapleSub').textContent=totalSold.toLocaleString()+' staple items sold';
+
+  var bp=BYPURITY[period];
+  function purityBars(el,list,color){
+    var maxG=Math.max.apply(null,list.map(function(x){return x.g}))||1;
+    el.innerHTML=list.map(function(x){
+      return '<div class="hbar-row"><span class="hbar-name">'+x.k+'</span><div class="hbar-track"><div class="hbar-fill" style="width:'+Math.max(1,Math.round(x.g/maxG*100))+'%;background:'+color+';opacity:.85"></div></div><span class="hbar-amt">'+sc(x.i).toLocaleString()+' items · '+scF(x.g).toLocaleString()+'g</span></div>';
+    }).join('');
+  }
+  purityBars(document.getElementById('addedRows'),bp.added,'var(--green)');
+  purityBars(document.getElementById('returnedRows'),bp.ret,'var(--amber)');
+  var ta=bp.added.reduce(function(s,x){return s+sc(x.i)},0);
+  var tr=bp.ret.reduce(function(s,x){return s+sc(x.i)},0);
+  document.getElementById('addedSub').textContent=ta.toLocaleString()+' items';
+  document.getElementById('returnedSub').textContent=tr.toLocaleString()+' items';
+}
+render();
+</script>
+<script>
+/* Portfolio demo navigation: links the standalone prototype pages together */
+(function(){
+  var inAdmin = location.pathname.indexOf('/admin/') !== -1;
+  var POS = {sale:'2-pos-sale.html', 'return':'3-return-system.html', repair:'4-repair-intake.html',
+             pickup:'5-repair-orders.html', usedgold:'6-used-gold.html', cash:'7-cash-management.html'};
+  var ADMIN = {'dashboard':'1-admin-dashboard.html','reports':'2-sales-reports.html','sales reports':'2-sales-reports.html',
+    'inventory reports':'3-inventory-reports.html','repairs reports':'4-repairs-reports.html',
+    'customers reports':'5-customers-reports.html','inventory':'6-admin-inventory.html',
+    'pricing':'7-admin-pricing.html','customers':'8-admin-customers.html','used gold':'9-admin-used-gold.html',
+    'returns management':'10-admin-returns.html','staff':'11-admin-staff.html','pos':'../pos/1-pos-dashboard.html'};
+  function go(url){ location.href = url; }
+  if (typeof window.navigate === 'function' && !inAdmin) {
+    window.navigate = function(page){ if (POS[page]) go(POS[page]); };
+  }
+  if (typeof window.showToast === 'function') {
+    var orig = window.showToast;
+    window.showToast = function(msg){
+      var m = String(msg);
+      if (/^Back to POS/i.test(m)) return go('1-pos-dashboard.html');
+      if (/^Opening Admin Panel/i.test(m)) return go('../admin/1-admin-dashboard.html');
+      if (/^Logging out/i.test(m)) return go('../index.html');
+      return orig.apply(this, arguments);
+    };
+  }
+  if (inAdmin) {
+    document.querySelectorAll('.side-item, .side-sub-item').forEach(function(el){
+      if (el.id === 'reportsToggle') return;
+      var label = el.textContent.replace(/[^A-Za-z ]/g,'').trim().toLowerCase();
+      var target = ADMIN[label];
+      if (target) { el.style.cursor = 'pointer'; el.addEventListener('click', function(){ go(target); }); }
+    });
+  }
+})();
+</script>
+</body>
+</html>
